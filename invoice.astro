@@ -1,0 +1,197 @@
+<div class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen flex items-center justify-center">
+    <div class="max-w-lg mx-auto mt-10 bg-white shadow-xl rounded-lg p-6 border-t-4 border-purple-600">
+        <h1 class="text-2xl font-extrabold text-gray-700 mb-6 text-center">
+            Invoice Generator
+        </h1>
+        <div id="invoice-items">
+            <div class="grid grid-cols-2 gap-4">
+                <input
+                    type="text"
+                    placeholder="Item Name"
+                    class="w-full p-2 border rounded-md outline-none focus:ring focus:ring-purple-300"
+                />
+                <input
+                    type="number"
+                    placeholder="Quantity"
+                    class="w-full p-2 border rounded-md outline-none focus:ring focus:ring-purple-300"
+                />
+                <input
+                    type="number"
+                    placeholder="Price"
+                    class="w-full p-2 border rounded-md outline-none focus:ring focus:ring-purple-300"
+                />
+                <input
+                    type="number"
+                    id="tax"
+                    placeholder="Tax (%)"
+                    class="w-full p-2 border rounded-md outline-none focus:ring focus:ring-purple-300"
+                />
+                <input
+                    type="number"
+                    id="discount"
+                    placeholder="Discount (%)"
+                    class="w-full p-2 border rounded-md outline-none focus:ring focus:ring-purple-300"
+                />
+            </div>
+            <p id="error-message" class="text-red-500 text-sm mt-2"></p>
+            <button
+                class="w-full mt-4 add-item bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
+                Add Item
+            </button>
+        </div>
+        <div class="mt-6">
+            <table class="w-full border-collapse border border-gray-300 text-sm">
+                <thead>
+                    <tr>
+                        <th class="border border-gray-300 p-2">Item Name</th>
+                        <th class="border border-gray-300 p-2">Quantity</th>
+                        <th class="border border-gray-300 p-2">Price</th>
+                        <th class="border border-gray-300 p-2">Total</th>
+                        <th class="border border-gray-300 p-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="invoice-body"></tbody>
+            </table>
+        </div>
+        <div class="mt-6 flex justify-between items-center">
+            <h2 class="text-lg font-semibold text-gray-700">
+                Grand Total: <span id="grand-total">$0.00</span>
+            </h2>
+            <button
+                id="download"
+                class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                Download Invoice
+            </button>
+        </div>
+    </div>
+</div>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script is:inline>
+
+    const invoiceBody = document.getElementById('invoice-body');
+    const grandTotal = document.getElementById('grand-total');
+    const taxInput = document.getElementById('tax');
+    const discountInput = document.getElementById('discount');
+    const errorMessage = document.getElementById('error-message');
+    const items = [];
+    
+    function updateInvoice(){
+        let subtotal = 0;
+        invoiceBody.innerHTML = '';
+        items.forEach((item, index) => {
+            const total = item.quantity * item.price;
+            subtotal += total;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="border border-gray-300 p-2 text-gray-700">${item.name}</td>
+                <td class="border border-gray-300 p-2 text-gray-700">${item.quantity}</td>
+                <td class="border border-gray-300 p-2 text-gray-700">${item.price.toFixed(2)}</td>
+                <td class="border border-gray-300 p-2 text-gray-700">${total.toFixed(2)}</td>
+                <td class="border border-gray-300 p-2 text-center">
+                    <button class="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600"
+                        onclick="removeItem(${index})" >   
+                        Remove
+                    </button>    
+                </td>
+            `;
+            invoiceBody.appendChild(row);
+        });
+
+        const tax = (subtotal * parseFloat(taxInput.value || 0)) / 100;
+        const discount = (subtotal * parseFloat(discountInput.value || 0)) / 100;
+        const totalAmount = subtotal + tax - discount;
+        grandTotal.textContent = `$${totalAmount.toFixed(2)}`;
+    };
+    function addItem(name, quantity, price){
+        if(!name || quantity <= 0 || price <= 0){
+            errorMessage.textContent = 'Please enter valid item details.';
+            return;
+        }
+        errorMessage.textContent = '';
+        items.push({name, quantity, price});
+        updateInvoice();;
+    }
+    function removeItem(index){
+        items.splice(index, 1);
+        updateInvoice();
+    }
+    document.querySelector('.add-item').addEventListener('click', (e) => {
+        const itemName = e.target.parentElement.querySelector('input[type="text"]').value;
+        const quantity = parseFloat(e.target.parentElement.querySelector('input[type="number"]:nth-child(2)').value);
+        const price = parseFloat(e.target.parentElement.querySelector('input[type="number"]:nth-child(3)').value);
+
+        addItem(itemName, quantity, price);
+        e.target.parentElement.querySelector('input[type="text"]').value = '';
+        e.target.parentElement.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
+    });
+
+    document.getElementById('download').addEventListener('click', () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(18);
+        doc.setTextColor(34, 34, 34);
+        doc.text('Invoice', 105, 20, {align: 'center'});
+
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(100, 100, 100);
+        doc.text('Generated on:' + new Date().toLocaleDateString(), 14, 30);
+        
+        const headers = [['Item Name', 'Quantity', 'Price', 'Total']];
+        const data = items.map(item => [
+            item.name,
+            item.quantity.toString(),
+            `$${item.price.toFixed(2)}`,
+            `$${(item.quantity * item.price).toFixed(2)}`
+        ]);
+
+        let subtotal = items.reduce((sum, item) => sum + item.quantity * item.price, 0);
+        const tax = (parseFloat(taxInput.value || 0) / 100) * subtotal;
+        const discount = (parseFloat(discountInput.value || 0) / 100) * subtotal;
+        const totalAmount = subtotal + tax - discount;
+        const footer = [
+            ['', '', 'Subtotal:', `$${subtotal.toFixed(2)}`],
+            ['', '', 'Tax:', `$${tax.toFixed(2)}`],
+            ['', '', 'Discount:', `-$${discount.toFixed(2)}`],
+            ['', '', 'Grand Total:', `$${totalAmount.toFixed(2)}`]
+        ];
+
+        doc.autoTable({
+            head: headers,
+            body: [...data],
+            foot: footer,
+            startY: 40,
+            theme: 'striped',
+            headStyles: {
+                fillColor: [41, 128, 185],
+                textColor: [255, 255, 255],
+                fontStyle: 'bold',
+                fontSize: 12,
+                halign: 'center',
+            },
+            bodyStyles: {
+                textColor: [34, 34, 34],
+                fontSize: 10,
+                halign: 'left'
+            },
+            footStyles: {
+                textColor: [255, 255, 255],
+                fontSize: 12,
+                fontStyle: 'bold',
+                halign: 'right'
+            },
+            styles: {
+                font: 'helvetica',
+                cellPadding: 4,
+                valign: 'middle',
+            }
+        });
+        doc.save('invoice.pdf')
+    });
+
+    taxInput.addEventListener('input', updateInvoice);
+    discountInput.addEventListener('input', updateInvoice);
+</script>

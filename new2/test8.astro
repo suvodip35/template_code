@@ -1,0 +1,131 @@
+<div class="bg-gradient-to-r from-pink-400 via-red-500 to-purple-500 flex justify-center py-2 min-h-screen">
+    <div class="max-w-xl w-full bg-white shadow-lg rounded-lg p-6">
+        <h1 class="text-2xl font-semibold text-gray-700 mb-4">
+            Budget Planner
+        </h1>
+        <div class="mb-4 p-4 bg-gray-200 rounded-lg">
+            <h2 class="text-xl font-semibold text-gray-700 mb-2">
+                Summary
+            </h2>
+            <p class="text-gray-600">
+                Total Income:
+                <span id="total-income">
+                    $0.00
+                </span>
+            </p>
+            <p class="text-gray-600">
+                Total Expense:
+                <span id="total-expense">
+                    $0.00
+                </span>
+            </p>
+            <p class="text-gray-600 font-semibold">
+                balance:
+                <span id="balance">$0.00</span>
+            </p>
+        </div>
+        <div class="mb-6">
+            <form id="transaction-form" class="space-y-4">
+                <input 
+                    type="text"
+                    id="transaction-name"
+                    placeholder="Transaction Name"
+                    class="w-full p-2 rounded border"
+                    required
+                />
+                <input 
+                    type="number"
+                    id="transaction-amount"
+                    placeholder="Amount"
+                    class="w-full p-2 rounded border"
+                    required
+                />
+                <select 
+                    id="transaction-type"
+                    class="w-full p-2 rounded border"
+                    required>
+                    <option value="0">Select Transaction Type</option>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+                <button 
+                    type="submit"
+                    class="w-full py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-semibold ">
+                    Add Transaction
+                </button>
+            </form>
+        </div>
+        <div class="h-[230px] overflow-y-auto">
+            <canvas id="budget-chart"></canvas>
+        </div>
+        <div id="transaction-list" class="mt-4 space-y-2 h-[170px] overflow-y-auto"></div>
+    </div>
+</div>
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script is:inline>
+    const ctx = document.getElementById('budget-chart').getContext('2d');
+    let budgetChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Income',
+                backgroundColor: '#10b981',
+                data: [],
+            }, {
+                label: 'Expense',
+                backgroundColor: '#EF4444',
+                data: []
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+            },
+        },
+    });
+    let totalIncome = 0;
+    let totalExpense = 0;
+    document.getElementById('transaction-form').addEventListener('submit', function(e){
+        e.preventDefault();
+        const name = document.getElementById('transaction-name').value;
+        const amount = parseFloat(document.getElementById('transaction-amount').value);
+        const type = document.getElementById('transaction-type').value;
+
+        if(type === 'income'){
+            totalIncome += amount;
+            budgetChart.data.labels.push(name);
+            budgetChart.data.datasets[0].data.push(amount);
+            budgetChart.data.datasets[1].data.push(0);
+        } else if (type === 'expense'){
+            totalExpense += amount;
+            budgetChart.data.labels.push(name);
+            budgetChart.data.datasets[0].data.push(0);
+            budgetChart.data.datasets[1].data.push(amount);
+        }
+        updateSummary();
+
+        const transactionList = document.getElementById('transaction-list');
+        const transactionItem = document.createElement('div');
+        transactionItem.className = 'p-2 bg-gray-100 rounded';
+        transactionItem.textContent = `${type === "income" ? "+" : "-"} $${amount.toFixed(2)} - ${name}`;
+        transactionList.appendChild(transactionItem);
+        budgetChart.update();
+
+        document.getElementById('transaction-name').value = '';
+        document.getElementById('transaction-amount').value = '';
+        document.getElementById('transaction-type').value = '';
+
+    });
+
+    function updateSummary(){
+        const balance = totalIncome - totalExpense;
+        document.getElementById('total-income').textContent = `$${totalIncome.toFixed(2)}`;
+        document.getElementById('total-expense').textContent = `$${totalExpense.toFixed(2)}`;
+        document.getElementById('balance').textContent = `$${balance.toFixed(2)}`;
+    }
+</script>

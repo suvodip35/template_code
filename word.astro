@@ -1,0 +1,129 @@
+<div class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen flex justify-center items-center p-4">
+    <div class="w-full max-w-lg bg-white rounded-xl shadow-lg p-6 space-y-6">
+        <h1 class="text-3xl font-bold text-gray-800 text-center">
+            Word Definition Explorer
+        </h1>
+        <div class="space-y-4">
+            <input
+                id="wordInput"
+                type="text"
+                placeholder="Enter a word..."
+                class="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <button
+                onclick="fetchWord()"
+                class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md transition duration-300">
+                Search
+            </button>
+        </div>
+        <p id="message" class="text-sm font-semibold text-red-500 hidden"></p>
+        <div id="output" class="space-y-4"></div>
+        <div id="history" class="bg-gray-100 p-4 rounded-md shadow-inner">
+            <h2 class="text-lg font-semibold text-gray-800">
+                Search History
+            </h2>
+            <ul id="historyList" class="space-y-2 text-gray-600"></ul>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    const apiUrl = 'https://api.dictionaryapi.dev/api/v2/entries/en/';
+    const historyList = document.getElementById('historyList');
+    const output = document.getElementById('output');
+    const message = document.getElementById('message');
+    let searchHistory = [];
+
+    function fetchWord(){
+        const word = document.getElementById('wordInput').value.trim();
+
+        if(!word){
+            displayMessage('Please enter a word to search!');
+            return;
+        }
+        fetch(apiUrl + word)
+        .then(response => {
+            if(!response.ok){
+                throw new Error('Word not found');
+            }
+            return response.json();
+        })
+        .then(data => displayWord(data, word))
+        .catch(error => {
+            displayMessage(error.message);
+        })
+
+    }
+
+    function displayWord(data, word){
+        const wordData = data[0];
+        const phonetics = wordData.phonetics.find(p => p.audio) || {};
+        const definitions = wordData.meanings.flatMap(m => m.definitions.map(d => d.definition));
+        const examples = wordData.meanings.flatMap(m => m.definitions.map(d => d.example)).filter(Boolean);
+
+        output.innerHTML = `
+            <div class="p-4 border rounded-lg shadow-md bg-indigo-50">
+                <h2 class="text-2xl font-bold text-indigo-700">${word}</h2>    
+                <p class="text-sm text-gray-600">Pronuciation: <span class="font-semibold">${phonetics.text || "N/A"}</span></p>
+                <button onclick="playAudio('${phonetics.audio || ''}')" 
+                    class="mt-2 px-3 py-1 bg-indigo-600 text-white rounded-md text-sm hover:bg-indigo-700 transition">
+                    Play Pronuciation    
+                </button>
+                <div class="mt-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Definitions:</h3>    
+                    <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                        ${definitions.map(def => `<li>${def}</li>`).join("")}    
+                    </ul>
+                </div>
+                <div class="mt-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Examples:</h3>
+                    <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                        ${examples.length ? examples.map(ex => `<li>${ex}</li>`).join("") : '<li>No examples available.</li>'}
+                    </ul>
+                </div>
+            <div>
+        `;
+
+        clearMessage();
+        updateHistory(word);
+    }
+
+    function playAudio(audioUrl){
+        if(audioUrl){
+            const audio = new Audio(audioUrl);
+            audio.play();
+        } else{
+            displayMessage('Audio not available for this word.');
+        }
+    }
+
+    function updateHistory(word){
+        if(!searchHistory.includes(word)){
+            searchHistory.push(word);
+            const listItem = document.createElement('li');
+            listItem.className = 'flex items-center justify-between';
+            listItem.innerHTML = `
+                <span>${word}</span>
+                <button 
+                    onclick="searchFromHistory('${word}')"
+                    class="text-indigo-600 hover:text-indigo-800 font-semibold text-sm"
+                    Search>
+                </button>
+            `;
+            historyList.appendChild(listItem)
+        }
+    }
+
+    function searchFromHistory(word){
+        document.getElementById('wordInput').value = word;
+        fetchWord()
+    }
+
+    function displayMessage(msg){
+        message.textContent = msg;
+        message.classList.remove('hidden');
+    }
+    function clearMessage(){
+        message.textContent = '';
+        message.classList.add('hidden');
+    }
+</script>

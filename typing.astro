@@ -1,0 +1,135 @@
+<div class="bg-gradient-to-br from-red-500 via-pink-500 to-purple-500 h-screen flex justify-center items-center">
+    <div class="w-full max-w-lg bg-white p-6 rounded-xl shadow-xl">
+        <h1 class="text-3xl font-bold text-center text-indigo-600">
+            Typing Speed Test
+        </h1>
+        <div
+            id="text-to-type"
+            class="mt-6 text-lg text-gray-700 p-4 border-2 border-gray-300 rounded-lg break-words">
+        </div>
+        <textarea
+            id="user-input"
+            rows="4"
+            class="mt-4 w-full p-3 border-2 border-gray-300 rounded-lg focus:outline:none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Start typing here..."
+        ></textarea>
+        <div class="mt-4 flex justify-between">
+            <span class="text-lg font-semibold text-indigo-600">Time: <span id="timer">0</span>s</span>
+            <span class="text-lg font-semibold text-indigo-600">WPM: <span id="wpm">0</span></span>
+        </div>
+        <div class="mt-4 text-lg ">
+            <span class="text-indigo-600">
+                Accuracy: <span id="accuracy">0</span>%
+            </span>
+        </div>
+        <div
+            id="progress"
+            class="mt-6 bg-gray-200 h-2 rounded-full">
+            <div id="progress-bar" class="bg-indigo-600 h-2 rounded-full" style="width: 0%;"></div>
+        </div>
+        <button
+            onclick="startTest()"
+            id="start-btn"
+            class="mt-6 w-full p-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-300">
+            Start Test
+        </button>
+        <div class="mt-4 text-center">
+            <span id="result-message" class="text-lg font-semibold text-indigo-600 hidden"></span>
+        </div>
+        <div class="mt-4 text-center">
+            <p class="text-sm text-gray-600">
+                Best WPM:
+                <span id="best-wpm" class="text-indigo-600">
+                    0
+                </span>
+            </p>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    const textToTypeElement = document.getElementById('text-to-type');
+    const userInputElement = document.getElementById('user-input');
+    const timerElement = document.getElementById('timer');
+    const wpmElement = document.getElementById('wpm');
+    const accuracyElement = document.getElementById('accuracy');
+    const progressBarElement = document.getElementById('progress-bar');
+    const startButton = document.getElementById('start-btn');
+    const resultMessage = document.getElementById('result-message');
+    const bestWPMElement = document.getElementById('best-wpm');
+
+    let testText = "The quick brown fox jumps over the lazy dog. It is a typing test to measure your speed and accuracy.";
+    let timer;
+    let time = 0;
+    let started = false;
+    let correctChars = 0;
+    let totalChars = 0;
+    let interval;
+    let bestWPM = 0;
+
+    function startTest(){
+        time = 0;
+        correctChars = 0;
+        totalChars = 0;
+        userInputElement.value = '';
+        progressBarElement.style.width = '0%';
+        accuracyElement.textContent = '0';
+        resultMessage.classList.add('hidden');
+        startButton.textContent = 'Restart Test';
+        started = true;
+        textToTypeElement.textContent = testText;
+        interval = setInterval(() => {
+            time++;
+            timerElement.textContent = time;
+            updateProgressBar();
+            if(time>= 60){
+                clearInterval(interval);
+            }
+        },1000);
+    }
+
+    function updateProgressBar(){
+        const progress = (time / 60) * 100;
+        progressBarElement.style.width = progress + '%';
+    };
+    userInputElement.addEventListener('input', () => {
+        if(!started) return;
+
+        const typedText = userInputElement.value;
+        totalChars = typedText.length;
+
+        if(typedText === testText){
+            clearInterval(interval);
+            resultMessage.classList.remove('hidden');
+            resultMessage.textContent = `Test Completed! Your WPM is: ${calculateWPM()}`;
+            if(calculateWPM() > bestWPM){
+                bestWPM = calculateWPM();
+                bestWPMElement.textContent = bestWPM;
+            }
+        } else{
+            correctChars = 0;
+            for(let i = 0; i < typedText.length; i++){
+                if(typedText[i] === testText[i]){
+                    correctChars++;
+                }
+            }
+
+            const accuracy = (correctChars / totalChars) * 100;
+            accuracyElement.textContent = accuracy.toFixed(2);
+
+            const displayText = testText.split('').map((char, index) => {
+                if(typedText[index] === char){
+                    return `<span class="bg-indigo-600 text-white">${char}</span>`;
+                } else if(typedText[index] !== undefined){
+                    return `<span class="text-red-500">${char}</span>`;
+                } else{
+                    return `<span>${char}</span>`
+                }
+            }).join('');
+            textToTypeElement.innerHTML = displayText;
+            wpmElement.textContent = calculateWPM();
+        }
+    });
+    function calculateWPM(){
+        return Math.round((correctChars / 5) / (time / 60));
+    }
+</script>

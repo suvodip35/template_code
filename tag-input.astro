@@ -1,0 +1,82 @@
+<div class="bg-gradient-to-r from-blue-300 to-purple-300 flex
+    items-center justify-center h-screen">
+    <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">
+            Tag Input
+        </h2>
+        <div id="tagInput" 
+            class="border-2 border-indigo-400 rounded-lg flex flex-wrap p-3 transition duration-300 
+                hover:border-indigo-500 focus-within:border-indigo-500">
+                <input 
+                    type="text"
+                    id="inputField" 
+                    placeholder="Add a tag and press Enter"
+                    class="input-field border-none outline-none flex-1 p-2
+                        focus:ring focus:ring-indigo-400 rounded-lg">
+            </div>
+            <div class="mt-4">
+                <h3 class="text-lg font-semibold">
+                    Tags:
+                </h3>
+                <div id="tagList"
+                    class="flex flex-wrap mt-2">
+                </div>
+                <p class="text-gray-500 text-sm mt-2">
+                    Press Enter to add a tag. Click '&#128942;' to remove.
+                </p>
+            </div>
+    </div>
+</div>
+<script is:inline>
+    const inputField = document.getElementById('inputField');
+    const tagList = document.getElementById('tagList');
+
+    inputField.addEventListener('keypress', (event) => {
+        if(event.key === 'Enter' && inputField.value.trim() !== ''){
+            event.preventDefault();
+            addTag(inputField.value.trim());
+            inputField.value = '';
+        }
+    });
+    function addTag(tagText){
+        const tag = document.createElement('span');
+        tag.className = `tag bg-indigo-500 text-white rounded-full px-3 py-1 mr-2 mt-2 flex items-center transition-all duration-300`;
+        tag.textContent = tagText;
+
+        const removeButton = document.createElement('button');
+        removeButton.innerHTML = '&#128942;';
+        removeButton.className = `ml-2 text-red-500 cursor-pointer hover:text-red-400`;
+        removeButton.onclick = () => {
+            tag.classList.add('fade-out');
+            setTimeout(() => tag.remove(), 10);
+        };
+
+        tag.appendChild(removeButton);
+        tagList.appendChild(tag);
+    }
+</script>
+<style>
+    .tag{
+        transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    .tag:hover{
+        transform: scale(1.1);
+        background-color: #6366F1;
+        box-shadow: 0 4px 12px rgba(0,0,0, 0.2);
+    }
+    .fade-out{
+        animation: fadeOut 0.5s forwards;
+    }
+    @keyframes fadeOut{
+        from {
+            opacity: 1;
+        }
+        to{
+            opacity: 0; transform: scale(0);
+        }
+    }
+    .input-field:focus{
+        box-shadow:  0 0 5px rgba(99, 102, 241, 0.5);
+        border-color: #6366F1;
+    }
+</style>

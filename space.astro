@@ -1,0 +1,118 @@
+<div class="bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 min-h-screen flex flex-col items-center justify-center text-white">
+    <div id="app" class="w-full max-w-lg p-6 rounded-lg bg-gray-900 shadow-lg">
+        <h1 class="text-3xl font-bold text-center mb-4">
+            &#128640; Daily Space Facts Viewer
+        </h1>
+        <div id="content" class="flex flex-col items-center gap4">
+            <div id="loading" class="text-center text-lg font-medium">
+                Loading today's space fact...
+            </div>
+            <div id="fact-container" class="hidden">
+                <img
+                    id="space-image"
+                    class="w-full rounded-lg shadow-md mb-4 h-72 object-cover"
+                    alt="Space Image"
+                />
+                <h2 id="title" class="text-2xl font-semibold mb-2"></h2>
+                <p id="description" class="text-lg text-justify line-clamp-6"></p>
+            </div>
+        </div>
+        <div class="flex justify-between items-center mt-4">
+            <button
+                id="prev-day"
+                class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">
+                Previous Day
+            </button>
+            <button
+                id="ai-chat-toggle"
+                class="px-4 py-2 bg-green-600 rounded hover:bg-green-700">
+                AI Chat
+            </button>
+        </div>
+        <div id="ai-chat" class="hidden mt-6 p-4 bg-gray-800 rounded shadow-md">
+            <h3 class="text-xl font-semibold mb-2">
+                Ask AI about today's fact
+            </h3>
+            <textarea
+                id="user-input"
+                class="w-full p-2 rounded text-black"
+                rows="3"
+                placeholder="Ask a question..."
+            ></textarea>
+            <button
+                id="ask-ai"
+                class="mt-2 px-4 py-2 bg-purple-600 rounded hover:bg-purple-700">
+                Ask AI
+            </button>
+            <div id="ai-response" class="mt-4 text-lg font-medium"></div>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    const API_KEY = 'kLYYK4ZQozBFB2VT6Sp5VOc7NBgKttWhTsQmSZoK';
+    const NASA_API_URL = `https://api.nasa.gov/planetary/apod?api_key=${API_KEY}`;
+    const app = document.getElementById('app');
+    const loading = document.getElementById('loading');
+    const factContainer = document.getElementById('fact-container');
+    const spaceImage = document.getElementById('space-image');
+    const title = document.getElementById('title');
+    const description = document.getElementById('description');
+    const prevDayButton = document.getElementById('prev-day');
+    const aiChatToggle = document.getElementById('ai-chat-toggle');
+    const aiChat = document.getElementById('ai-chat');
+    const askAiButton = document.getElementById('ask-ai');
+    const aiResponse = document.getElementById('ai-response');
+    const userInput = document.getElementById('user-input')
+
+    let currentDate = new Date();
+    const fetchSpaceFact = async(date) => {
+        try{
+            loading.style.display = 'block';
+            factContainer.style.display = 'none';
+            const response = await fetch(`${NASA_API_URL}&date=${date.toISOString().split('T')[0]}`);
+            const data = await response.json();
+            if(data.url){
+                spaceImage.src = data.url;
+                spaceImage.alt = data.title;
+            }
+            title.textContent = data.title;
+            description.textContent = data.explanation;
+            loading.style.display = 'none';
+            factContainer.style.display = 'block';
+        } catch(error){
+            console.error('Error fetching space fact:', error);
+            loading.textContent = 'Faild to load space fact. Please try again later';
+        }
+    };
+
+    const handlePrevDay = () => {
+        currentDate.setDate(currentDate.getDate() - 1);
+        fetchSpaceFact(currentDate);
+    };
+    const toggleAiChat = () => {
+        aiChat.classList.toggle('hidden');
+    };
+
+    const handleAiQuery = () => {
+        const question = userInput.value.trim();
+
+        if(!question){
+            aiResponse.textContent = 'Please enter a question to ask the AI.';
+            return;
+        }
+
+        if(question.toLowerCase().includes('sunset')){
+            aiResponse.textContent = 'AI says: Sunsets are truly beautiful, with their vibrant colors and calming effect!';
+        } else if(question.toLowerCase().includes('space')){
+            aiResponse.textContent = 'AI says: Space is vast and full of mysteries waiting o be discovered!';
+        } else{
+            aiResponse.textContent = `AI says: That's an intresting question abot "${question}"! Let me think more on it.`;
+        }
+    };
+
+    prevDayButton.addEventListener('click', handlePrevDay);
+    aiChatToggle.addEventListener('click', toggleAiChat);
+    askAiButton.addEventListener('click', handleAiQuery);
+
+    fetchSpaceFact(currentDate);
+</script>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+    <div class="bg-white shadow-lg rounded-lg p-6 max-w-md w-full">
+        <div class="flex justify-between items-center mb-4">
+            <button 
+                id="prevMonth"
+                class="text-xl font-bold text-blue-500 hover:text-blue-700 transition duration-300">
+                &lt;
+            </button>
+            <h2
+                id="calendarTitle"
+                class="text-xl font-bold text-center text-gray-700">
+                Calendar
+            </h2>
+            <button
+                id="nextMonth"
+                class="text-xl font-bold text-blue-500 hover:text-blue-700 transition duration-300">
+                &gt;
+            </button>
+        </div>
+        <div id="calendar" class="grid grid-cols-7 gap-2 mb-4">
+            <span class="text-center font-semibold text-blue-500">Sun</span>
+            <span class="text-center font-semibold text-blue-500">Mon</span>
+            <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="mt-4">
+            <input 
+                type="text"
+                id="noteInput"
+                placeholder="Add a note..."
+                class="w-full border rounded p-2 text-sm mb-2 focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+                id="saveNote"
+                class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200">
+                Save Note
+            </button>
+        </div>
+        <p 
+            id="selectedDate"
+            class="text-sm mt-2 text-center text-gray-700">
+        </p>
+        <p 
+            id="message"
+            class="text-sm mt-2 text-center text-green-600 font-semibold">
+        </p>
+    </div>
+    <div
+        id="noteModal"
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white p-4 rounded-lg shadow-lg max-w-md w-full">
+            <h3
+                id="modalDate"
+                class="text-lg font-bold mb-2">
+            </h3>
+            <p
+                id="modalNote"
+                class="text-gray-700 mb-4">
+            </p>
+            <button
+                id="closeModal"
+                class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-200">
+                Close
+            </button>
+        </div>
+    </div>
+    <script is:inline>
+        const calendar = document.getElementById('calendar');
+        const noteInput = document.getElementById('noteInput');
+        const saveNoteButton = document.getElementById('saveNote');
+        const selectedDateText = document.getElementById('selectedDate');
+        const prevMonthButton = document.getElementById('prevMonth');
+        const nextMonthButton = document.getElementById('nextMonth');
+        const noteModal = document.getElementById('noteModal');
+        const closeModal = document.getElementById('closeModal');
+        const message = document.getElementById('message');
+        const modalDate = document.getElementById('modalDate');
+        const modalNote = document.getElementById('modalNote')
+
+        let selectedDate = null;
+        const notes = {};
+        let currentYear = new Date().getFullYear();
+        let currentMonth = new Date().getMonth();
+
+        function renderCalendar(){
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
+            calendar.innerHTML = calendar.innerHTML.slice(0, 14);
+            document.getElementById('calendarTitle').textContent = `${new Date(currentYear, currentMonth).toLocaleString('default', {month: 'long'})} ${currentYear}`;
+            for (let i = 0; i < firstDay; i++){
+                const emptyCell = document.createElement('div');
+                calendar.appendChild(emptyCell);
+            }
+            for (let day = 1; day <= lastDate; day++){
+                const dayCell = document.createElement('div');
+                dayCell.textContent = day;
+                dayCell.className = "text-center p-2 rounded-lg cursor-pointer transition duration-200 ease-in-out";
+                dayCell.classList.add(day === new Date().getDate() && currentMonth === new Date().getMonth() && currentYear === new Date().getFullYear() ? 'bg-blue-200' : 'bg-gray-200');
+
+                const dateKey = `${currentYear}-${currentMonth + 1}-${day}`;
+                if(notes[dateKey]){
+                    dayCell.classList.add('bg-yellow-300');
+                    dayCell.innerHTML += " 📌";
+                }
+                dayCell.onclick = () => {
+                    selectedDate = dateKey;
+                    console.log(selectedDate)
+                    selectedDateText.textContent = `Selected Date: ${dateKey}`;
+                    noteInput.value = notes[selectedDate] || '';
+                    message.textContent = '';
+                    document.querySelectorAll('.selected').forEach(el => {
+                        el.classList.remove('bg-blue-500', 'selected')
+                        dayCell.classList.add('bg-gray-200');
+                    });
+                    dayCell.classList.remove('bg-gray-200');
+                    dayCell.classList.add('bg-blue-500')
+                };
+                dayCell.ondblclick = () => {
+                    if(notes[dateKey]){
+                        modalDate.textContent = `Notes for ${dateKey}`;
+                        modalNote.textContent = notes[dateKey];
+                        noteModal.classList.remove('hidden');
+
+                    }
+                };
+                calendar.appendChild(dayCell);
+            }
+        }
+        saveNoteButton.onclick = () => {
+            if(selectedDate){
+                const note = noteInput.value.trim();
+                if(note){
+                    notes[selectedDate] = note;
+                    message.textContent = `Note Saved for ${selectedDate}`;
+                    message.classList.add('text-green-600');
+                } else{
+                    delete notes[selectedDate];
+                    message.textContent = `Note Removed for ${selectedDate}`;
+                    message.classList.add('text-red-600');
+                }
+                renderCalendar();
+            } else{
+                message.textContent = 'Please select a date first';
+                message.classList.add('text-red-600')
+            }
+        };
+        closeModal.onclick = () => {
+            noteModal.classList.add('hidden');
+        };
+        prevMonthButton.onclick = () => {
+            currentMonth = (currentMonth - 1 + 12) % 12;
+            if(currentMonth === 11) currentYear--;
+            renderCalendar();
+        };
+        nextMonthButton.onclick = () => {
+            currentMonth = (currentMonth + 1) % 12;
+            if(currentMonth === 0) currentYear++;
+            renderCalendar();
+        };
+        renderCalendar();
+    </script>
+</body>
+</html>

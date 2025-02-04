@@ -1,0 +1,116 @@
+<div class="flex items-center justify-center min-h-screen bg-gradient-to-r from-green-400 to-blue-500">
+    <div id="chatWidget" class="bg-white">
+        <div class="flex items-center justify-between p-4 bg-blue-600 text-white">
+            <h2 class="text-lg font-semibold ">
+                Chat Widget
+            </h2>
+            <button id="closeChat" class="text-white hover:text-gray-200">
+                &times;
+            </button>
+        </div>
+        <div id="messages" class="p-4"></div>
+        <div class="p-4 border-t border-gray-200 -mt-8">
+            <div class="input-container">
+                <input
+                    id="messageInput" 
+                    type="text"
+                    placeholder="Type a message..."
+                    class="p-2 border rounded shadow-sm flex-grow"
+                >
+                <button
+                    id="sendButton"
+                    class="ml-2 bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700 transition">
+                    Send
+                </button>
+            </div>
+        </div>
+    </div>
+    <button
+        id="openChatButton"
+        class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-blue-600 
+        text-white rounded-full p-3 hover:bg-blue-700 transition">
+        Open Chat
+    </button>
+</div>
+<script is:inline>
+    const messagesContainer = document.getElementById('messages');
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    const closeChat = document.getElementById('closeChat');
+    const chatWidget = document.getElementById('chatWidget');
+    const openChatButton = document.getElementById('openChatButton');
+    let username = prompt("Please enter your name:");
+    if(!username){
+        username = 'User';
+    }
+
+    function formatTimestamp(){
+        const now = new Date();
+        return now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit' });
+        // return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function addMessage(text, sender = 'user'){
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `mb-2 p-2 rounded ${sender === 'user' ? 'bg-blue-600 text-white self-end' : 'bg-gray-200 text-gray-700'}`;
+        messageDiv.innerHTML = `
+            <div>${text}</div>
+            <div class="timestamp">${formatTimestamp()}</div>
+        `;
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    };
+    sendButton.addEventListener('click', () => {
+        const messageText = messageInput.value.trim();
+        if(messageText){
+            addMessage(messageText);
+            messageInput.value = '';
+
+            setTimeout(() => {
+                addMessage("Thank you for message!", "bot");
+            }, 1000);
+        }
+    });
+    closeChat.addEventListener('click', () => {
+        chatWidget.style.display = 'none';
+        openChatButton.style.display = 'block';
+    });
+    openChatButton.addEventListener('click', () => {
+        chatWidget.style.display = 'block';
+        openChatButton.style.display = 'none';
+    });
+    messageInput.addEventListener('keypress', (e) => {
+        if(e.key === 'Enter'){
+            sendButton.click();
+        }
+    });
+    chatWidget.style.display = 'block';
+</script>
+<style>
+    #chatWidget{
+        width: 350px;
+        height: 500px;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
+        display: none;
+    }
+    #messages{
+        height: 400px;
+        overflow-y: auto;
+    }
+    .timestamp{
+        font-size: 0.75rem;
+        color: #a0aec0;
+    }
+    .input-container{
+        display: flex;
+    }
+    .input-container input{
+        flex-grow: 1;
+    }
+    #openChatButton{
+        display: none;
+    }
+</style>

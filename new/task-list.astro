@@ -1,0 +1,96 @@
+<div class="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 p-6 flex items-center justify-center min-h-screen txt-white">
+    <div class="w-full max-w-lg bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">
+            Task List
+        </h2>
+        <div class="w-full bg-gray-300 rounded-full h-4 mb-6">
+            <div id="progressBar" class="bg-blue-500 h-4 rounded-full progress-animated" style="width: 0%;"></div>
+        </div>
+        <form id="taskForm" class="flex items-center mb-4">
+            <input 
+                type="text"
+                id="taskInput"
+                class="w-full p-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="Add a new task"
+                required
+            />
+            <button 
+                type="submit"
+                class="ml-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white px-4 py-2 rounded-lg 
+                hover:from-blue-500 hover:to-purple-500 transition-all">
+                Add
+            </button>
+        </form>
+        <ul id="taskList" class="space-y-2"></ul>
+    </div>
+</div>
+<script is:inline>
+    const taskForm = document.getElementById('taskForm');
+    const taskInput = document.getElementById('taskInput');
+    const taskList = document.getElementById('taskList');
+    const progressBar = document.getElementById('progressBar');
+
+    let tasks = [];
+    taskForm.addEventListener('submit', function(event){
+        event.preventDefault();
+        const taskText = taskInput.value.trim();
+        if(taskText !== ''){
+            tasks.push({text: taskText, completed: false});
+            taskInput.value = '';
+            updateTaskList();
+            updateProgressBar();
+        };
+    });
+    function updateTaskList(){
+        taskList.innerHTML = '';
+        tasks.forEach((task, index) => {
+            const li = document.createElement('li');
+            li.className = `flex items-center justify-between p-2 bg-gray-200 rounded-lg transition-all hover:bg-gray-300`;
+            const label = document.createElement('label');
+            label.className = `flex items-center space-x-2`;
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = task.completed;
+            checkbox.className = `form-checkbox h-4 w-4 text-blue-500`;
+            checkbox.addEventListener('change', () => {
+                tasks[index].completed = checkbox.checked;
+                updateTaskList();
+                updateProgressBar();
+            });
+
+            const taskText = document.createElement('span');
+            taskText.className = task.completed ? `line-through text-gray-400 transition-all` : `text-gray-800 transition-all`;
+            taskText.innerText = task.text;
+
+            label.appendChild(checkbox);
+            label.appendChild(taskText);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.className = `bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-600 transition-all`;
+            deleteButton.innerText = 'Delete';
+            deleteButton.addEventListener('click', () => {
+                tasks.splice(index, 1);
+                updateTaskList();
+                updateProgressBar();
+            });
+
+            li.appendChild(label);
+            li.appendChild(deleteButton);
+            taskList.appendChild(li);
+        })
+    }
+    function updateProgressBar(){
+        const totalTasks = tasks.length;
+        const completedTasks = tasks.filter(task => task.completed).length;
+        const progress = totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100;
+        progressBar.style.width = `${progress}%`;
+    }
+</script>
+<style>
+    .transition-all {
+        transition: all 0.3s ease-in-out;
+    }
+    .progress-animated {
+        transition: width 0.4s ease-in-out;
+    }
+</style>

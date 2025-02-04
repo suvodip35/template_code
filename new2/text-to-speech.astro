@@ -1,0 +1,79 @@
+<div class="flex items-center justify-center min-h-screen bg-gradient-to-r
+  from-indigo-500 via-purple-500 to-pink-500 text-white">
+  <div class="w-full max-w-md p-8 bg-white text-gray-800 rounded-3xl shadow-2xl 
+    transform transition-all duration-300 hover:scale-105 hover:shadow-lg" >
+    <h2 class="text-3xl font-bold text-center text-indigo-600 mb-6">
+      Text to Speech Converter
+    </h2>
+    <textarea 
+      id="text-input"
+      placeholder="Enter text here..."
+      class="w-full p-4 mb-4 text-gray-800 border-2 border-gray-200 rounded-lg resize-none
+        focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"></textarea>
+        <div class="flex items-center justify-between mb-4">
+          <label for="pitch" class="font-semibold text-gray-700">
+            Pitch
+          </label>
+          <input 
+              type="range"
+              id="pitch"
+              min="0.5"
+              max="2"
+              value="1"
+              step="0.1"
+              class="w-2/3 h-2 bg-indigo-300 rounded-full focus:ring-indigo-500 cursor-pointer">
+        </div>
+        <div class="flex items-center justify-between mb-6">
+          <label 
+            for="rate" class="font-semibold text-gray-700">Rate</label>
+            <input
+                type="range"
+                id="rate"
+                min="0.5"
+                max="2"
+                value="1"
+                step="0.1"
+                class="w-2/3 h-2 bg-indigo-300 rounded-full focus:ring-indigo-500 cursor-pointer">
+        </div>
+        <p id="textEnterMessage" class="text-gray-700 mb-2 hidden">
+          Please enter some text!
+        </p>
+        <button 
+            id="speak-btn"
+            class="w-full py-3 text-lg font-semibold text-white bg-indigo-600 rounded-lg
+            hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200">
+            Speak Text
+        </button>
+        <p id="error-message" class="mt-4 text-center text-red-500 hidden">
+          Speech Synthesis not support in this browse.
+        </p>
+  </div>
+</div>
+<script is:inline>
+  const speakButton = document.getElementById('speak-btn');
+  const textInput = document.getElementById('text-input');
+  const pitchSlider = document.getElementById('pitch');
+  const errorMessage = document.getElementById('error-message');
+  const rateSlider = document.getElementById('rate')
+  if(!('speechSynthesis' in window)){
+    errorMessage.classList.remove('hidden');
+  };
+  speakButton.addEventListener('click', () => {
+    const text = textInput.value.trim();
+    const pitch = parseFloat(pitchSlider.value);
+    const rate = parseFloat(rateSlider.value);
+
+    if(text && 'speechSynthesis' in window){
+      window.speechSynthesis.cancel();
+
+      const speech = new SpeechSynthesisUtterance(text);
+      speech.lang = 'en-US';
+      speech.pitch = pitch;
+      speech.rate = rate;
+
+      window.speechSynthesis.speak(speech);
+    }else if(!text){
+      document.getElementById('textEnterMessage').classList.remove('hidden');
+    }
+  });
+</script>

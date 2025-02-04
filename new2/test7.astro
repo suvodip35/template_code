@@ -1,0 +1,98 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-r from-pink-500 
+    via-purple-500 to-indigo-400 text-gray-800 font-sans">
+    <div class="max-w-lg mx-auto p-6 bg-white bg-opacity-80 rounded-lg shadow-xl">
+        <h1 class="text-4xl font-bold mb-6 text-center text-indigo-600">
+            Habit Tracker
+        </h1>
+        <div class="bg-white p-5 rounded-lg shadow-md hover-grow transition-all duration-300">
+            <input 
+                type="text"  
+                id="habit-input"
+                class="w-full p-3 mb-3 border rounded-lg border-gray-300 focus:border-indigo-500"
+                placeholder="Add a new habit"
+            />
+            <input 
+                type="number"
+                id="goal-input"
+                placeholder="Set a weekly goal (e.g., 5 days)"
+                class="w-full p-3 mb-3 border rounded-lg border-gray-300 focus:border-indigo-500"
+            />
+            <button
+                onclick="addHabit();" 
+                class="w-full bg-indigo-500 text-white font-semibold py-2 rounded-lg transition-all duration-300 hover:bg-indigo-600 hover-grow">
+                + Add Habit
+            </button>
+        </div>
+        <div id="habit-list" class="space-y-4 mt-6"></div>
+    </div>
+</div>
+<script is:inline>
+    const habitList = document.getElementById('habit-list');
+    const habits = [];
+    function addHabit(){
+        const habitInput = document.getElementById('habit-input');
+        const goalInput = document.getElementById('goal-input');
+        const habitName = habitInput.value.trim();
+        const weeklyGoal = parseInt(goalInput.value) || 7;
+
+        if (habitName) {
+        habits.push({ name: habitName, streak: 0, weeklyGoal, completedDays: 0, days: Array(7).fill(false) });
+        habitInput.value = "";
+        goalInput.value = "";
+        renderHabits();
+      }
+    }
+    function toggleDay(index, dayIndex){
+        const habit = habits[index];
+        habit.days[dayIndex] = !habit.days[dayIndex];
+        habit.completedDays = habit.days.filter(day => day).length;
+        habit.streak = habit.completedDays;
+        renderHabits();
+    };
+    function renderHabits(){
+        habitList.innerHTML = '';
+        habits.forEach((habit, index) => {
+            const habitCard = document.createElement('div');
+            habitCard.className = `bg-white p-5 rounded-lg border border-gray-200 hover-grow transition-all duration-300`;
+            habitCard.innerHTML = `
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="font-semibold text-xl text-indigo-600">${habit.name}</h3>
+                ${habit.completedDays >= habit.weeklyGoal ? `<span class="badge">Goal Achieved!</span>` : ""}
+            </div>
+            <div class="progress-bg rounded-full mb-4 overflow-hidden">
+                <div class="progress-bar rounded-full" style="width: ${(habit.completedDays / habit.weeklyGoal) * 100}%;"></div>
+            </div>
+            <div class="flex justify-between text-gray-600 mb-2 text-sm">
+                <span>Progress: ${habit.completedDays}/${habit.weeklyGoal}</span>
+                <span>Streak: ${habit.streak} days</span>
+            </div>
+            <div class="grid grid-cols-7 gap-2 mt-3">
+                ${habit.days.map((dayCompleted, dayIndex) => `
+                <button onclick="toggleDay(${index}, ${dayIndex})" class="py-2 rounded-md ${
+                    dayCompleted ? 'bg-teal-500' : 'bg-gray-300 hover:bg-gray-400'
+                } transition-colors duration-300">
+                    ${['S', 'M', 'T', 'W', 'T', 'F', 'S'][dayIndex]}
+                </button>
+                `).join("")}
+            </div>
+            `;
+            habitList.appendChild(habitCard);
+        })
+    }
+</script>
+<style>
+    .progress-bar{
+        height: 10px;
+        background: #ff6b6b;
+    }
+    .progress-bg{
+        background: #f0f4f8;
+    }
+    .badge{
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+        background: #38b2ac;
+        color: #FFF;
+        border-radius: 9999px;
+    }
+</style>

@@ -1,0 +1,163 @@
+<div class="bg-gradient-to-r from-red-500 via-purple-500 to-pink-500 text-gray-800 min-h-screen flex justify-center items-center p-4">
+    <div class="bg-white bg-opacity-30 rounded-lg shadow-2xl p-6 max-w-lg w-full">
+        <h1 class="text-2xl font-bold text-center text-gray-900 mb-6">
+            Gradient Animated Builder
+        </h1>
+        <div 
+            id="gradientPreview"
+            class="h-40 rounded-md mb-6 border border-gray-300 shadow-md">
+        </div>
+        <span 
+            id="statusMessage"
+            class="text-white text-sm font-medium hidden">
+            CSS copied to clipboard!
+        </span>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block font-medium text-gray-700 mb-2">
+                    Colors:
+                </label>
+                <div 
+                    id="colorInputs" 
+                    class="flex items-center gap-4">
+                    <input 
+                        type="color"
+                        value="#ff9a9e"
+                        class="color-stop w-12 h-12 rounded border-gray-300" 
+                    />
+                    <input 
+                        type="color"
+                        value="#fad0c4" 
+                        class="color-stop w-12 h-12 rounded border-gray-300"
+                    />
+                    <button id="addColor" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white">
+                        + Add Color
+                    </button>
+                </div>
+            </div>
+            <div>
+                <label class="block font-medium text-gray-700 mb-2">
+                    Gradient Angle: 
+                    <span id="angleValue">
+                        45
+                    </span>
+                    °
+                </label>
+                <input 
+                    type="range"
+                    id="gradientAngle"
+                    min="0"
+                    max="360"
+                    value="45"
+                    class="w-full accent-blue-500"
+                />
+            </div>
+            <div>
+                <label class="block font-medium text-gray-700 mb-2">
+                    Animation Speed:
+                    <span id="speedValue">
+                        20
+                    </span>
+                    s
+                </label>
+                <input
+                    type="range"
+                    id="animationSpeed"
+                    min="5"
+                    max="50"
+                    value="20"
+                    class="w-full accent-blue-500" 
+                />
+            </div>
+            <div>
+                <label class="block font-medium text-gray-700 mb-2">
+                    Generated CSS:
+                </label>
+                <textarea 
+                    id="cssOutput"
+                    class="w-full bg-gray-100 text-gray-700 rounded p-2 border border-gray-300"
+                    readonly></textarea>
+            </div>
+            <div class="flex justify-between items-center gap-4">
+                <button 
+                    id="generateCSS"
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                    Generate CSS
+                </button>
+                <button
+                    id="copyCSS"
+                    class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
+                    Copy CSS
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    const gradientPreview = document.getElementById('gradientPreview');
+    const animationSpeed = document.getElementById('animationSpeed');
+    const gradientAngle = document.getElementById('gradientAngle');
+    const cssOutput = document.getElementById('cssOutput');
+    const generateCSS = document.getElementById('generateCSS');
+    const copyCSS = document.getElementById('copyCSS');
+    const statusMessage = document.getElementById('statusMessage');
+    const colorInputs = document.getElementById('colorInputs');
+    const addColor = document.getElementById('addColor');
+    const angleValue = document.getElementById('angleValue');
+    const speedValue = document.getElementById('speedValue');
+
+    function updateGradient(){
+        const colors = Array.from(document.querySelectorAll('.color-stop')).map(input => input.value).join(', ');
+        const angle = gradientAngle.value;
+        const speed = animationSpeed.value;
+        angleValue.textContent = angle;
+        speedValue.textContent = speed;
+
+        const gradientCSS = `
+            background: linear-gradient(${angle}deg, ${colors});
+            background-size: 200% 200%;
+            animattion: gradientAnimation ${speed}s ease infinite;
+        `;
+        gradientPreview.style = gradientCSS;
+        cssOutput.value = `@keyframes gradientAnimation {
+                0%{
+                    background-position: 0% 50%;
+                }
+                50%{
+                    background-position: 100% 50%;
+                }
+                100%{
+                    background-position: 0% 50%;
+                }
+            }
+            .${gradientPreview.className}{
+                ${gradientCSS.trim()}
+            }
+        `;
+    };
+    function copyToClipboard(){
+        cssOutput.select();
+        document.execCommand('copy');
+        statusMessage.classList.remove('hidden');
+        setTimeout(() => statusMessage.classList.add('hidden'), 3000);
+    };
+
+    function addNewColorInput() {
+        const newColor = document.createElement('input');
+        newColor.type = 'color';
+        newColor.value = '#ffffff';
+        newColor.className = 'color-stop w-12 h-12 rounded border-gray-300';
+        newColor.addEventListener('input', updateGradient);
+        colorInputs.insertBefore(newColor, addColor);
+        updateGradient();
+    };
+    generateCSS.addEventListener('click', updateGradient);
+    copyCSS.addEventListener('click', copyToClipboard);
+    addColor.addEventListener('click', addNewColorInput);
+
+    [animationSpeed, gradientAngle].forEach(input => {
+        input.addEventListener('input', updateGradient);
+    });
+    updateGradient();
+</script>

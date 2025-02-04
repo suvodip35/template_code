@@ -1,0 +1,87 @@
+<div class="bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white font-sans min-h-screen flex items-center justify-center">
+    <div class="bg-white text-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 my-4">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold mb-2">
+                &#127760; Country Viewer
+            </h1>
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search country..."
+                class="px-4 py-2 rounded-lg border w-full text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+        </div>
+        <main id="countryContainer" class="grid grid-cols-2 gap-4"></main>
+    </div>
+    <div id="countryModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white text-gray-800 rounded-lg shadow-lg max-w-md w-full p-6 relative transform transition-transform scale-95">
+            <button
+                id="closeModal"
+                class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-2xl font-bold">
+                &times;
+            </button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    const apiURL = 'https://restcountries.com/v3.1/all';
+    const countryContainer = document.getElementById('countryContainer');
+    const searchInput = document.getElementById('searchInput');
+    const countryModal = document.getElementById('countryModal');
+    const modalContent = document.getElementById('modalContent');
+    const closeModal = document.getElementById('closeModal');
+
+    async function fetchCountries(){
+        const response = await fetch(apiURL);
+        const data = await response.json();
+        displayCountries(data);
+    }
+    function displayCountries(countries){
+        countryContainer.innerHTML = '';
+        countries.forEach((country) => {
+            const {name, flags, population, languages } = country;
+            const languagesSpoken = languages ? Object.values(languages).join(", ") : "N/A";
+            const card = document.createElement('div');
+            card.className = 'bg-gray-100 text-gray-800 shadow-md rounded-lg overflow-hidden hover:shadow-xl transform hover:translate-y-1 transition-all cursor-pointer text-sm';
+            card.innerHTML = `
+                <img src="${flags.svg}" alt="${name.common}" class="w-full h-24 object-cover" />
+                <div class="p-3">
+                    <h2 class="font-bold text-base">${name.common}</h2>
+                    <p class="text-gray-600">Population: ${population.toLocaleString()}</p>    
+                    <p class="text-gray-600">Languages: ${languagesSpoken}</p>
+                </div>
+            `;
+            card.addEventListener('click', () => showModal(country));
+            countryContainer.appendChild(card);
+        })
+    }
+
+    function showModal(country){
+        const {name, flags, population, languages, region, capital, subregion } = country;
+        const languagesSpoken = languages ? Object.values(languages).join(", ") : "N/A";
+        modalContent.innerHTML = `
+            <img src="${flags.svg}" alt="${name.common}" class="w-full h-40 object-cover rounded" />
+            <h2 class="mt-4 text-2xl font-bold">${name.common}</h2>
+            <p class="text-sm text-gray-700"><strong>Region: <strong/>${region}</p>
+            <p class="text-sm text-gray-700"><strong>Subregion: <strong/>${subregion}</p>
+            <p class="text-sm text-gray-700"><strong>Capital: <strong/>${capital ? capital[0] : "N/A"}</p>
+            <p class="text-sm text-gray-700"><strong>Population: <strong/>${population.toLocaleString()}</p>
+            <p class="text-sm text-gray-700"><strong>Languages: <strong/>${languagesSpoken}</p>
+        `;
+        countryModal.classList.remove('hidden');
+    };
+    closeModal.addEventListener('click', () => {
+        countryModal.classList.add('hidden');
+    });
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const cards = Array.from(countryContainer.children);
+        cards.forEach((card) => {
+            const countryName = card.querySelector('h2').textContent.toLocaleLowerCase();
+            card.style.display = countryName.includes(query) ? "block" : "none";
+        });
+    });
+
+    fetchCountries();
+</script>

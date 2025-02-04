@@ -1,0 +1,100 @@
+<div class="flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+        <h2 class="text-3xl font-extrabold text-center text-indigo-600 mb-6">
+            Currency Converter
+        </h2>
+        <div class="mb-4">
+            <label 
+                for="amountInput"
+                class="block text-gray-800 font-bold mb-2">
+                Amount:
+            </label>
+            <input 
+                type="number"
+                id="amountInput"
+                class="border border-indigo-500 rounded-lg w-full py-3 px-4 focus:ring-indigo-500 
+                    focus:border-indigo-500 transition focus:outline-none"
+                    placeholder="Enter amount" 
+                />
+        </div>
+        <div class="mb-4">
+            <label 
+                for="fromCurrency" 
+                class="block text-gray-800 font-bold mb-2">
+                From:
+            </label>
+            <select
+                id="fromCurrency"
+                class="border dorder-indigo-500 rounded-lg w-full py-3 px-4 focus:ring-indigo-500
+                focus:border-indigo-500 focus:outline-none transition">
+                <option value="">-Select-</option>
+                <option value="INR">INR</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+            </select>
+        </div>
+        <div class="mb-4">
+            <label 
+                for="toCurrency" 
+                class="block text-gray-800 font-bold mb-2">
+                To:
+            </label>
+            <select
+                id="toCurrency"
+                class="border dorder-indigo-500 rounded-lg w-full py-3 px-4 focus:ring-indigo-500
+                focus:border-indigo-500 focus:outline-none transition">
+                <option value="">-Select-</option>
+                <option value="INR">INR</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+            </select>
+        </div>
+        <button 
+            id="convertBtn"
+            class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-3 px-4 rounded-lg w-full duration-700 mb-4">
+            Convert
+        </button>
+        <p id="result" class="text-2xl font-bold text-center text-indigo-700"></p>
+        <p id="errorMessage" class="text-red-500 text-center hidden"></p>
+    </div>
+</div>
+<script is:inline>
+    const convertBtn = document.getElementById('convertBtn');
+    const result = document.getElementById('result');
+    const errorMessage = document.getElementById('errorMessage');
+
+    convertBtn.addEventListener('click', async () => {
+        const amount = parseFloat(document.getElementById('amountInput').value);
+        const fromCurrency = document.getElementById('fromCurrency').value;
+        const toCurrency = document.getElementById('toCurrency').value;
+
+        if(!amount || amount <= 0){
+            errorMessage.classList.remove('hidden');
+            result.textContent = '';
+            return;
+        }
+        errorMessage.classList.add('hidden');
+
+        const apiKey = '64765904f1474df5b2e998e9';
+        const apiUrl = `https://v6.exchangerate-api.com/v6/${apiKey}/pair/${fromCurrency}/${toCurrency}/${amount}`;
+
+        try{
+            const response = await fetch(apiUrl);
+            if(!response.ok) throw new Error('Faild to fetch exchange rate');
+            const data = await response.json();
+
+            const convertedAmount = data.conversion_result;
+            result.textContent = `${amount} ${fromCurrency} = ${convertedAmount.toFixed(2)} ${toCurrency}`;
+        }catch(error){
+            result.textContent = 'Error: Could not find retrive data.';
+        }
+    })
+
+</script>
+<style>
+    body{
+        background: linear-gradient(135deg, #667EEA, #764BA2);
+    }
+</style>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>StackEdit Component</title>
+</head>
+<body>
+  <div id="stackedit-container"></div>
+
+  <script is:inline src="/stackedit.min.js"></script>
+  <script is:inline>
+    const stackedit = new Stackedit();
+
+    // Open StackEdit with initial Markdown content
+    stackedit.openFile({
+      name: 'My Document',
+      content: {
+        text: '# Welcome to StackEdit!\n\nThis is a simple Markdown document.\n\n* You can write **bold** and *italic* text.\n* Create numbered or bulleted lists.\n* Add code blocks:\n```javascript\nconsole.log("Hello, world!");\n```'
+      }
+    });
+
+    // Listen for content changes and log them in real-time
+    stackedit.on('fileChange', (file) => {
+      console.log('Updated content:', file.content.text);
+    });
+  </script>
+</body>
+</html>

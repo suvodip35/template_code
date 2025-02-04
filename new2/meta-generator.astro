@@ -1,0 +1,151 @@
+<div class="bg-gradient-to-br from-red-600 via-pink-500 to-purple-500 flex justify-center items-center min-h-screen">
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-lg">
+        <h2 class="text-3xl font-extrabold text-gradient- bg-clip-text
+            text-transparent bg-gradient-to-r from-purple-600 to-indigo-500 text-center mb-6">
+            Meta Tag Generator
+        </h2>
+        <label 
+            for="title"
+            class="block text-gray-700 font-semibold mb-1">
+            Title:
+        </label>
+        <input 
+            oninput="updatePreview();"
+            type="text"
+            id="title"
+            placeholder="Enter title"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none
+            focus:ring-2 focus:ring-indigo-400 mb-3"    
+        />
+        <label 
+            for="description"
+            class="block text-gray-700 font-semibold mb-1">
+            Description:
+            <span id="desc-count" class="text-gray-400">
+                (0/150)
+            </span>
+        </label>
+        <textarea
+            oninput="updatePreview(); updateCharCount()"
+            id="description"
+            placeholder="Enter description (150 characters max)"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none
+            focus:ring-2 focus:ring-indigo-400 mb-3" maxlength="150"></textarea>
+
+            <label 
+                for="keywords"
+                class="block text-gray-700 font-semibold mb-1">
+                Keywords:
+            </label>
+            <input
+                oninput="updatePreview();" 
+                type="text"
+                id="keywords"
+                placeholder="Enter keywords, separated by commas"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none
+                focus:ring-2 focus:ring-indigo-400 mb-3" 
+            />
+            <label 
+                for="image"
+                class="block text-gray-700 font-semibold mb-1">
+                Meta Image URL:
+            </label>
+            <input 
+                oninput="updatePreview();"
+                type="text"
+                id="image"
+                placeholder="Enter image URL for social media preview" 
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none
+                focus:ring-2 focus:ring-indigo-400 mb-3"
+            />
+
+            <button
+                onclick="generateMeta();" 
+                class="w-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white py-2 rounded-lg
+                hover:purple-600 hover:to-indigo-600 font-semibold transform transition hover:scale-105">
+                Generate Meta Tags
+            </button>
+
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">
+                    Live Preview:
+                </h3>
+                <div 
+                    id="preview"
+                    class="p-4 bg-gray-100 rounded-lg border border-gray-200 font-mono text-sm text-gray-700 overflow-hidden">
+                </div>
+
+                <div class="mt-4 flex justify-between items-center">
+                    <button
+                        onclick="copyMeta();"
+                        class="w-full bg-gradient-to-r from-green-500 to-teal-500 text-white py-2 rounded-lg hover:from-green-600
+                        hover:to-teal-600 font-semibold transform transition hover:scale-105">
+                        Copy Meta Tags
+                    </button>
+                    <span id="copy-status" class="ml-4 text-sm font-semibold text-gray-600 hidden">
+                        Copied!
+                    </span>
+                </div>
+            </div>
+    </div>
+</div>
+<script is:inline>
+    function updateCharCount(){
+        const description = document.getElementById('description').value;
+        document.getElementById('desc-count').innerText = `(${description.length}/150)`;
+    }
+
+    function updatePreview(){
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const keywords = document.getElementById('keywords').value;
+        const image = document.getElementById('image').value;
+
+        document.getElementById('preview').innerText = `
+            <meta name="title" content="${title}" />
+            <meta name="description" content="${description}" />
+            <meta name="keywords" content="${keywords}" />
+            <meta property="og:image" content="${image}" />
+        `;
+    }
+
+    function generateMeta(){
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const keywords = document.getElementById('keywords').value;
+        const image = document.getElementById('image').value;
+
+        if(!title || !description || !keywords || !image){
+            alertMissingFields();
+            return;
+        }
+        updatePreview();
+        const resultDiv = document.getElementById('preview');
+        resultDiv.classList.add('border-indigo-400', 'bg-indigo-500');
+
+        document.getElementById('copy-status').classList.add('hidden');
+    }
+
+    function alertMissingFields(){
+        const fields = ["title", "description", "keywords", "image"];
+        fields.forEach(id => {
+            const field = document.getElementById(id);
+            field.classList.add('border-red-400');
+            setTimeout(() => field.classList.remove('border-red-400'), 1500)
+        });
+    }
+    function copyMeta(){
+        const resultDiv = document.getElementById('preview');
+        const metaTags = resultDiv.innerText;
+        navigator.clipboard.writeText(metaTags)
+            .then(() => {
+                const copyStatus = document.getElementById('copy-status');
+                copyStatus.classList.remove('hidden');
+                copyStatus.innerText = "Copied!";
+                copyStatus.classList.add('text-green-600');
+
+                setTimeout(() => copyStatus.classList.add("hidden"), 2000);
+            })
+            .catch(err => console.error("Faild to copy", err))
+    }
+</script>

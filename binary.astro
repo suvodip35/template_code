@@ -1,0 +1,128 @@
+<div class="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-lg bg-white rounded-lg shadow-lg p-6 text-gray-800">
+        <h1 class="text-2xl font-bold text-center text-blue-600">
+            Real-Time Binary to Text Converter
+        </h1>
+        <p class="text-sm text-center text-gray-600 mt-2">
+            Convert Binary code to Text or Text to Binary instantly!
+        </p>
+        <div class="flex items-center justify-center mt-4">
+            <span class="mr-2 text-sm font-medium text-gray-600">
+                Binary to Text
+            </span>
+            <label
+                class="relative inline-flex items-center cursor-pointer">
+                <input
+                    type="checkbox"
+                    id="toggleMode"
+                    class="sr-only peer"
+                />
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer-checked:bg-blue-600"></div>
+                <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-5 transition-transform"></span>
+            </label>
+            <span class="ml-2 text-sm font-medium text-gray-600">
+                Text to Binary
+            </span>
+        </div>
+        <div id="binaryToText" class="mt-6">
+            <label
+                for="binaryInput"
+                class="block font-medium text-gray-700">
+                Binary Input
+            </label>
+            <textarea 
+                id="binaryInput"
+                placeholder="Enter binary (e.g., 01001000 01001000 01001001)"
+                class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            ></textarea>
+            <label
+                for="textOutput"
+                class="block font-medium text-gray-700">
+                Text Output
+            </label>
+            <textarea 
+                id="textOutput"
+                placeholder="Plain text will appear here"
+                class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            ></textarea>
+        </div>
+        <div id="textToBinary" class="mt-6 hidden">
+            <label
+                for="textInput"
+                class="block font-medium text-gray-700">
+                Text Input
+            </label>
+            <textarea
+                id="textInput"
+                placeholder="Enter plain text"
+                class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            ></textarea>
+            <label
+                for="binaryOutput"
+                class="block font-medium text-gray-700">
+                Binary Output
+            </label>
+            <textarea
+                id="binaryOutput"
+                rows="4"
+                placeholder="Binary will appear here"
+                class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            ></textarea>
+        </div>
+        <p id="errorMessage" class="text-red-600 text-sm mt-2 hidden">
+            Invalid binary input! Please ensure it contains only 0 and 1.
+        </p>
+        <button
+            id="resetBtn"
+            class="mt-6 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-500 transition">
+            Reset All Fields
+        </button>
+    </div>
+</div>
+<script is:inline>
+    const toggleMode = document.getElementById('toggleMode');
+    const binaryToText = document.getElementById('binaryToText');
+    const textToBinary = document.getElementById('textToBinary');
+    const binaryInput = document.getElementById('binaryInput');
+    const textOutput = document.getElementById('textOutput');
+    const textInput = document.getElementById('textInput');
+    const binaryOutput = document.getElementById('binaryOutput');
+    const errorMessage = document.getElementById('errorMessage');
+    const resetBtn = document.getElementById('resetBtn');
+
+    toggleMode.addEventListener('change', () => {
+        if(toggleMode.checked){
+            binaryToText.classList.add('hidden');
+            textToBinary.classList.remove('hidden')
+        } else{
+            textToBinary.classList.add('hidden');
+            binaryToText.classList.remove('hidden');
+        }
+        resetAllFields();
+    });
+
+    binaryInput.addEventListener('input', () => {
+        const binary = binaryInput.value.trim();
+        if(/^[01\s]+$/.test(binary) ||  binary === ''){
+            errorMessage.classList.add('hidden')
+            textOutput.value = binary.split(' ').map(bin => String.fromCharCode(parseInt(bin, 2))).join('');
+        } else{
+            errorMessage.classList.remove('hidden');
+            textOutput.value = '';
+        }
+    });
+
+    textInput.addEventListener('input', () => {
+        const text = textInput.value.trim();
+        binaryOutput.value = text.split('').map(char => char.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
+    });
+    function resetAllFields(){
+        binaryInput.value = '';
+        textOutput.value = '';
+        textInput.value = '';
+        binaryOutput.value = '';
+        errorMessage.classList.add('hidden');
+    }
+
+    resetBtn.addEventListener('click', resetAllFields);
+</script>

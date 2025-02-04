@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Digital Art Canvas</title>
+</head>
+<body class="bg-gradient-to-b from-blue-500 via-indigo-500 to-purple-700 min-h-screen p-6 flex flex-col items-center text-white">
+    <h1 class="text-4xl font-extrabold mb-6">
+        🎨 Interactive Digital Art Canvas
+    </h1>
+    <div class="flex flex-wrap justify-center gap-2 bg-white bg-opacity-10 p-6 rounded-xl shadow-lg mb-6 max-w-xl">
+        <div class="">
+            <label 
+                for="brushSize"
+                class="block text-sm font-semibold">
+                Brush Size
+            </label>
+            <input 
+                type="range"
+                id="brushSize"
+                class="w-30 mt-2 accent-purple-400"
+                value="5"
+                min="1"
+                max="30"
+            />
+        </div>
+        <div>
+            <label 
+                for="brushColor"
+                class="block text-sm font-extrabold">
+                Brush Color
+            </label>
+            <input 
+                type="color"
+                id="brushColor" 
+                class="w-8 h-8 p-0 border-none mt-2 shadow-md"
+            />
+        </div>
+        <div>
+            <label 
+                for="brushOpacity"
+                class="block text-sm font-extrabold">
+                Opacity
+            </label>
+            <input 
+                id="brushOpacity"
+                type="range"
+                value="1"
+                min="0.1"
+                max="1"
+                step="0.1"
+                class="w-30 p-0 mt-2 accent-purple-400" 
+            />
+        </div>
+        <div>
+            <label 
+                for="bgColor"
+                class="block text-sm font-extrabold">
+                Background Color
+            </label>
+            <input 
+                type="color"
+                id="bgColor"
+                class="w-8 h-8 p-0 border-none mt-2 shadow-md"
+                value="#FFFFFF" 
+            />
+        </div>
+    </div>
+    <div class="relative">
+        <canvas 
+            id="drawingCanvas"
+            class="rounded-lg border-4 border-white shadow-lg"
+            width="800"
+            height="500">
+        </canvas>
+        <button
+            id="downloadCanvas"
+            class="absolute top-4 right-4 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg shadow-md">
+            ⬇️ Download
+        </button>
+    </div>
+    <button 
+        id="clearCanvas"
+        class="mt-6 px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg">
+        🧹 Clear Canvas
+    </button>
+
+    <script is:inline>
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        const brushSize = document.getElementById('brushSize');
+        const brushColor = document.getElementById('brushColor');
+        const brushOpacity = document.getElementById('brushOpacity');
+        const bgColor = document.getElementById('bgColor');
+        const clearCanvas = document.getElementById('clearCanvas');
+        const downloadCanvas = document.getElementById('downloadCanvas');
+
+        let drawing = false;
+
+        ctx.fillStyle = bgColor.value;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        bgColor.addEventListener('input', () => {
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = bgColor.value;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.restore();
+        });
+
+        canvas.addEventListener('mousedown', (e) => {
+            drawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        });
+        canvas.addEventListener('mousemove', (e) => {
+            if(!drawing) return;
+            ctx.lineWidth = brushSize.value;
+            ctx.strokeStyle = `${brushColor.value}${Math.floor(brushOpacity.value * 255).toString(16).padStart(2, '0')}`;
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+        });
+
+        canvas.addEventListener('mouseup', () => drawing = false);
+        canvas.addEventListener('mouseleave', () => drawing = false);
+
+        clearCanvas.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = bgColor.value;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        });
+        downloadCanvas.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'my_drawing.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        })
+    </script>
+</body>
+</html>

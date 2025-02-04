@@ -1,0 +1,110 @@
+<div class="bg-gradient-to-br from-purple-500 to-blue-600 min-h-screen flex justify-center items-center">
+    <div class="bg-white rounded-lg shadow-2xl p-6 max-w-lg w-full">
+        <h1 class="text-3xl font-bold text-center text-indigo-600 mb-4">
+            Markdown to HTML
+        </h1>
+        <div class="mb-4">
+            <label
+                for="markdown"
+                class="block text-gray-700 font-medium mb-2">
+                Write Markdown:
+            </label>
+            <textarea
+                id="markdown"
+                rows="6"
+                class="w-full p-3 rounded-lg bg-gray-100 border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                placeholder="Write your Markdown here..."
+            ></textarea>
+            <div class="text-sm text-gray-600 mt-1 flex justify-between">
+                <span id="wordCount">Words: 0</span>
+                <span id="charCount">Characters: 0</span>
+            </div>
+        </div>
+        <div>
+            <label
+                class="block text-gray-700 font-medium mb-2">
+                HTML Preview:
+            </label>
+            <div
+                id="html-preview"
+                class="w-full p-3 rounded-lg bg-gray-50 border border-gray-300 h-40 overflow-auto">
+            </div>
+        </div>
+        <div class="flex justify-between items-center gap-2 mt-4">
+            <button
+                id="copyBtn"
+                class="bg-indigo-500 hover:bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg transition">
+                Copy HTML
+            </button>
+             <button
+                id="clearBtn"
+                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium px-4 py-2 rounded-lg transition">
+                Clear
+            </button>
+            <button
+                id="downloadBtn"
+                class="bg-green-500 hover:bg-green-600 text-white font-medium px-4 py-2 rounded-lg transition">
+                Download HTML
+            </button>
+        </div>
+    </div>
+</div>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.0/marked.min.js" defer></script>
+<script is:inline>
+    const markdownInput = document.getElementById('markdown');
+    const htmlPreview = document.getElementById('html-preview');
+    const copyBtn = document.getElementById('copyBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const wordCount = document.getElementById('wordCount');
+    const charCount = document.getElementById('charCount');
+
+
+    function convertMarkdownToHTML(){
+        const markdown = markdownInput.value;
+
+        let html = markdown
+            .replace(/^### (.*$)/gim, "<h3>$1</h3>")
+            .replace(/## (.*$)/gim, "<h2>$1</h2>")
+            .replace(/# (.*$)/gim, "<h1>$1</h1>")
+            .replace(/\*\*(.*)\*/gim, "<b>$1</b>")
+            .replace(/\*(.*)\*/gim, "<i>$1</1>")
+            .replace(/\n/gim, "<br />");
+
+            htmlPreview.innerHTML = html;
+
+            wordCount.textContent = `Words: ${markdown.split(/\s+/).filter(Boolean).length}`;
+            charCount.textContent = `Characters: ${markdown.length}`;
+    };
+
+    markdownInput.addEventListener('input', convertMarkdownToHTML);
+    copyBtn.addEventListener('click', () => {
+        const tempTextarea = document.createElement('textarea');
+        tempTextarea.value = htmlPreview.innerHTML;
+        document.body.appendChild(tempTextarea);
+        tempTextarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempTextarea);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => (copyBtn.textContent = 'Copy HTML'), 1500);
+    });
+
+    clearBtn.addEventListener('click', () => {
+        markdownInput.value = '';
+        htmlPreview.innerHTML = '';
+        wordCount.textContent = 'Words: 0';
+        charCount.textContent = 'Characters: 0';
+    });
+
+    downloadBtn.addEventListener('click', () => {
+        const blob = new Blob([htmlPreview.innerHTML], {type: "text/html"});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'converted.html';
+        link.click();
+    });
+
+
+    markdownInput.value = "# Hellow World &#127757\n\nWrite *Markdown* here!\n\n**Enjoy Converting**";
+    convertMarkdownToHTML();
+</script>

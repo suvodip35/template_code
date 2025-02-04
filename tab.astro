@@ -1,0 +1,70 @@
+<div
+class="flex items-center justify-center min-h-screen
+bg-gradient-to-br from-indigo-50 to-purple-50">
+    <div 
+    class="w-full max-w-2xl p-4 rounded-lg shadow-lg bg-white">
+    <div 
+        id="tabs"
+        class="flex space-x-2"></div>
+        <div 
+            id="tabContent"
+            class="p-4 bg-indigo-50 rounded shadow fade-in"></div>
+    </div>
+</div>
+<script is:inline>
+        const tabData = [
+        {
+            title: "Home",
+            content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium facere at cumque, sed perferendis hic rem alias eos sit non quia explicabo corporis velit labore molestiae, ipsa voluptate voluptatibus. Eligendi."
+        },
+        {
+            title: "About",
+            content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium facere at cumque, sed perferendis hic rem alias eos sit non quia explicabo corporis velit labore molestiae, ipsa voluptate voluptatibus. Eligendi."
+        },
+        {
+            title: "Contact",
+            content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium facere at cumque, sed perferendis hic rem alias eos sit non quia explicabo corporis velit labore molestiae, ipsa voluptate voluptatibus. Eligendi."
+        }
+    ];
+
+    const tabsContainer = document.getElementById('tabs');
+    const tabContent = document.getElementById('tabContent');
+
+    function renderTabs(){
+        tabData.forEach((item, index) => {
+            const button = document.createElement('button');
+            button.classList.add('tab-button', 'px-4', 'py-2', 'rounded-t-lg', 'transition-colors', 'duration-300', 'focus:outline-none');
+            button.setAttribute('data-tab', index);
+            button.innerText = item.title;
+            button.addEventListener('click', () => activateTab(index));
+            tabsContainer.appendChild(button);
+        });
+        activateTab(0);
+    };
+    function activateTab(index){
+        const tabButtons = document.querySelectorAll('.tab-button');
+        tabButtons.forEach((btn, btnIndex) => {
+            btn.classList.remove('bg-indigo-600', 'text-white', 'bg-gray-200', 'text-gray-700');
+            if(btnIndex === index){
+                btn.classList.add('bg-indigo-600', 'text-white');
+            } else {
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            }
+        });
+        tabContent.classList.remove('fade-in');
+        setTimeout(() => {
+            tabContent.innerHTML = `<p>${tabData[index].content}</p>`;
+            tabContent.classList.add('fade-in');
+        },50);
+    }
+    renderTabs();
+</script>
+<style>
+    .fade-in{
+        animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+        from {opacity: 0; transform: translateY(20px);}
+        to {opacity: 1; transform: translateY(0px);}
+    }
+</style>

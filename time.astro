@@ -1,0 +1,113 @@
+<div class="bg-gradient-to-r from-blue-500 to-indigo-600 min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-4">
+            Time Zone Converter
+        </h1>
+        <div class="space-y-4">
+            <div>
+                <label
+                    for="city1"
+                    class="block text-sm font-medium text-gray-700">
+                    Select First City:
+                </label>
+                <select
+                    id="city1"
+                    class="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                </select>
+            </div>
+            <div>
+                <label
+                    for="city2"
+                    class="block text-sm font-medium text-gray-700">
+                    Select Second City:
+                </label>
+                <select
+                    id="city2"
+                    class="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                </select>
+            </div>
+            <div id="results" class="text-center text-gray-700 mt-4">
+                <p class="text-lg font-semibold">
+                    Compare times!
+                </p>
+            </div>
+        </div>
+        <button
+            id="convertBtn"
+            class="mt-6 w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-200">
+            Compare Time Zones
+        </button>
+    </div>
+</div>
+<script is:inline>
+    const city1Select = document.getElementById('city1');
+    const city2Select = document.getElementById('city2');
+    const resultsDiv = document.getElementById('results');
+    const convertBtn = document.getElementById('convertBtn');
+
+    const apiKey = 'YOUR_API_KEY';
+    const baseUrl = 'https://api.timezonedb.com/v2.1';
+
+    async function fetchTimeZones(){
+        try{
+            const response = await fetch(`${baseUrl}/list-time-zone?key=${apiKey}&format=json`);
+            const data = await response.json();
+            if(data.status !== 'OK'){
+                throw new Error(data.message || 'Faild to load timezones.');
+            }
+            const timezones = data.zones.map(zone => zone.zoneName);
+            populateSelectOptions(city1Select, timezones);
+            populateSelectOptions(city2Select, timezones);
+        } catch(error){
+            console.error('Error fetching timezones:', error);
+            resultsDiv.innerHTML = `<p class="text-red-500">Faild to load timezones. Please try again later</p>`;
+        }
+    }
+
+    function populateSelectOptions(selectElement, options){
+        options.forEach(option => {
+            const opt = document.createElement('option');
+            opt.value = option;
+            opt.textContent = option;
+            selectElement.appendChild(opt);
+        });
+    }
+
+    async function compareTimeZones(){
+        const city1 = city1Select.value;
+        const city2 = city2Select.value;
+
+        if(!city1 || !city2){
+            resultsDiv.innerHTML = `<p class="text-red-500">Please select both cities.</p>`;
+            return;
+        }
+        try{
+            const [time1, time2] = await Promise.all([
+                fetch(`${baseUrl}/get-time-zone?key=${apiKey}&format=json&by=zone&zone=${city1}`).then(res => res.json()),
+                fetch(`${baseUrl}/get-time-zone?key=${apiKey}&format=json&by=zone&zone=${city2}`).then(res => res.json())
+            ]);
+
+            if(!time1.timestamp || !time2.timestamp){
+                throw new Error('Timestamp missing in API response.');
+            }
+
+            const time1Date = new Date(time1.timestamp * 1000);
+            const time2Date = new Date(time2.timestamp * 1000);
+
+            const timeDifference = Math.abs((time1Date - time2Date) / (1000 * 60 * 60));
+
+            resultsDiv.innerHTML = `
+                <p class="text-xl font-bold">Current Times:</p>
+                <p>${city1}: <span class="text-indigo-500">${time1Date.toLocaleTimeString()}</span></p>
+                <p>${city2}: <span class="text-indigo-500">${time2Date.toLocaleTimeString()}</span></p>
+                <p class="mt-2 text-lg">Time Difference: <span class="font-semibold">${timeDifference} hours<span></p>
+            `;
+        } catch(error){
+            console.error('Error fetching time data:', error);
+            resultsDiv.innerHTML = `<p class="text-red-500">Faild to compare times. Please try again later.</p>`;
+        }
+    }
+
+    convertBtn.addEventListener('click', compareTimeZones);
+    fetchTimeZones();
+</script>

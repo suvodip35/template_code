@@ -1,0 +1,107 @@
+<div class="bg-gradient-to-r from-purple-500 via-blue-500 to-indigo-500 min-h-screen flex items-center justify-center">
+    <div class="bg-white shadow-2xl rounded-lg p-8 w-full max-w-lg">
+        <h1 class="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-6">
+            Unit Price Calculator
+        </h1>
+        <div class="flex flex-col gap-4 mb-6">
+            <input
+                type="text"
+                id="productName"
+                placeholder="Product Name"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <div class="flex gap-4">
+                <input
+                    type="number"
+                    id="quantity"
+                    placeholder="Quantity"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+                <input 
+                    type="number"
+                    id="cost"
+                    placeholder="Cost ($)"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+            </div>
+            <button 
+                id="addProduct"
+                class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-300">
+                Add Product
+            </button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full table-auto border-collapse border border-gray-300">
+                <thead class="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+                    <tr>
+                        <th class="border border-gray-300 p-3">Product</th>
+                        <th class="border border-gray-300 p-3">Quantity</th>
+                        <th class="border border-gray-300 p-3">Cost</th>
+                        <th class="border border-gray-300 p-3">Price/Unit</th>
+                    </tr>
+                </thead>
+                <tbody id="productTable" class="bg-white"></tbody>
+            </table>
+        </div>
+        <div class="mt-6 flex flex-col gap-4">
+            <button
+                id="sortByUnitPrice"
+                class="bg-gradient-to-r from-green-500 to-teal-500 text-white px=6 py-2 rounded-lg hover:shadow-lg transition-all duration-300">
+                Sort by Unit Price (Lowest to Highest)
+            </button>
+            <button
+                id="clearTable"
+                class="bg-gradient-to-r from-red-500 to-pink-500 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-300">
+                Clear All Products
+            </button>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    const productTable = document.getElementById('productTable');
+    const addProductButton = document.getElementById('addProduct');
+    const sortByUnitPriceButton = document.getElementById('sortByUnitPrice');
+    const clearTableButton = document.getElementById('clearTable');
+    let products = [];
+
+    addProductButton.addEventListener('click', () => {
+        const productName = document.getElementById('productName').value.trim();
+        const quantity = parseFloat(document.getElementById('quantity').value);
+        const cost = parseFloat(document.getElementById('cost').value);
+        if(!productName || quantity <= 0 || cost <= 0){
+            alert('Please provide valid inputs for all fields.');
+            return;
+        }
+        const pricePerUnit = (cost / quantity).toFixed(2);
+        products.push({productName, quantity, cost, pricePerUnit});
+        updateTable();
+        clearInputs();        
+    });
+    function updateTable(){
+        productTable.innerHTML = '';
+        products.forEach((product, index) => {
+            const row = document.createElement('tr');
+            row.className = index % 2 === 0 ? 'bg-gray-100' : 'bg-gray-200';
+            row.innerHTML = `
+                <td class="border border-gray-300 p-3">${product.productName}</td>
+                <td class="border border-gray-300 p-3">${product.quantity}</td>
+                <td class="border border-gray-300 p-3">${product.cost.toFixed(2)}</td>
+                <td class="border border-gray-300 p-3">${product.pricePerUnit}</td>
+            `;
+            productTable.appendChild(row);
+        });
+    }
+    function clearInputs(){
+        document.getElementById('productName').value = '';
+        document.getElementById('quantity').value = '';
+        document.getElementById('cost').value = '';
+    };
+    sortByUnitPriceButton.addEventListener('click', () => {
+        products.sort((a, b) => parseFloat(a.pricePerUnit) - parseFloat(b.pricePerUnit));
+        updateTable();
+    });
+    clearTableButton.addEventListener('click', () => {
+        products = [];
+        updateTable();
+    });
+</script>

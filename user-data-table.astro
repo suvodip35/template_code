@@ -1,0 +1,134 @@
+<div class="bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center min-h-screen">
+    <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-2xl">
+        <h2 class="text-3xl font-bold mb-6 text-center text-blue-600">
+            User Data Table
+        </h2>
+        <div class="mb-4 flex justify-between items-center">
+            <input 
+                type="text"
+                id="searchInput"
+                placeholder="Search by Name..."
+                class="border rounded w-2/3 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <button id="exportBtn" class="bg-green-500 hover:bg-green-600 text-white 
+                    font-semibold py-2 px-4 rounded transition duration-300">
+                    Export to CSV
+                </button>
+        </div>
+        <table class="min-w-full bg-white border border-gray-300 rounded-lg overflow-hidden">
+            <thead class="bg-blue-500 text-white border">
+                <tr>
+                    <th class="py-3 px-4 border-b cursor-pointer hover:bg-blue-600" onclick="sortTable(0)">
+                        Name
+                    </th>
+                    <th class="py-3 px-4 border-b cursor-pointer hover:bg-blue-600" onclick="sortTable(1)">
+                        Email
+                    </th>
+                    <th class="py-3 px-4 border-b cursor-pointer hover:bg-blue-600" onclick="sortTable(2)">
+                        Age
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+        <div class="mt-4 flex justify-between items-center">
+            <button 
+                id="prevPageBtn" 
+                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+                onclick="changePage(-1)">
+                Previous
+            </button>
+            <button 
+                id="nextPageBtn" 
+                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+                onclick="changePage(1)">
+                Next
+            </button>
+        </div>
+        <div class="mt-4 text-center ">
+            <span id="pageInfo" class="text-lg font-semibold"></span>
+        </div>
+    </div>
+</div>
+<script is:inline>
+        const users = [
+        { name: 'Alice Johnson', email: 'alice@example.com', age: 28 },
+        { name: 'Bob Smith', email: 'bob@example.com', age: 34 },
+        { name: 'Charlie Brown', email: 'charlie@example.com', age: 22 },
+        { name: 'David Wilson', email: 'david@example.com', age: 45 },
+        { name: 'Eva Green', email: 'eva@example.com', age: 30 },
+        { name: 'Frank Miller', email: 'frank@example.com', age: 29 },
+        { name: 'Grace Lee', email: 'grace@example.com', age: 31 },
+        { name: 'Hannah Davis', email: 'hannah@example.com', age: 27 },
+        { name: 'Ian White', email: 'ian@example.com', age: 40 },
+        { name: 'Julia Taylor', email: 'julia@example.com', age: 35 },
+        { name: 'Kevin Brown', email: 'kevin@example.com', age: 26 },
+        { name: 'Laura Adams', email: 'laura@example.com', age: 33 },
+        { name: 'Mike Wilson', email: 'mike@example.com', age: 39 },
+        { name: 'Nina Carter', email: 'nina@example.com', age: 24 },
+        { name: 'Oscar King', email: 'oscar@example.com', age: 32 },
+    ];
+    let currentPage = 1;
+    const rowsPerPage = 5;
+    function displayTable(){
+        const tableBody = document.getElementById('tableBody');
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        tableBody.innerHTML = '';
+        const filteredUsers = users.filter(user => user.name.toLowerCase().includes(searchInput));
+        const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
+        const startIndex = (currentPage - 1) * rowsPerPage;
+        const endIndex = Math.min(startIndex + rowsPerPage, filteredUsers.length);
+        for(let i = startIndex; i < endIndex; i++){
+            const user = filteredUsers[i];
+            const row = `<tr class=""hover:bg-gray-100 transition duration-300>
+                <td class="py-2 px-4 border-b">${user.name}</td>
+                <td class="py-2 px-4 border-b">${user.email}</td>
+                <td class="py-2 px-4 border-b">${user.age}</td>
+            </tr>`;
+            tableBody.innerHTML += row;
+         }
+         document.getElementById('prevPageBtn').disabled = currentPage === 1;
+         document.getElementById('nextPageBtn').disabled = endIndex >= filteredUsers.length;
+         document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+    }
+    function changePage(delta){
+        currentPage += delta;
+        displayTable();
+    }
+    function sortTable(columnIndex){
+        const sortedUsers = [...users].sort((a, b) => {
+            const aValue = Object.values(a)[columnIndex].toString().toLowerCase();
+            const bValue = Object.values(b)[columnIndex].toString().toLowerCase();
+            return aValue.localeCompare(bValue);
+        });
+        users.length = 0;
+        users.push(...sortedUsers);
+        displayTable();
+    };
+    function exportToCSV(){
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        const filteredUsers = users.filter(user => user.name.toLowerCase().includes(searchInput));
+        let csvContent = "data:text/csv;charset=utf-8,"
+        + "Name,EmailAge\n"
+        + filteredUsers.map(user => {
+            const name = user.name.replace(/"/g, '""');
+            const email = user.email.replace(/"/g, '""');
+            return `"${name}", "${email}", "${user.age}"`;
+        }).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement('a');
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "user_data.csv");
+        document.body.appendChild(link);
+
+        link.click();
+        document.body.removeChild(link);
+
+    };
+    document.getElementById('searchInput').addEventListener('input', () => {
+        currentPage = 1;
+        displayTable();
+    });
+    document.getElementById('exportBtn').addEventListener('click', exportToCSV);
+    displayTable();
+
+</script>

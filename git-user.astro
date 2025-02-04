@@ -1,0 +1,125 @@
+<div class="bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 flex min-h-screen justify-center items-center text-gray-900">
+    <div class="max-w-lg mx-auto p-5">
+        <div class="bg-white shadow-xl rounded-xl p-6">
+            <h1 class="text-3xl font-extrabold text-center mb-6 text-indigo-600">
+                GitHub User Finder
+            </h1>
+            <div class="flex gap-3 mb-5">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="e.g. octocat, torvalds, facebook"
+                    class="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all ease-in-out"
+                />
+                <button
+                    id="searchButton"
+                    class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all ease-in-out">
+                    Search
+                </button>
+            </div>
+            <div id="profile" class="hidden">
+                <div class="flex items-center mb-6">
+                    <img
+                        src=""
+                        alt="Avatar"
+                        id="avatar"
+                        class="w-20 h-20 rounded-full border-4 border-indigo-600"
+                    />
+                    <div class="ml-5">
+                        <h2 id="name" class="text-2xl font-semibold text-gray-800"></h2>
+                        <p id="bio" class="text-gray-600 mt-2"></p>
+                        <a id="profileLink" href="#" target="_blank" class="text-indigo-600 mt-2 inline-block hover:underline">
+                            View Profile
+                        </a>
+                    </div>
+                </div>
+                <div class="flex gap-4 mb-4">
+                    <span id="followers" class="bg-indigo-100 text-indigo-600 text-sm px-4 py-2 rounded-full shadow-md"></span>
+                    <span id="reposCount" class="bg-indigo-100 text-indigo-600 text-sm px-4 py-2 rounded-full shadow-md"></span>
+                </div>
+                <div class="mb-6">
+                    <label for="filter" class="block text-sm font-medium text-gray-700">
+                        Filter Repositories:
+                    </label>
+                    <select
+                        id="filter"
+                        class="mt-2 block w-full px-4 py-2 border rounded-md bg-white text-gray-800 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">All</option>
+                        <option value="stars">Most Stars</option>
+                        <option value="language">Filter by Language</option>
+                    </select>
+                </div>
+                <ul id="repositories" class="space-y-4"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const profile = document.getElementById('profile');
+    const avatar = document.getElementById('avatar');
+    const name = document.getElementById('name');
+    const bio = document.getElementById('bio');
+    const profileLink = document.getElementById('profileLink');
+    const followers = document.getElementById('followers');
+    const reposCount = document.getElementById('reposCount');
+    const filter = document.getElementById('filter');
+    const repositories = document.getElementById('repositories');
+
+    const sampleUsernames = ['octocat', 'torvalds', 'facebook'];
+    searchInput.value = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
+
+    searchButton.addEventListener('click', async () => {
+        const username = searchInput.value.trim();
+        if(!username) return alert('Please enter a username!');
+        const userResponse = await fetch(`https://api.github.com/users/${username}`);
+        if(!userResponse.ok) return alert('User not fount!');
+        const userData = await userResponse.json();
+
+        avatar.src = userData.avatar_url;
+        name.textContent = userData.name || userData.login;
+        bio.textContent = userData.bio || 'No bio available';
+        profileLink.href = userData.html_url;
+        followers.textContent = `Followers: ${userData.followers}`;
+        reposCount.textContent = `Public Repos: ${userData.public_repos}`;
+
+        const reposResponse = await fetch(userData.repos_url);
+        const reposData = await reposResponse.json();
+        displayRepositories(reposData);
+        profile.classList.remove('hidden');
+    });
+
+    filter.addEventListener('change', () => {
+        const repos = Array.from(repositories.children);
+        if(filter.value === 'stars'){
+            repos.sort((a, b) => b.dataset.stars - a.dataset.stars);
+        } else if(filter.value === 'language'){
+            repos.sort((a, b) => a.dataset.language.localeCompare(b.dataset.language));
+        }
+        repositories.innerHTML = '';
+        repos.forEach(repo => repositories.appendChild(repo));
+    });
+
+
+    function displayRepositories(repos){
+        repositories.innerHTML = '';
+        repos.forEach(repo => {
+            const repoElement = document.createElement('li');
+            repoElement.className = 'card bg-gray-100 p-4 rounded-lg shadow-md transition-all ease-in-out';
+            repoElement.dataset.stars = repo.stasgazers_count;
+            repoElement.dataset.language = repo.language || '';
+            repoElement.innerHTML = `
+                <h3 class="text-xl font-semibold">
+                    <a href="${repo.html_url}" target="_blank" class="text-indigo-600 hover:underline">${repo.name}</a>    
+                </h3>
+                <p class="text-sm text-gray-600">${repo.description || 'No description available'}</p>
+                <div class="text-sm mt-2">
+                    <span class="mr-2">&#11088; ${repo.stasgazers_count}</span>    
+                    <span>${repo.language || 'N/A'}</span>
+                </div>
+            `;
+            repositories.appendChild(repoElement);
+        });
+    }
+</script>

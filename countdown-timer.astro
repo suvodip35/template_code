@@ -1,0 +1,102 @@
+<div
+    class="bg-gradient-to-r from-indigo-500 to-purple-600 flex
+    items-center justify-center min-h-screen">
+    <div
+        class="bg-white rounded-lg shadow-lg p-6 text-center
+        w-full max-w-lg">
+        <h1
+            class="text-xl font-bold mb-4 text-gray-800">
+            Countdown Timer
+        </h1>
+        <div
+            id="countdown"
+            class="countdown normal fade-in">
+            00:00:00:000
+        </div>
+        <button
+            id="toggleBtn"
+            class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg
+            shadow-md hover:bg-blue-700 transition">
+            Start Countdown
+        </button>
+        <div
+            id="savedCountdowns"
+            class="mt-4 text-gray-700">
+        </div>
+    </div>
+</div>
+<script is:inline>
+    let countdown;
+    let savedCountdowns = [];
+    const countdownDisplay = document.getElementById('countdown');
+    const toggleBtn = document.getElementById('toggleBtn');
+    let isRunning = false;
+    let timeLeft = 3600 * 1000;
+
+    function updateDisplay(){
+        const hours = Math.floor(timeLeft / 3600000);
+        const minutes = Math.floor((timeLeft % 3600000) / 60000);
+        const seconds = Math.floor((timeLeft % 60000) / 1000);
+        const milliseconds = timeLeft % 1000;
+
+        countdownDisplay.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(3, '0')}`;
+        countdownDisplay.classList.add('fade-in');
+
+        if(timeLeft < 60000){
+            countdownDisplay.classList.remove('normal');
+            countdownDisplay.classList.add('warning');
+        }else{
+            countdownDisplay.classList.remove('warning');
+            countdownDisplay.classList.add('normal');
+        }
+    }
+    toggleBtn.addEventListener('click', () => {
+        if(isRunning){
+            clearInterval(countdown);
+            savedCountdowns.push(countdownDisplay.textContent);
+            updateSavedCountdowns();
+            countdownDisplay.textContent = "00:00:00.000";
+            toggleBtn.textContent = "Start Countdown";
+        } else{
+            countdown = setInterval(() => {
+                timeLeft -= 100;
+                if(timeLeft <= 0){
+                    clearInterval(countdown);
+                    countdownDisplay.textContent = "Time's up!";
+                }else{
+                    updateDisplay();
+                }
+            }, 100);
+            toggleBtn.textContent = "Stop Countdown";
+        };
+        isRunning = !isRunning;
+    })
+    function updateSavedCountdowns(){
+        const savedDisplay = document.getElementById('savedCountdowns');
+        savedDisplay.innerHTML = '<h2 class="font-bold ">Saved Countdowns:</h2>' + savedCountdowns.map(time => `<div>${time}</div>`).join('');
+    }
+
+</script>
+<style>
+    .countdown{
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    .fade-in{
+        animation: fadeIn 0.5s;
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to{
+            opacity: 1;
+        }
+    }
+    .warning{
+        color: #FCA5A1;
+    }
+    .normal{
+        color: '#3B82F6';
+    }
+</style>

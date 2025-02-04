@@ -1,0 +1,142 @@
+<div class="bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 min-h-screen text-white flex items-center justify-center">
+    <div class="max-w-lg w-full bg-white text-black rounded-lg shadow-lg p-6 my-10">
+        <h1 class="text-center text-2xl font-bold mb-6">
+            Book Search Tool
+        </h1>
+        <div class="flex justify-between mb-4">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search by title, author, or ISBN"
+                class="w-full p-3 rounded-lg text-black shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            />
+            <button
+                id="searchButton"
+                class="ml-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-md focus:outline-none">
+                Search
+            </button>
+        </div>
+        <div id="loading" class="text-center text-indigo-500 hidden">Loading...</div>
+        <div id="result" class="grid grid-cols-3 gap-4"></div>
+        <div id="pagination" class="flex justify-center mt-4 space-x-4"></div>
+    </div>
+    <div id="bookModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-11/12 max-w-md relative">
+            <button
+                id="closeModal"
+                class="absolute top-2 right-2 bg-red-500 text-white rounded-full px-3 py-1 focusLoutline-none">
+                &times;
+            </button>
+            <div id="modalContent" class="text-black"></div>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    const apiUrl = 'https://openlibrary.org/search.json';
+    const resultsContainer = document.getElementById('result');
+    const paginationContainer = document.getElementById('pagination');
+    const searchButton = document.getElementById('searchButton');
+    const searchInput = document.getElementById('searchInput');
+    const loadingIndicator = document.getElementById('loading');
+    const bookModal = document.getElementById('bookModal');
+    const modalContent = document.getElementById('modalContent');
+    const closeModal = document.getElementById('closeModal');
+
+
+    let currentPage = 1;
+    let currentQuery = '';
+
+    const fetchBooks = async(query, page = 1) => {
+        loadingIndicator.classList.remove('hidden');
+        resultsContainer.innerHTML = '';
+        paginationContainer.innerHTML = '';
+
+        try{
+            const response = await fetch(`${apiUrl}?q=${query}&page=${page}`);
+            const data = await response.json();
+            displayResults(data.docs.slice(0, 10));
+            setupPagination(data.numFound, page);
+        } catch(error){
+            resultsContainer.innerHTML = '<p class="col-span-full text-center text-red-500">Error fetching data. Please try again!</p>';
+        } finally{
+            loadingIndicator.classList.add('hidden');
+        }
+    };
+
+    const displayResults = (books) => {
+        resultsContainer.innerHTML = '';
+        if(books.length === 0){
+            resultsContainer.innerHTML = '<p class="col-span-full text-center text-yellow-400">No books found.</p>';
+            return;
+        }
+        books.forEach(book => {
+            const coverId = book.cover_i || '';
+            const title = book.title || '';
+            const author = book.author_name ? book.author_name.join(', ') : 'Unknown Author';
+
+            const bookCard = document.createElement('div');
+            bookCard.className = 'bg-gray-100 text-black rounded-lg shadow-md p-2 cursor-pointer hover:bg-gray-200 transition';
+            bookCard.innerHTML = `
+                <img src="https://covers.openlibrary.org/b/id/${coverId}-M.jpg" alt="${title}" class="w-full h-32 object-cover rounded">
+                <h3 class="text-sm font-bold mt-2">${title}</h3>
+                <p class="text-xs text-gray-600">${author}</p>
+            `;
+            bookCard.addEventListener('click', () => {
+                showModal(book);
+            });
+            resultsContainer.appendChild(bookCard);
+        })
+    };
+    const setupPagination = (totalItems, currentPage) => {
+        paginationContainer.innerHTML = '';
+        const totalPages = Math.ceil(totalItems / 10);
+
+        for (let i = 1; i <= Math.min(totalPages, 5); i++){
+            const pageButton = document.createElement('button');
+            pageButton.className = `px-3 py-1 rounded shadow-md ${i === currentPage ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-black hover:bg-gray-300'}`;
+            pageButton.textContent = i;
+            pageButton.addEventListener('click', () => {
+                fetchBooks(currentQuery, i)
+            });
+            paginationContainer.appendChild(pageButton);
+        }
+    };
+
+    const showModal = (book) => {
+        const coverId = book.cover_i || '';
+        const title = book.title || 'Unknown Title';
+        const author = book.author_name ? book.author_name.join(', ') : 'Unknown Author';
+        const publishYear = book.first_publish_year || 'Unknown Year';
+        const isbn = book.isbn ? book.isbn[0] : 'N/A';
+        const pages = book.number_of_pages_mapped || 'N/A';
+
+        modalContent.innerHTML = `
+            <img src="https://covers.openlibrary.org/b/id/${coverId}-L.jpg" alt="${title}" class="w-full h-48 object-cover rounded mb-4">
+            <h3 class="text-lg font-bold">${title}</h3>
+            <p class="text-sm text-gray-700">Author: ${author}</p>
+            <p class="text-sm text-gray-700">Published: ${publishYear}</p>
+            <p class="text-sm text-gray-700">ISBN: ${isbn}</p>
+            <p class="text-sm text-gray-700">Pages: ${pages}</p>
+        `;
+        bookModal.classList.remove('hidden');
+    };
+
+    closeModal.addEventListener('click', () => {
+        bookModal.classList.add('hidden');
+    });
+    searchButton.addEventListener('click', () => {
+        const query = searchInput.value.trim();
+        if(query){
+            currentQuery = query;
+            currentPage = 1;
+            fetchBooks(query, currentPage);
+        }
+    });
+
+    searchInput.addEventListener('keypress', (e) => {
+        if(e.key === 'Enter'){
+            searchButton.click();
+        }
+    });
+
+</script>

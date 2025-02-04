@@ -1,0 +1,81 @@
+<div class="flex items-center justify-center min-h-screen bg-gradient-to-r from-pink-400 via-red-500 to-purple-500">
+    <div class="w-full max-w-md p-8 mx-auto premium-bg shadow-lg rounded-lg">
+        <h1 class="text-2xl font-bold text-white text-center mb-6">
+            Letter Case Converter
+        </h1>
+        <textarea
+             id="inputText"
+             rows="7"
+             class="w-full p-4 rounded-lg shadow-inner text-gray-900 focus:outline-none"
+             placeholder="Enter text here..."></textarea>
+        <div class="mt-4 grid grid-cols-2 gap-4 text-center">
+            <button 
+                onclick="convertCase('uppercase')"
+                class="w-full py-2 px-4 rounded-lg text-white font-semibold btn-hover focus:outline-none">
+                UPPERCASE
+            </button>
+            <button 
+                onclick="convertCase('lowercase')"
+                class="w-full py-2 px-4 rounded-lg text-white font-semibold btn-hover focus:outline-none">
+                lowercase
+            </button>
+            <button 
+                onclick="convertCase('capitalize')"
+                class="w-full py-2 px-4 rounded-lg text-white font-semibold btn-hover focus:outline-none">
+                Capitalize
+            </button>
+            <button 
+                onclick="convertCase('toggle')"
+                class="w-full py-2 px-4 rounded-lg text-white font-semibold btn-hover focus:outline-none">
+                tOGGLE cASE
+            </button>
+        </div>
+        <div class="mt-4 flex flex-col">
+            <p id="copiedMessage" class="text-white"></p>
+            <button 
+                onclick="copyText()"
+                class="w-full py-2 px-4 rounded-lg bg-purple-600 text-white font-semibold hover:bgpurple-700 focus:outline-none">
+                Copy Text
+            </button>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    function convertCase(type){
+        const inputText = document.getElementById('inputText');
+        let text = inputText.value;
+
+        switch(type){
+            case 'uppercase':
+                inputText.value = text.toUpperCase();
+                break;
+            case 'lowercase':
+                inputText.value = text.toLowerCase();
+                break;
+            case 'capitalize':
+                inputText.value = text.replace(/\b\w/g, char => char.toUpperCase());
+                break;
+            case 'toggle':
+                inputText.value = Array.from(text).map(char => char === char.toUpperCase() ? char.toLowerCase() : char.toUpperCase()).join('');
+                break;
+        }
+    };
+    function copyText(){
+        const inputText = document.getElementById('inputText');
+        inputText.select();
+        document.execCommand('copy');
+        document.getElementById('copiedMessage').textContent = 'Text copied to clipboard!';
+    }
+</script>
+<style>
+    .premium-bg{
+        background-color: #2a2a72;
+        background-image: linear-gradient(315deg, #2a2a72 0%, #009ffd 74%);
+    }
+    .btn-hover:hover{
+        background-color: #05b3a4;
+    }
+    .active-mode{
+        background-color: #1e293b;
+    }
+</style>

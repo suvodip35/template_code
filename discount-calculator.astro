@@ -1,0 +1,93 @@
+<div class="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 min-h-screen flex items-center justify-center p-6">
+    <div class="bg-white shadow-2xl rounded-xl p-8 w-full max-w-md">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">
+            Dynamic Discount Calculator
+        </h1>
+        <div class="mb-4">
+            <label for="originalPrice" class="block text-gray-800 font-medium mb-2">
+                Original Price:
+            </label>
+            <input 
+                type="number"
+                id="originalPrice"
+                placeholder="Enter original price"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-pink-500 transition-shadow" 
+            />
+        </div>
+        <div class="mb-4">
+            <label for="discountPercentage" class="block text-gray-800 font-medium mb-2">
+                Discount Percentage:
+            </label>
+            <input
+                type="number"
+                id="discountPercentage"
+                placeholder="Enter Discount %"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-pink-500 transition-shadow" 
+            />
+        </div>
+        <div class="mb-4">
+            <label for="taxPercentage" class="block text-gray-800 font-medium mb-2">
+                Tax Percentage:
+            </label>
+            <input
+                type="number"
+                id="taxPercentage"
+                placeholder="Enter tax %"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-pink-500 transition-shadow" 
+            />
+        </div>
+        <div class="mb-4">
+            <label for="currency" class="block text-gray-800 fomt-medium mb-2">
+                currency:
+            </label>
+            <select
+                id="currency"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500">
+                <option value="$">USD ($)</option>
+                <option value="€">EUR (€)</option>
+                <option value="£">GBP (£)</option>
+            </select>
+        </div>
+        <div id="result" class="mt-6 text-center hidden">
+            <p class="text-lg font-medium text-gray-800">
+                Final Price
+            </p>
+            <div id="finalPriceDisplay" class="text-4xl font-extrabold bg-gradient-to-r from-green-400 to-teal-500 text-transparent bg-clip-text mt-2">
+                $0.00
+            </div>
+            <p id="savingDisplay" class="text-sm text-gray-600 mt-2">
+                You saved: $0.00
+            </p>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    const originalPriceInput = document.getElementById('originalPrice');
+    const discountPercentageInput = document.getElementById('discountPercentage');
+    const taxPercentageInput = document.getElementById('taxPercentage');
+    const currencySelect = document.getElementById('currency');
+    const resultSection = document.getElementById('result');
+    const finalPriceDisplay = document.getElementById('finalPriceDisplay');
+    const savingsDisplay = document.getElementById('savingDisplay');
+    
+    function calculatePrice(){
+        const originalPrice = parseFloat(originalPriceInput.value) || 0;
+        const discountPercentage = parseFloat(discountPercentageInput.value) || 0;
+        const taxPercentage = parseFloat(taxPercentageInput.value) || 0;
+        const currency = currencySelect.value;
+
+        const discountAmount = (originalPrice * discountPercentage) / 100;
+        const discountedPrice = originalPrice - discountAmount;
+        const taxAmount = (discountedPrice * taxPercentage) / 100;
+        const finalPrice = discountedPrice + taxAmount;
+
+        finalPriceDisplay.textContent = `${currency}${finalPrice.toFixed(2)}`;
+        savingsDisplay.textContent = `You saved: ${currency}${discountAmount.toFixed(2)}`;
+        resultSection.classList.remove('hidden');
+    }
+
+    [originalPriceInput, discountPercentageInput, taxPercentageInput, currencySelect].forEach(input => {
+        input.addEventListener('input', calculatePrice);
+    });
+    calculatePrice();
+</script>

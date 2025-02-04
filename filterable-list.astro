@@ -1,0 +1,74 @@
+<div class="flex flex-col items-center p-5 gradient-background min-h-screen">
+    <h2 class="text-4xl font-bold mb-4 text-white ">
+        Filterable List
+    </h2>
+    <div class="flex items-center mb-4">
+        <input 
+            type="text" 
+            name="" 
+            id="filterInput"
+            placeholder="Filter Items..."
+            class="border border-white p-2 rounded-l-md w-full max-w-md focus:outline-none
+            focus:ring-2 focus:ring-white bg-white" />
+            <button 
+                id="clearButton"
+                class="bg-blue-600 text-white p-2 rounded-r-md hover:bg-blue-500 transition">
+                Clear
+            </button>
+    </div>
+    <ul id="itemList" class="w-full max-w-md bg-white shadow-lg rounded-lg">
+        <li class="list-item p-3 border-b border-gray-200">Apple</li>
+        <li class="list-item p-3 border-b border-gray-200">Banana</li>
+        <li class="list-item p-3 border-b border-gray-200">Cherry</li>
+        <li class="list-item p-3 border-b border-gray-200">Date</li>
+        <li class="list-item p-3 border-b border-gray-200">Elderberry</li>
+        <li class="list-item p-3 border-b border-gray-200">Fig</li>
+        <li class="list-item p-3 border-b border-gray-200">Grape</li>
+    </ul>
+</div>
+<script is:inline>
+    const filterInput = document.getElementById('filterInput');
+    const itemList = document.getElementById('itemList');
+    const items = Array.from(itemList.getElementsByTagName('li'));
+    const clearButton = document.getElementById('clearButton');
+
+    filterInput.addEventListener('input', () => {
+        const filterValue = filterInput.value.toLowerCase();
+        items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            const matchedText = text.includes(filterValue);
+
+            item.style.display = matchedText ? '' : 'none';
+
+            if(matchedText){
+                const highlightedHTML = item.textContent.replace(new RegExp(`(${filterValue})`, 'gi'), '<span class="highlight">$1</span>');
+                item.innerHTML = highlightedHTML;
+            }else{
+                item.innerHTML = item.textContent;
+            }
+
+        })
+    });
+    clearButton.addEventListener('click', () => {
+        filterInput.value = '';
+        items.forEach(item => {
+            item.style.display = '';
+            item.innerHTML = item.textContent;
+        })
+    })
+</script>
+<style>
+    .list-item{
+        transition: background-color 0.3s, transform 0.3s;
+    }
+    .list-item:hover{
+        background-color: #F0F9FF;
+        transform: scale(1.02);
+    }
+    .highlight{
+        background-color: #FFDD57;
+    }
+    .gradient-background{
+        background: linear-gradient(to right, #6EE7B7, #3B82F6);
+    }
+</style>

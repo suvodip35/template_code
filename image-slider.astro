@@ -1,0 +1,60 @@
+<div class="bg-gradient-to-r from-purple-400 to-blue-500 flex justify-center items-center h-screen">
+    <div class="relative w-full max-w-2xl aspect-video overflow-hidden rounded-lg shadow-lg">
+        <img id="slideImage" src="" alt="" class="slide active w-full h-full object-cover transition-transform duration-500" />
+        <button  id="prevButton" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white text-gray-800 p-2 rounded-full shadow-lg hover:bg-gray-100 transition">&lt;</button>
+        <button  id="nextButton" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white text-gray-800 p-2 rounded-full shadow-lg hover:bg-gray-100 transition">&gt;</button>
+        <div id="slidetInfo" class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-2 text-center text-white">
+            <h2 class="text-lg font-bold" id="imageTitle">Image Title</h2>
+            <p class="text-sm" id="imageDescription">Description goes here.</p>
+        </div>
+    </div>
+</div>
+<script is:inline>
+        const jsonData = [
+        {
+            "src": "/image1.jpg",
+            "title": "Image Title 1",
+            "description": "Description for image 1 goes here."
+        },
+        {
+            "src": "/image2.jpg",
+            "title": "Image Title 2",
+            "description": "Description for image 2 goes here."
+        },
+        {
+            "src": "/image3.jpg",
+            "title": "Image Title 3",
+            "description": "Description for image 3 goes here."
+        },
+        {
+            "src": "/image4.jpg",
+            "title": "Image Title 4",
+            "description": "Description for image 4 goes here."
+        }
+    ];
+    let currentSlide = 0;
+
+    function updateSlide(){
+        const slide = jsonData[currentSlide];
+        document.getElementById('slideImage').src = slide.src;
+        document.getElementById('imageTitle').textContent = slide.title;
+        document.getElementById('imageDescription').textContent = slide.description;
+    }
+    document.getElementById('nextButton').addEventListener('click', () => {
+        currentSlide = (currentSlide + 1) % jsonData.length;
+        updateSlide();
+    })
+    document.getElementById('prevButton').addEventListener('click', () => {
+        currentSlide = (currentSlide - 1 + jsonData.length) % jsonData.length;
+        updateSlide();
+    })
+    updateSlide();
+</script>
+<style>
+    .slide{
+        display: none;
+    }
+    .active{
+        display: block;
+    }
+</style>

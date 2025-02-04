@@ -1,0 +1,49 @@
+<div class="bg-gradient-to-r from-red-900 via-pink-500 to-purple-900 text-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+    <div class="mb-6 w-full max-w-md">
+        <select name="" id="time-zone-select" class="w-full bg-gray-700 text-white p-3 rounded-md">
+            <option disabled selected>Add a new time zone</option>
+            <option value="America/New_York">New York</option>
+            <option value="Europe/London">London</option>
+            <option value="Asia/Tokyo">Tokyo</option>
+            <option value="Australia/Sydney">Sydney</option>
+            <option value="Europe/Paris">Paris</option>
+            <option value="Asia/Kolkata">Kolkata</option>
+        </select>
+    </div>
+    <div id="clock-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-xl"></div>
+</div>
+<script is:inline>
+    let timeZones = [
+        { name: 'New York', timeZone: 'America/New_York' },
+        { name: 'London', timeZone: 'Europe/London' },
+        { name: 'Tokyo', timeZone: 'Asia/Tokyo' },
+    ];
+    document.getElementById('time-zone-select').addEventListener('change', (event) => {
+        const selectedZone = event.target.value;
+        const selectedName = event.target.options[event.target.selectedIndex].text;
+        addTimeZone(selectedName, selectedZone);
+        event.target.selectedIndex = 0;
+    });
+    function addTimeZone(name, timeZone){
+        timeZones.push({name, timeZone});
+        updateTime();
+    };
+    function updateTime(){
+        const clockContainer = document.getElementById('clock-container');
+        clockContainer.innerHTML = '';
+        timeZones.forEach(zone => {
+            const now = new Date().toLocaleString('en-US', {timeZone: zone.timeZone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false});
+            const card = `
+                <div class="bg-gradient-to-br from-indigo-600 to-purple-700 text-white rounded-lg p-5 shadow-lg transform hover:scale-105 transition-transform duration-300 ease-out hover:shadow-2xl border-2 border-purple-400">
+                    <h2 class="text-2xl font-bold mb-2">${zone.name}</h2>
+                    <p class="text-4xl font-mono">${now}</p>
+                    <p class="text-sm mt-3 italic opacity-75">${zone.timeZone}</p>
+                    
+                </div>
+            `;
+            clockContainer.innerHTML += card;
+        });
+    };
+    setInterval(updateTime, 1000);
+    updateTime();
+</script>

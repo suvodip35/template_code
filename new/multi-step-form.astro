@@ -1,0 +1,180 @@
+<div class="bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full">
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-700">
+            Multi-Step Form
+        </h2>
+        <form id="multiStepForm">
+            <div class="step active" id="step1">
+                <h3 class="text-lg font-semibold mb-4">
+                    Step 1: Personal Information
+                </h3>
+                <label class="block mb-2">
+                    Name:
+                    <input 
+                        type="text"
+                        id="name"
+                        class="border rounded-md p-2 w-full focus:outline-none focus:ring focus:border-blue-300"
+                        required
+                    >
+                </label>
+                <label class="block mb-2">
+                    Email:
+                    <input 
+                        type="email"
+                        id="email"
+                        class="border rounded-md p-2 w-full focus:outline-none focus:ring focus:border-blue-300"
+                        required
+                    >
+                </label>
+                <div class="flex justify-between mt-4">
+                    <button 
+                        type="button"
+                        id="nextBtn"
+                        class="btn bg-blue-600 text-white px-4 py-2 rounded-md">
+                        Next
+                    </button>
+                </div>
+            </div>
+            <div class="step" id="step2">
+                <h3 class="text-lg font-semibold mb-4">
+                    Step 2: Address
+                </h3>
+                <label class="block mb-2">
+                    <input 
+                        type="text" 
+                        id="address"
+                        class="border rounded-md p-2 w-full focus:outline-none focus:ring focus:border-blue-300"
+                        required
+                        >
+                </label>
+                <label class="block mb-2">
+                    <input 
+                        type="text"
+                        id="city"
+                        class="border rounded-md p-2 w-full focus:outline-none focus:ring focus:border-blue-300"
+                        required
+                    >
+                </label>
+                <div class="flex justify-between mt-4">
+                    <button 
+                        type="button"
+                        id="prevBtn"
+                        class="btn bg-gray-400 text-white px-4 py-2 rounded-md">
+                        Back
+                    </button>
+                    <button 
+                        type="submit"
+                        id="nextBtn2"
+                        class="btn bg-blue-600 text-white px-4 py-2 rounded-md">
+                        Next
+                    </button>
+                </div>
+            </div>
+            <div class="step" id="step3">
+                <h3 class="text-lg font-semibold mb-4">
+                    Step 3: Review & Submit
+                </h3>
+                <div class="mb-4">
+                    <p><strong>Name:</strong><span id="reviewName"></span></p>
+                    <p><strong>Email:</strong><span id="reviewEmail"></span></p>
+                    <p><strong>Address:</strong><span id="reviewAddress"></span></p>
+                    <p><strong>City:</strong><span id="reviewCity"></span></p>
+                </div>
+                <div class="flex justify-between mt-4">
+                    <button
+                        type="button"
+                        id="prevBtn2"
+                        class="btn bg-gray-400 text-white px-4 py-2 rounded-md">
+                        Back
+                    </button>
+                    <button 
+                        type="submit"
+                        id="submitBtn"
+                        class="btn bg-green-600 text-white px-4 py-2 rounded-md">
+                        Submit
+                    </button>
+                </div>
+                <p id="submitAlert" class="text-green-500 font-bold mt-4"></p>
+            </div>
+        </form>
+    </div>
+</div>
+<script is:inline>
+  const nextBtn = document.getElementById('nextBtn');
+  const nextBtn2 = document.getElementById('nextBtn2');
+  const prevBtn = document.getElementById('prevBtn');
+  const prevBtn2 = document.getElementById('prevBtn2');
+  const form = document.getElementById('multiStepForm');
+
+    let currentStep = 0;
+    const steps = document.querySelectorAll('.step');
+
+    function showStep(step){
+        steps.forEach((s, index) => {
+            s.classList.remove('active');
+            if(index === step){
+                s.classList.add('active');
+            }
+        });
+    }
+    nextBtn.addEventListener('click', () => {
+        if(validateStep(currentStep)){
+            currentStep++;
+            showStep(currentStep);
+            updateReview()
+        }
+    });
+    nextBtn2.addEventListener('click', () => {
+        if(validateStep(currentStep)){
+            currentStep++;
+            showStep(currentStep);
+            updateReview();
+        }
+    });
+    prevBtn.addEventListener('click', () => {
+        currentStep--;
+        showStep(currentStep);
+    });
+    prevBtn2.addEventListener('click', () => {
+        currentStep--;
+        showStep(currentStep);
+    });
+    function validateStep(step){
+        const inputs = steps[step].querySelectorAll('input');
+        let valid = true;
+        inputs.forEach(input => {
+            if(!input.reportValidity()){
+                valid = false;
+            } 
+        });
+        return valid;
+    };
+    function updateReview(){
+        document.getElementById('reviewName').textContent = document.getElementById('name').value;
+        document.getElementById('reviewEmail').textContent = document.getElementById('email').value;
+        document.getElementById('reviewAddress').textContent = document.getElementById('address').value;
+        document.getElementById('reviewCity').textContent = document.getElementById('city').value;
+    };
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        document.getElementById('submitAlert').innerHTML = 'Form submitted successfully';
+    })
+</script>
+<style>
+    .step{
+        display: none;
+    }
+    .step.active{
+        display: block;
+    }
+    .btn{
+        transition: background-color 0.3s, transform 0.2s;
+    }
+    .btn:hover{
+        transform: scale(1.05);;
+    }
+    .btn:focus{
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(66, 153, 225, 0.5);
+    }
+</style>

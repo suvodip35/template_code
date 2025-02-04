@@ -1,0 +1,131 @@
+<div class="bg-gray-900 flex items-center justify-center min-h-screen text-white">
+    <div class="container max-w-lg mx-auto p-8 bg-gray-800 rounded-xl shadow-2xl">
+        <h1 class="text-3xl font-extrabold text-center text-indigo-300 mb-8">
+            Interactive Photo Filter Tool
+        </h1>
+        <div class="flex justify-center mb-6">
+            <input
+                type="file" 
+                id="image-upload"
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg cursor-pointer focus:outline-none"
+            />
+        </div>
+        <div class="flex justify-center mb-6">
+            <img 
+                id="image-preview" 
+                class="image-preview max-w-full rounded-full rounded-lg shadow-xl" 
+            />
+        </div>
+        <div class="space-y-6">
+            <div class="flex justify-between items-center mb-4">
+                <label for="brightness" class="text-indigo-300 text-lg">
+                    Brightness
+                </label>
+                <input
+                    type="range"
+                    id="brightness"
+                    min="0"
+                    max="2"
+                    step="0.01"
+                    value="1"
+                    class="slider w-2/3 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-lg cursor-pointer h-2" 
+                />
+            </div>
+            <div class="flex justify-between items-center mb-4">
+                <label for="contrast" class="text-indigo-300 text-lg">
+                    Contrast
+                </label>
+                <input
+                    type="range"
+                    id="contrast"
+                    min="0"
+                    max="2"
+                    step="0.01"
+                    value="1"
+                    class="slider w-2/3 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-lg cursor-pointer h-2" 
+                />
+            </div>
+            <div class="flex justify-between items-center mb-4">
+                <label for="saturation" class="text-indigo-300 text-lg">
+                    Saturation
+                </label>
+                <input
+                    type="range"
+                    id="saturation"
+                    min="0"
+                    max="2"
+                    step="0.01"
+                    value="1"
+                    class="slider w-2/3 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-lg cursor-pointer h-2" 
+                />
+            </div>
+            <div class="flex justify-between items-center mt-6">
+                <button 
+                    id="download-btn"
+                    class="bg-green-500 text-white py-2 px-6 rounded-lg font-semibold text-lg hover:bg-green-400 transition">
+                    Download Image
+                </button>
+                <button
+                    id="reset-btn"
+                    class="bg-red-500 text-white py-2 px-6 rounded-lg font-semibold text-lg hover:bg-red-400 transition">
+                    Reset Filters
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    const imageUpload = document.getElementById('image-upload');
+    const imagePreview = document.getElementById('image-preview');
+    const brightnessControl = document.getElementById('brightness');
+    const contrastControl = document.getElementById('contrast');
+    const saturationControl = document.getElementById('saturation');
+    const resetButton = document.getElementById('reset-btn');
+    const downloadButton = document.getElementById('download-btn');
+
+    function applyFilters(){
+        const brightness = brightnessControl.value;
+        const contrast = contrastControl.value;
+        const saturation = saturationControl.value;
+        imagePreview.style.filter = `brightness(${brightness}) contrast(${contrast}) saturate(${saturation})`;
+    };
+    imageUpload.addEventListener('change', function(event){
+        const file = event.target.files[0];
+        if(file){
+            const reader = new FileReader();
+            reader.onload = function (e){
+                imagePreview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    brightnessControl.addEventListener('input', applyFilters);
+    contrastControl.addEventListener('input', applyFilters);
+    saturationControl.addEventListener('input', applyFilters);
+
+    resetButton.addEventListener('click', function(){
+        brightnessControl.value = 1;
+        contrastControl.value = 1;
+        saturationControl.value = 1;
+        imagePreview.style.filter = 'none';
+    });
+
+    downloadButton.addEventListener('click', function(){
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = imagePreview.width;
+        canvas.height = imagePreview.height;
+        ctx.filter = `brightness(${brightnessControl.value}) contrast(${contrastControl.value}) saturate(${saturationControl.value})`;
+        ctx.drawImage(imagePreview, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = 'filtered-image.png';
+        link.click();
+    });
+</script>
+<style>
+    .image-preview{
+        transition: all 0.3s ease-in-out;
+    }
+</style>

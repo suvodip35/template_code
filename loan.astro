@@ -1,0 +1,102 @@
+<div class="bg-gradient-to-r from-blue-500 to-green-500 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg transition-all">
+        <h1 class="text-3xl font-semibold text-center text-gray-800 mb-6">
+            Loan EMI Calculator
+        </h1>
+        <div class="relative">
+            <label
+                for="loanAmount"
+                class="block text-lg text-gray-700">
+                Loan Amount
+            </label>
+            <input
+                oninput="calculateEMI()"
+                type="number"
+                id="loanAmount"
+                class="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter loan amount"
+            />
+            <span class="absolute text-sm text-gray-500 right-3 top-12">₹</span>
+        </div>
+        <div class="relative mt-4">
+            <label
+                for="interestRate"
+                class="block text-lg text-gray-700">
+                Annual Interest Rate (%)
+            </label>
+            <input 
+                oninput="calculateEMI()"
+                type="number"
+                id="interestRate"
+                class="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter interest rate"
+            />
+            <span class="absolute text-sm text-gray-500 right-3 top-12">%</span>
+        </div>
+        <div class="relative mt-4">
+            <label
+                for="loanTerm"
+                class="block text-lg text-gray-700">
+                Loan Term (Years)
+            </label>
+            <input
+                oninput="calculateEMI()"
+                type="number"
+                id="loanTerm"
+                class="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter loan term in years"
+            />
+            <span class="absolute text-sm text-gray-500 right-3 top-12">Years</span>
+        </div>
+        <p id="errorMessage" class="text-red-500 text-sm mt-4 hidden">
+            Please fill in all fields correctly.
+        </p>
+        <div class="mt-6 flex justify-between items-center gap-4">
+            <button
+                onclick="calculateEMI()"
+                class="w-1/2 py-3 bg-blue-600 text-white text-lg rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:lring-blue-500">
+                Calculate EMI
+            </button>
+            <button
+                onclick="resetFields()"
+                class="w-1/2 py-3 bg-red-500 text-white text-lg rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                Reset
+            </button>
+        </div>
+        <div id="result" class="mt-6 hidden">
+            <p class="text-xl font-semibold text-gray-800">
+                Your EMI is: <span id="emiAmount" class="text-green-600"></span>
+            </p>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    function calculateEMI(){
+        const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+        const interestRate = parseFloat(document.getElementById('interestRate').value);
+        const loanTerm = parseFloat(document.getElementById('loanTerm').value);
+        const errorMessage = document.getElementById('errorMessage');
+        const resultContainer = document.getElementById('result');
+        const emiAmount = document.getElementById('emiAmount');
+
+        errorMessage.classList.add('hidden');
+        resultContainer.classList.add('hidden');
+        if(isNaN(loanAmount) || isNaN(interestRate) || isNaN(loanTerm) || loanAmount <= 0 || interestRate <= 0 || loanTerm <= 0){
+            errorMessage.classList.remove('hidden');
+            return;
+        }
+        const monthlyRate = interestRate / 100 / 12;
+        const loanTermMonths = loanTerm * 12;
+        const emi = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, loanTermMonths)) / (Math.pow(1 + monthlyRate, loanTermMonths) - 1);
+        emiAmount.textContent = emi.toFixed(2);
+        resultContainer.classList.remove('hidden');
+    };
+    function resetFields(){
+        document.getElementById('loanAmount').value = '';
+        document.getElementById('interestRate').value = '';
+        document.getElementById('loanTerm').value = '';
+        document.getElementById('emiAmount').textContent = '';
+        document.getElementById('result').classList.add('hidden');
+        document.getElementById('errorMessage').classList.add('hidden');
+    }
+</script>

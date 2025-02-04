@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matching Game</title>
+    <style>
+        .card{
+            transition: transform 0.3s;
+        }
+        .card.flipped{
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+        <h2 class="text-3xl font-bold mb-6 text-center text-purple-700">
+            Matching Game
+        </h2>
+        <div class="flex justify-between mb-4">
+            <div id="score" class="text-lg font-semibold">Score: 0</div>
+            <div id="timer" class="text-lg font-semibold">Time: 0</div>
+        </div>
+        <div id="gameBoard" class="grid grid-cols-4 gap-4 mb-4"></div>
+        <button id="restartBtn" class="bg-purple-500 hover:bg-purple-700 text-white 
+            font-bold py-2 px-4 rounded w-full hidden">
+            Restart Game
+        </button>
+        <div id="message" class="text-lg font-semibold text-center mt-4 text-red-500"></div>
+    </div>
+    
+    <script is:inline>
+        const gameBoard = document.getElementById('gameBoard');
+        const restartBtn = document.getElementById('restartBtn');
+        const messageDiv = document.getElementById('message');
+        const scoreDiv = document.getElementById('score');
+        const timerDiv = document.getElementById('timer');
+
+        let cards = [
+        '🍎', '🍌', '🍇', '🍊', 
+            '🍎', '🍌', '🍇', '🍊'
+        ];
+        let cardElements = [];
+        let selectedCards = [];
+        let matchedCount = 0;
+        let score = 0;
+        let timer;
+        let seconds = 0;
+
+        function shuffle(array){
+            for(let i = array.length - 1; i > 0; i--){
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function createCard(card){
+            const cardElement = document.createElement('div');
+            cardElement.classList = `card bg-gray-200 flex items-center justify-center text-4xl cursor-pointer h-16 rounded-lg`;
+            cardElement.dataset.cardValue = card;
+            cardElement.innerHTML = '?';
+            cardElement.addEventListener('click', flipCard);
+            return cardElement;
+        };
+        function flipCard(){
+            if(selectedCards.length < 2){
+                this.classList.add('flipped');
+                const cardValue = this.dataset.cardValue;
+                this.innerHTML = cardValue;
+                selectedCards.push(this);
+                if(selectedCards.length === 2){
+                    setTimeout(checkMatch, 1000);
+                }
+            }
+        }
+        function checkMatch(){
+            const [card1, card2] = selectedCards;
+            if(card1.dataset.cardValue === card2.dataset.cardValue){
+                matchedCount +=2;
+                score += 10;
+                scoreDiv.textContent = `Score: ${score}`;
+                if(matchedCount === cards.length){
+                    messageDiv.textContent = `You've matched add cards!`;
+                    clearInterval(timer);
+                    restartBtn.classList.remove('hidden')
+                }
+            } else{
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+                card1.innerHTML = '?';
+                card2.innerHTML = '?';
+                score -= 2;
+                scoreDiv.textContent = `Score: ${score}`;
+            }
+            selectedCards = [];
+        };
+        function startTimer(){
+            timer = setInterval(() => {
+                seconds++;
+                timerDiv.textContent = `Time: ${seconds}`
+            }, 1000);
+        }
+        function startGame(){
+            gameBoard.innerHTML = '';
+            cards = shuffle(cards);
+            matchedCount = 0;
+            selectedCards = [];
+            score = 0;
+            seconds = 0;
+            scoreDiv.textContent = `Score: ${score}`;
+            timerDiv.textContent = `Time: ${seconds}`;
+            messageDiv.textContent = '';
+            restartBtn.classList.add('hidden');
+            cards.forEach(card => {
+                const cardElement = createCard(card);
+                gameBoard.appendChild(cardElement);
+                cardElements.push(cardElement);
+            });
+            startTimer();
+        };
+        restartBtn.addEventListener('click', startGame);
+        startGame();
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<div class="flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md transition-all duration-300">
+        <h2 class="text-2xl font-bold mb-4 text-center text-blue-600">
+            Weather App
+        </h2>
+        <input 
+            type="text" 
+            id="cityInput" 
+            placeholder="Enter City" 
+            class="border p-2 w-full mb-4 rounded focus:outline-none
+            focus:ring-2 focus:ring-blue-500" />
+            <button id="getWeatherButton" class="bg-blue-500 hover:bg-blue-700 
+                text-white font-bold py-2 px-4 rounded w-full transition duration-300">
+                Get Weather Info
+            </button>
+            <div id="loadingIndicator" class="hidden text-center text-blue-500 mt-4 loading">
+                Loading...
+            </div>
+            <div id="weatherInfo" class="mt-4 hidden">
+                <h3 class="text-xl font-bold text-center mt-1" id="cityName"></h3>
+                <p id="temperature" class="text-lg text-center mt-1"></p>
+                <p id="weatherDescription" class="text-gary-700 text-center"></p>
+            </div>
+            <p id="errorMessage" class="text-red-500 mt-4 hidden text-center"></p>
+    </div>
+</div>
+<script is:inline>
+    const getWeatherButton = document.getElementById('getWeatherButton');
+    const cityInput = document.getElementById('cityInput');
+    const weatherInfo = document.getElementById('weatherInfo');
+    const cityName = document.getElementById('cityName');
+    const temperature = document.getElementById('temperature');
+    const weatherDescription = document.getElementById('weatherDescription');
+    const errorMessage = document.getElementById('errorMessage');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+
+    getWeatherButton.addEventListener('click', async () => {
+        const city = cityInput.value.trim();
+        if(!city){
+            errorMessage.textContent = 'Please enter a city name.';
+            errorMessage.classList.remove('hidden');
+            weatherInfo.classList.add('hidden');
+            return;
+        }
+        const apiKey = 'e8b03f2b305e838d1337e457e18b7df9';
+        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+
+        weatherInfo.classList.add('hidden');
+        errorMessage.classList.add('hidden');
+        loadingIndicator.classList.remove('hidden');
+
+        try{
+            const response = await fetch(apiUrl);
+            if(!response.ok) throw new Error('City Not Found');
+            const data = await response.json();
+
+            cityName.textContent = data.name;
+            temperature.textContent = `${data.main.temp} °C`;
+            weatherDescription.textContent = data.weather[0].description.charAt(0).toUpperCase() + data.weather[0].description.slice(1);
+            weatherInfo.classList.remove('hidden');
+            loadingIndicator.classList.add('hidden');
+        } catch(error){
+            errorMessage.textContent = error.message;
+            errorMessage.classList.remove('hidden');
+            loadingIndicator.classList.add('hidden');
+        }
+    });
+</script>
+<style>
+    @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
+    body{
+        background: linear-gradient(135deg, #6ee7b7, #3b82f6);
+    }
+    .loading{
+        animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse{
+        0%{
+            opacity: 1;
+        }
+        50%{
+            opacity: 0.5;
+        }
+        100%{
+            opacity: 1;
+        }
+    }
+</style>

@@ -1,0 +1,355 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+<Layout title="Guided Letter Tracing Game">
+    <main>
+        <div>
+        </div>
+        <script is:inline src="/assets/js/phaser_3.60.0.js"></script>
+    </main>
+</Layout>
+<script src="/saveGameData.js" is:inline></script>
+<script is:inline> 
+  const isMobile = window.innerWidth <= 768; 
+  const drawingZone = {
+    x: isMobile ? 0 : window.innerWidth / 4,
+    y: window.innerHeight / 4,
+    width: isMobile ? window.innerWidth : window.innerWidth / 2,
+    height: window.innerHeight / 2,
+  };
+
+  const config = {
+    type: Phaser.AUTO,
+    width: window.innerWidth,
+    height: window.innerHeight,
+    backgroundColor: 0xFFFFFF,
+    scale: {
+      mode: Phaser.Scale.FIT,
+      autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
+    },
+    scene: {
+      preload: preload,
+      create: create,
+      update: update
+    }
+  };
+  // backgroundImage.png
+  const game = new Phaser.Game(config);
+  const customWidth = window.innerWidth;
+  const customHeight = window.innerHeight;
+  let firstLayer, secondLayer, thirdLayer;
+  let graphics;
+  let isDrawing = false;
+  let formattedDateTime;
+  let animatedLetter;
+  let scoreTotal = 0;
+  
+  // const urls = window.location.href;
+  // const gameNames = urls.split('/');
+  // const gameTypes = gameNames[3].split('?id=');
+  // console.log(gameTypes[0]);
+
+
+    if(isMobile){
+      cloudeSize = 200;
+      cloudHeight = 340;
+      canvasScale = 0.14
+      canvasHeight = 35; 
+      letterHeight = 30;
+      letterScale = 1.1;
+      backgroundScale = 0.8;
+      sunScale = 0.1;
+      sunScalePlus = 0.15;
+      sunWidth = 70;
+      sunHeight = 70;
+      animated0videoScale = 0.6;
+      animated0Height = 32;
+      helpButtonHeight = customHeight / 1.1;
+      helpButtonWidth = customWidth / 2 + 10;
+
+      startButtonHeight = customHeight / 1.1;
+      startButtonWidth = customWidth / 2 - 100;
+      submitWidth = customWidth / 2 - 100;
+      submitHeight = customHeight / 1.1;
+      noticeWidth = window.innerWidth * 0.5 - 100;
+      noticeHeight = window.innerHeight * 0.38;
+
+    } else{
+      cloudeSize = 500;
+      cloudHeight = 250;
+      canvasScale = 0.195;
+      canvasHeight = 20;
+      letterHeight = 10;
+      letterScale = 1.2;
+      backgroundScale = 1;
+      sunScale  = 0.2;
+      sunScalePlus = 0.25;
+      sunWidth = 200;
+      sunHeight = 100;
+      animated0videoScale = 0.70;
+      animated0Height = 20;
+      helpButtonHeight = customHeight / 2 + 40;
+      helpButtonWidth = customWidth / 1.32;
+
+      startButtonHeight = customHeight / 2 - 20;
+      startButtonWidth = customWidth / 1.32;
+      submitWidth = customWidth / 1.32;
+      submitHeight = customHeight / 2 - 20;
+      noticeWidth = window.innerWidth * 0.5 - 120;
+      noticeHeight = window.innerHeight * 0.32;
+    }
+    window.onload = function() {
+        currentDate = new Date();
+        formattedDateTime = currentDate.toLocaleString();
+        // console.log("Page loaded on: " + formattedDateTime);
+    };
+    // function gmStartTime() {
+    //   let startTime = new Date();
+    //   let gameStartTime = startTime.toLocaleString();
+    //     console.log("Page loaded on: " + gameStartTime);
+    // };
+  // let hideButton;
+
+  function preload() {
+    this.load.video('animated0', '/assets/animated-letter/number_0.mp4');
+    this.load.svg('number0', '/assets/numeric/n0.svg');
+    this.load.svg('layer1', '/assets/numeric/n0.svg');
+    this.load.audio('audioOne', '/assets/audio/hook-around-close.mp3');
+    this.load.image('topLogo', '/assets/top_logo.png');
+    this.load.svg('succesImage', '/assets/svg/tick.svg');
+    this.load.svg('hintImage', '/assets/svg/hint.svg');
+    this.load.svg('handPointer', '/assets/svg/hand.svg');
+    this.load.image('backgroundImage', '/assets/bg6.png');
+    this.load.image('cloud', '/assets/cloud.png');
+    this.load.image('canvas', '/assets/canvas4.png');
+    this.load.image('sun', '/assets/sun.png');
+    this.load.image('bgMobile', '/assets/bgMobile.png');
+    this.load.image('canvasStand', '/assets/stand2.png');
+  }
+  function create() {
+              submitNotic = this.add.text(window.innerWidth / 2 - 100, window.innerHeight / 2, 'Submitted Successfully', { font: '600 20px Quicksand', fill: 'blue'}).setDepth(3).setVisible(false);
+
+
+      submitButton = this.add.text(submitWidth, submitHeight, "Submit", {
+        font: '900 24px Quicksand',
+        fill: '#05b3a4',
+        backgroundColor : '#7c4c23',
+        padding: {x: 10, y: 10},
+        shadow: {
+          offsetX : 2, 
+          offsetY : 2, 
+          color: '#000',
+          blur: 5,
+          fill: true
+        }
+      });
+
+      submitButton.setVisible(false);
+      submitButton.setInteractive().on('pointerdown', () => {
+        // console.log('Clicked');
+        submitUserData(this);
+      })
+    this.add.image(customWidth / 2 * 1.6 - 0.5, 50, 'topLogo');
+    this.add.text(customWidth / 10, 20, "Number : 0", { font: '700 40px quicksand', fill: '#05b3a4', });
+    // this.add.image(customWidth / 2, 50, 'cloud').setDepth(1.9);
+  
+    const cloud = this.add.tileSprite(customWidth / 2, customHeight / 2 - cloudHeight, customWidth, cloudeSize, 'cloud').setAlpha(0.9);
+    cloud.setDepth(-1.8);
+    const scrollSpeed = 0.5;
+    this.time.addEvent({
+      loop: true,
+      callback: () => {
+        cloud.tilePositionX += scrollSpeed;
+      },
+      delay: 16, // Adjust the delay for the desired scrolling speed
+    });
+
+    const sun = this.add.sprite(customWidth - sunWidth, sunHeight, 'sun').setScale(sunScale).setDepth(-1.9);
+
+    const scaleFactor = sunScalePlus; // Scale factor (2 means double the size)
+    const duration = 3000; // Duration of the animation in milliseconds
+
+    // Create a scaling tween
+    this.tweens.add({
+      targets: sun,
+      scaleX: scaleFactor,
+      scaleY: scaleFactor,
+      duration: duration,
+      ease: 'Linear',
+      yoyo: true, // Makes the animation play in reverse
+      repeat: -1 // Repeat indefinitely
+    });
+    
+    const backgroundImages = this.add.image(customWidth / 2, customHeight /2, 'backgroundImage').setDepth(-2).setScale(backgroundScale);
+    this.add.image(customWidth / 2, customHeight / 2 + letterHeight, 'number0').setAlpha(0.2).setDepth(0.5).setScale(letterScale);
+    const firstScreen = this.add.image(customWidth / 2, customHeight / 2 + letterHeight, 'number0').setDepth(2).setScale(letterScale);
+    // const firstScreen = this.add.image(customWidth / 2, customHeight / 2 + letterHeight, 'animated0').setDepth(2); canvasStand
+    firstScreen.setVisible(false);
+    // this.add.image(customWidth / 2, customHeight / 2 + canvasHeight, 'canvas').setScale(canvasScale);
+    const canvas = this.add.image(customWidth / 2, customHeight / 2 + canvasHeight, 'canvas').setScale(canvasScale);
+    // Set up a mask for the drawing area based on the canvas dimensions
+    const maskGraphics = this.make.graphics()
+    maskGraphics.fillRect(customWidth / 2 - (canvas.width * canvasScale) / 2, customHeight / 2 + canvasHeight - (canvas.height * canvasScale) / 2, canvas.width * canvasScale, canvas.height * canvasScale);
+    const mask = maskGraphics.createGeometryMask();
+
+    let hideButton = this.add.text(helpButtonWidth, helpButtonHeight, "Let`s Do", {
+        font: '900 24px quicksand',
+        fill: '#05b3a4',
+        backgroundColor: '#7c4c23',
+        padding: { x: 20, y: 10 },
+        borderRadius: '15px', // Border radius
+        shadow: {
+            offsetX: 2, // X offset for the shadow
+            offsetY: 2, // Y offset for the shadow
+            color: '#000', // Shadow color
+            blur: 5, // Shadow blur
+            fill: true // Apply shadow to fill (background color)
+        }
+      });
+    hideButton.setInteractive().on('pointerdown', () => {
+      animatedLetter.stop();
+      isDemoButtonClicked = false;
+      firstScreen.setVisible(false);
+      hideButton.setVisible(false);  // Hide the "Hide" button
+      demoButton.setVisible(true);   // Show the "Demo" button
+      graphics.setVisible(true);
+      animatedLetter.setVisible(false);
+    });
+      hideButton.setVisible(false);
+      let demoButton = this.add.text(helpButtonWidth, helpButtonHeight, "Demo", {
+        font: '900 24px quicksand',
+        fill: '#05b3a4',
+        backgroundColor: '#7c4c23',
+        padding: { x: 20, y: 10 },
+        borderRadius: '15px', // Border radius
+        shadow: {
+            offsetX: 2, // X offset for the shadow
+            offsetY: 2, // Y offset for the shadow
+            color: '#000', // Shadow color
+            blur: 5, // Shadow blur
+            fill: true // Apply shadow to fill (background color)
+        }
+      });
+
+    demoButton.setInteractive().on('pointerdown', () => {
+      animatedLetter.setCurrentTime(0);
+      animatedLetter.play(true);
+      graphics.setVisible(false);
+      firstScreen.setVisible(true);
+      demoButton.setVisible(false);  // Hide the "Demo" button
+      hideButton.setVisible(true);   // Show the "Hide" button
+      animatedLetter.setVisible(true);
+    });
+
+
+      const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
+      const baseFontSize = 24;
+      const responsiveFontSize = (window.innerWidth / 480) * baseFontSize;
+      const descrptText = this.add.text(screenCenterX, 90, 'Let`s learn how to write number : 0', { font: `${responsiveFontSize}px quicksand`, fill: '#7c4c23', fontWeight : 'bold'}).setOrigin(0.5);
+            animatedLetter = this.add.video(customWidth / 2 , customHeight / 2 + animated0Height, 'animated0').setDepth(2).setScale(animated0videoScale);
+            animatedLetter.setLoop(true);
+      // Play the video
+      // animatedLetter.play();
+      animatedLetter.setVisible(false);
+
+      // You can set additional properties for the video, such as loop and mute:
+      animatedLetter.setLoop(true); // Loop the video
+      animatedLetter.setMute(false); // Unmute the video
+      animatedLetter.on('complete', function () {
+      // Video playback is complete
+      // You can add your code here for what to do when the video finishes.
+      });
+
+    let textX, textY;
+
+      firstLayer = this.add.image(customWidth / 2, customHeight / 2 + letterHeight, 'layer1').setScale(letterScale);
+      textX = isMobile ? customWidth / 4 : customWidth * 0.75;
+      textY = isMobile ? customHeight / 5 : customHeight / 2.4;
+      const firstTextLayer = this.add.text(textX, textY, '1. Hook Around Close',{ font: '700 35px quicksand', fill: '#05b3a4'});
+      const audioOneAudio = this.sound.add('audioOne');
+      // audioOneAudio.play();
+      firstLayer.setDepth(1);
+      firstLayer.setAlpha(0.5);
+      firstLayer.setInteractive({ draggable: true });
+
+
+
+        // Add these variables to keep track of start points
+        let firstDragStartPoint = { x: 0, y: 0 };
+
+        // Add this code for firstLayer
+        firstLayer.on('dragstart', (pointer) => {
+        firstDragStartPoint.x = pointer.x;
+        firstDragStartPoint.y = pointer.y;
+        });
+
+        firstLayer.on('drag', (pointer) => {
+        const distance = Phaser.Math.Distance.Between(firstDragStartPoint.x, firstDragStartPoint.y, pointer.x, pointer.y);
+
+        if (distance >= 0) {
+          
+            firstTextLayer.setVisible(false);
+            firstLayer.setAlpha(1);
+        } else {
+            firstLayer.setAlpha(0.5);
+        }
+        });
+       
+
+
+      graphics = this.add.graphics();
+      graphics.setMask(mask);
+      graphics.lineStyle(15, 0xFFFFFF, 2).setDepth(2); // Set line style (width, color, alpha)
+      this.input.on('pointerdown', function (pointer) {
+        isDrawing = true;
+        graphics.moveTo(pointer.x, pointer.y);
+      });
+
+      this.input.on('pointerup', function () {
+        isDrawing = false;
+      });
+
+      this.input.on('pointermove', function (pointer) {
+        if (!isDrawing) return;
+
+        graphics.lineTo(pointer.x, pointer.y);
+        graphics.strokePath();
+      });
+      let startButton = this.add.text(startButtonWidth, startButtonHeight, "Start", {
+      font: '900 24px Quicksand',
+      fill: '#05b3a4',
+      backgroundColor : '#7c4c23',
+      padding: {x: 20, y: 10},
+      shadow: {
+        offsetX : 2, 
+        offsetY : 2, 
+        color: '#000',
+        blur: 5,
+        fill: true
+      }
+    })
+    firstTextLayer.setVisible(false);
+    startButton.setInteractive().on('pointerdown', () => {
+      audioOneAudio.play();
+      // gmStartTime();
+      gamestart = new Date();
+      gameStartTime = gamestart.toLocaleString();
+      // console.log("Page loaded on: " + gameStartTime);
+      firstTextLayer.setVisible(true);
+      animatedLetter.setVisible(false);     
+      firstScreen.setVisible(false);
+      graphics.setVisible(true);
+      hideButton.setVisible(false);
+      demoButton.setVisible(true);
+      startButton.setVisible(false);
+      submitButton.setVisible(true);
+    })
+
+
+  }
+
+function update() {
+
+}
+
+</script>

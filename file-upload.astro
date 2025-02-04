@@ -1,0 +1,77 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-r
+ from-purple-400 via-pink-500 to-red-500">
+    <div class="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">
+            Upload Your Files
+        </h2>
+        <p id="uploadMessage"></p>
+        <div id="dropArea" class="border-2 border-dashed border-teal-500 p-6 rounded-lg text-center cursor-pointer
+            hover:bg-teal-100 transition-all">
+            <p class="text-teal-600">
+                Drag and Drop files or click to upload
+            </p>
+            <input type="file" name="" id="fileInput" class="hidden" multiple />
+        </div>
+        <button id="uploadBtn" class="mt-4 w-full bg-teal-500 text-white font-bold py-2 rounded
+            hover:bg-teal-600 transition">
+            Upload Files
+        </button>
+        <div id="fileList" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </div>
+</div>
+<script is:inline>
+    const dropArea = document.getElementById('dropArea');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    dropArea.addEventListener('click', () => {
+        fileInput.click();
+    });
+    dropArea.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropArea.classList.add('bg-teal-50');
+    });
+    dropArea.addEventListener('dragleave', () => {
+        dropArea.classList.remove('bg-teal-50');
+    });
+    dropArea.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropArea.classList.remove('bg-teal-50');
+        const files = event.dataTransfer.files;
+        handleFiles(files);
+    });
+    fileInput.addEventListener('change', (event) => {
+        const files = event.target.files;
+        handleFiles(files);
+    })
+    uploadBtn.addEventListener('click', () => {
+        document.getElementById('uploadMessage').innerHTML = 'Files Uploaded Successfully! (This is a demo)';
+    });
+    function handleFiles(files){
+        for (const file of files) {
+            const listItem = document.createElement('div');
+            listItem.className = 'flex items-center justify-between p-4 bg-white border border-teal-300 rounded-lg shadow-md transition duration-200 hover:shadow-lg mb-2'
+            
+            const fileName = document.createElement('span');
+            fileName.textContent = file.name;
+            fileName.className = 'text-gray-700 font-semibold';
+            
+            const imgPreview = document.createElement('img');
+            imgPreview.className = 'w-12 h-12 rounded-lg object-cover ml-2';
+            imgPreview.src = URL.createObjectURL(file);
+
+            const removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove';
+            removeButton.className = 'text-red-500 hover:text-red-700 font-semibold';
+            removeButton.onclick = () => {
+                listItem.remove();
+            };
+            listItem.appendChild(fileName);
+            listItem.appendChild(imgPreview);
+            listItem.appendChild(removeButton);
+            fileList.appendChild(listItem);
+        }
+    }
+
+</script>

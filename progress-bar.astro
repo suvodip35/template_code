@@ -1,0 +1,79 @@
+<div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500
+    flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg">
+        <h2 class="text-2xl font-bold text-center mb-4 text-gray-700">
+            Interactive Progress Bar
+        </h2>
+        <div class="w-full bg-gray-200 rounded-full h-6 mb-4 overflow-hidden relative">
+            <div 
+                id="progressBar"
+                class="progress-bar bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 h-full rounded-full"
+                style="width: 0%;">
+            </div>
+            <span
+                id="progressText"
+                class="absolute inset-0 flex items-center justify-center font-bold text-white">
+                0%
+            </span>
+        </div>
+        <div class="flex justify-between space-x-2">
+            <button 
+                id="startButton"
+                class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded transition duration-200">
+                Start
+            </button>
+            <button
+                id="pauseButton"
+                class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 rounded transition duration-200">
+                Pause
+            </button>
+            <button
+                id="resetButton"
+                class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded transition duration-200">
+                Reset
+            </button>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const startButton = document.getElementById('startButton');
+    const pauseButton = document.getElementById('pauseButton');
+    const resetButton = document.getElementById('resetButton');
+
+    let width = 0;
+    let interval;
+
+    const startProgress = () => {
+        if(interval) return;
+        interval = setInterval(() => {
+            if(width >= 100){
+                clearInterval(interval);
+            } else{
+                width++;
+                updateProgressBar();
+            }
+        }, 50);
+    };
+
+    const pauseProgress = () => {
+        clearInterval(interval);
+        interval = null;
+    }
+
+    const resetProgress = () => {
+        pauseProgress();
+        width = 0;
+        updateProgressBar();
+    }
+
+    const updateProgressBar = () => {
+        progressBar.style.width = `${width}%`;
+        progressText.textContent = `${width}%`;
+    }
+
+    startButton.addEventListener('click', startProgress);
+    pauseButton.addEventListener('click', pauseProgress);
+    resetButton.addEventListener('click', resetProgress);
+</script>

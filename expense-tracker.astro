@@ -1,0 +1,117 @@
+<div class="bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-lg w-full max-w-md">
+        <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">
+            Expense Tracker
+        </h2>
+        <div class="mb-4">
+            <label 
+                for="expenseDescription"
+                class="block text-gray-700 font-bold mb-2">
+                Description
+            </label>
+            <input 
+                type="text"
+                id="expenseDescription"
+                class="border rounded w-full py-2 px-3 focus:outline-none focus:ring focus:ring-blue-400"
+                placeholder="Enter expense description">
+        </div>
+        <div class="mb-4">
+            <label 
+                for="expenseAmount"
+                class="block text-gray-700 font-bold mb-2">
+                Amount ($):
+            </label>
+            <input 
+                type="number"
+                id="expenseAmount"
+                placeholder="Enter amount"
+                class="border rounded w-full py-2 px-3 focus:outline-none focus:ring focus:ring-blue-400"
+                step="0.01">
+        </div>
+        <div class="mb-4">
+            <label 
+                for="expenseCategory" 
+                class="block text-gray-700 font-bold mb-2">
+                Category
+            </label>
+            <select 
+                id="expenseCategory" 
+                class="border rounded w-full py-2 px-3 focus:outline-none focus:ring focus:ring-blue-400">
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <button 
+            id="addExpenseBtn"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded w-full mb-4">
+            Add Expense
+        </button>
+        <h3 class="text-xl font-bold mb-2">Expense List:</h3>
+        <ul id="expenseList" class="mb-4"></ul>
+        <div id="totalExpenses" class="text-lg font-bold text-blue-600">
+            Total Expenses: $0.00
+        </div>
+    </div>
+</div>
+<script is:inline>
+    const addExpenseBtn = document.getElementById('addExpenseBtn');
+    const expenseDescription = document.getElementById('expenseDescription');
+    const expenseAmount = document.getElementById('expenseAmount');
+    const expenseCategory = document.getElementById('expenseCategory');
+    const expenseList = document.getElementById('expenseList');
+    const totalExpenses = document.getElementById('totalExpenses');
+
+    let total = 0;
+
+    function updateTotal(){
+        totalExpenses.textContent = `Total Expenses: $${total.toFixed(2)}`;
+    };
+    function createExpenseItem(description, amount, category){
+        const listItem = document.createElement('li');
+        listItem.className = `flex justify-between items-center mb-2 border-b pb-2`;
+        listItem.innerHTML = `<div>
+                <strong>${description}</strong> - $${amount.toFixed(2)} (${category})
+            </div>
+            <div>
+                <button class="text-blue-500 hover:text-blue-700 mr-2" onclick="editExpense(this)">Edit</button>
+                <button class="text-red-500 hover:text-red-700" onclick="removeExpense(this)">Remove</button>
+            </div>`;
+            expenseList.appendChild(listItem);
+    }
+    addExpenseBtn.addEventListener('click', () => {
+        const description = expenseDescription.value.trim();
+        const amount = parseFloat(expenseAmount.value);
+        const category = expenseCategory.value;
+        if(!description || isNaN(amount) || amount <= 0){
+            alert('Please enter a valid description and amount.');
+            return;
+        }
+        total += amount;
+        createExpenseItem(description, amount, category);
+        expenseDescription.value = '';
+        expenseAmount.value = '';
+        expenseCategory.value = 'Food';
+        updateTotal();
+    });
+    function editExpense(button){
+        const listItem = button.closest('li');
+        const description = listItem.querySelector('strong').textContent;
+        const amount = parseFloat(listItem.textContent.split('- $')[1].split(' (')[0]);
+        expenseDescription.value = description;
+        expenseAmount.value = amount;
+        expenseCategory.value = listItem.textContent.split('(')[1].split(')')[0];
+        total -= amount;
+        listItem.remove();
+        updateTotal();
+    }
+    function removeExpense(button){
+        const listItem = button.closest('li');
+        const amount = parseFloat(listItem.textContent.split('- $')[1].split(' (')[0]);
+        total -= amount;
+        listItem.remove();
+        updateTotal();
+    }
+</script>

@@ -1,0 +1,138 @@
+<div class="bg-gradient-to-r from-red-600 via-pink-600 to-purple-600 text-white font-sans min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-lg p-6 bg-white text-gray-800 rounded-lg shadow-lg">
+        <div class="text-center py-6">
+            <h1 class="text-4xl font-extrabold mb-3">
+                Interactive Map Tool
+            </h1>
+            <p class="text-lg">
+                Set a location, adjust the radius, and explore dynamically.
+            </p>
+        </div>
+        <div class="mb-4">
+            <label for="location-input" class="block text-sm font-semibold mb-1">
+                Search Location:
+            </label>
+            <div class="flex items-center space-x-2">
+                <input
+                    type="text"
+                    id="location-input"
+                    placeholder="Enter a location (e.g., New York)"
+                    class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <button
+                    id="reset-btn"
+                    class="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400">
+                    Reset
+                </button>
+            </div>
+            <p id="location-message" class="message mt-2 text-red-500"></p>
+        </div>
+        <div class="mb-4">
+            <label for="radius-input" class="block text-sm font-semibold mb-1">
+                Radius (km)
+            </label>
+            <div class="flex items-center space-x-2">
+                <input
+                    type="range"
+                    id="radius-input"
+                    min="1"
+                    max="50"
+                    value="2"
+                    class="w-full accent-blue-500"
+                />
+                <span id="radius-value" class="text-lg font-semibold">
+                    2 km
+                </span>
+            </div>
+        </div>
+        <div id="map" class="rounded-lg shadow-lg h-[400px]"></div>
+        <div class="mt-4 text-center">
+            <p 
+                class="text-sm text-gray-600"
+                id="info">
+                Drag the marker to adjust the location.
+            </p>
+        </div>
+    </div>
+</div>
+<script is:inline src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+<script is:inline>
+    document.addEventListener('DOMContentLoaded', function (){
+        const map = L.map('map').setView([22.5726, 88.3639], 10);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+        }).addTo(map);
+        let marker = L.marker([22.5726, 88.3639], {draggable: true}).addTo(map);
+        let circle = L.circle([22.5726, 88.3639], {
+            radius: 10000,
+            color: '#4f46e5',
+            fillColor: '#a5b4fc',
+            fillOpacity: 0.4,
+        }).addTo(map);
+        function updateInfo(latlng, radius){
+            if(latlng && latlng.lat !== undefined && latlng.lng !== undefined){
+                document.getElementById('info').innerText = `Radius: ${radius} km, Location: ${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}`;
+            } else{
+                document.getElementById('info').innerText = `Invalid location data`;
+            }
+        }
+        marker.on('move', function(e){
+            const newPos = e.target.getLatLng();
+            circle.setLatLng(newPos);
+            updateInfo(newPos, circle.getRadius() / 1000);
+        });
+
+        const radiusInput = document.getElementById('radius-input');
+        const radiusValue = document.getElementById('radius-value');
+        radiusInput.addEventListener('input', function(){
+            const newRadius = radiusInput.value * 1000;
+            circle.setRadius(newRadius);
+            radiusValue.innerText = `${radiusInput.value} km`;
+            updateInfo(marker.getLatLng(), radiusInput.value);
+        });
+        const locationInput = document.getElementById('location-input');
+        const locationMessage = document.getElementById('location-message');
+        locationInput.addEventListener('keypress', function (e){
+            if(e.key === 'Enter'){
+                const location = e.target.value.trim();
+                if(!location){
+                    locationMessage.innerText = 'Please enetr a location';
+                    return;
+                }
+
+                fetch(`https://nominatim.openstreetmap.org/search?q=${location}&format=json&limit=1`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data.length > 0){
+                        const lat = parseFloat(data[0].lat);
+                        const lon = parseFloat(data[0].lon);
+                        const newLatLng = {lat, lng: lon};
+                        marker.setLatLng(newLatLng);
+                        circle.setLatLng(newLatLng);
+                        map.setView(newLatLng, 12);
+                        updateInfo(newLatLng, circle.getRadius() / 1000);
+                        locationMessage.innerText = '';
+                    } else{
+                        locationMessage.innerText = 'Location not found. Please try again.';
+                    }
+                })
+                .catch(() => {
+                    locationMessage.innerText = 'An error occurred while fetching location data.';
+                });
+            }
+        });
+        document.getElementById('reset-btn').addEventListener('click', function (){
+            const defaultLatLng = {lat: 22.5726, lng: 88.3639};
+            const defaultRadius = 2;
+            marker.setLatLng(defaultLatLng);
+            circle.setLatLng(defaultLatLng).setRadius(defaultRadius * 1000);
+            map.setView(defaultLatLng, 10);
+            radiusInput.value = defaultRadius;
+            radiusInput.innerText = `${defaultRadius} km`;
+            updateInfo(defaultLatLng, defaultRadius);
+            locationMessage.innerText = '';
+        });
+        updateInfo(marker.getLatLng(), circle.getRadius() / 1000);
+    });
+</script>

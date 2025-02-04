@@ -1,0 +1,107 @@
+<div
+    class="bg-teal-100 flex items-center justify-center min-h-screen">
+    <div
+        class="w-full max-w-3xl bg-white shadow-lg rounded-lg p-6">
+        <h1 
+            class="text-3xl font-bold mb-6 text-teal-800">
+            Image Gallery
+        </h1>
+        <div
+            class="mb-6">
+            <img 
+            id="main-image"
+            src="/img/g8.jpg" 
+            alt="main-image"
+            class="w-full h-auto rounded-lg shadowlg gallery-image cursor-pointer"
+            >
+        </div>
+        <div
+            class="grid grid-cols-3 gap-4">
+            <img 
+                src="/img/g.jpg" 
+                alt="Thumbnail"
+                class="thumbnail cursor-pointer w-full h-auto rounded-lg"
+            />
+            <img 
+                src="/img/g2.jpg" 
+                alt="Thumbnail"
+                class="thumbnail cursor-pointer w-full h-auto rounded-lg"
+            />
+            <img 
+                src="/img/g3.jpg" 
+                alt="Thumbnail"
+                class="thumbnail cursor-pointer w-full h-auto rounded-lg"
+            />
+            <img 
+                src="/img/g5.jpg" 
+                alt="Thumbnail"
+                class="thumbnail cursor-pointer w-full h-auto rounded-lg"
+            />
+            <img 
+                src="/img/g6.jpg" 
+                alt="Thumbnail"
+                class="thumbnail cursor-pointer w-full h-auto rounded-lg"
+            />
+            <img 
+                src="/img/g7.jpg" 
+                alt="Thumbnail"
+                class="thumbnail cursor-pointer w-full h-auto rounded-lg"
+            />
+        </div>
+
+        <div
+            id="lightbox"
+            class="lightbox">
+            <img
+                id="lightbox-image"
+                src="" alt="">
+        </div>
+    </div>
+</div>
+<script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        const mainImage = document.getElementById('main-image');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightbox-image');
+
+        thumbnails.forEach( thumb => {
+            thumb.addEventListener('click', () => {
+                mainImage.src = thumb.src;
+            });
+        });
+
+        mainImage.addEventListener('click', () => {
+            lightbox.classList.add('active');
+            lightboxImage.src = mainImage.src;
+        });
+
+        lightbox.addEventListener('click', () => {
+            lightbox.classList.remove('active');
+        })
+    })
+</script>
+<style>
+    .gallery-image{
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .lightbox{
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+    .lightbox img{
+        max-width: 90%;
+        max-height: 90%;
+        border-radius: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    .lightbox.active{
+        display: flex;
+    }
+</style>

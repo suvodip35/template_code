@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Price Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans flex items-center justify-center min-h-screen">
+
+  <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-4 text-center">📈 Stock Price Tracker</h2>
+    <div id="stockContainer" class="space-y-4">
+      <!-- Stock items will be dynamically added here -->
+    </div>
+  </div>
+
+  <script is:inline>
+    // Sample stock data for demonstration
+    const stocks = [
+      { symbol: 'AAPL', name: 'Apple Inc.' },
+      { symbol: 'GOOGL', name: 'Alphabet Inc.' },
+      { symbol: 'AMZN', name: 'Amazon.com Inc.' }
+    ];
+
+    // Mock API call to simulate fetching stock prices
+    function fetchStockPrice(symbol) {
+      // Replace this with actual API call
+      return new Promise((resolve) => {
+        const price = (Math.random() * 1000).toFixed(2);
+        const change = ((Math.random() - 0.5) * 2).toFixed(2); // Random price change
+        resolve({ price, change });
+      });
+    }
+
+    // Function to update stock prices
+    async function updateStockPrices() {
+      const stockContainer = document.getElementById('stockContainer');
+      stockContainer.innerHTML = ''; // Clear the container
+
+      for (const stock of stocks) {
+        const { price, change } = await fetchStockPrice(stock.symbol);
+        const changeIndicator = change >= 0 ? 'text-green-500' : 'text-red-500';
+        const changeSymbol = change >= 0 ? '+' : '';
+
+        // Create stock item element
+        const stockItem = document.createElement('div');
+        stockItem.classList = 'p-4 bg-gray-50 rounded flex justify-between items-center shadow-sm';
+
+        stockItem.innerHTML = `
+          <div>
+            <div class="font-semibold text-gray-700">${stock.name} (${stock.symbol})</div>
+            <div class="text-gray-500 text-sm">${new Date().toLocaleTimeString()}</div>
+          </div>
+          <div class="text-right">
+            <div class="text-xl font-bold">$${price}</div>
+            <div class="text-sm ${changeIndicator}">${changeSymbol}${change}</div>
+          </div>
+        `;
+        
+        stockContainer.appendChild(stockItem);
+      }
+    }
+
+    // Initial load and update every 5 seconds
+    updateStockPrices();
+    setInterval(updateStockPrices, 5000);
+
+  </script>
+
+</body>
+</html>

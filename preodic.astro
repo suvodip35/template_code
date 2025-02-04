@@ -1,0 +1,78 @@
+<div class="bg-gradient-to-br from-red-500 via-purple-500 to-pink-500 flex items-center justify-center min-h-screen text-gray-800">
+    <div class="bg-white shadow-lg rounded-lg max-w-lg w-full p-6">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-700">
+                Periodic Table Explorer
+            </h1>
+            <p class="text-sm text-gray-500">
+                Click over an elements to explore its properties!
+            </p>
+        </div>
+        <div id="periodic-table" class="grid grid-cols-4 gap-4"></div>
+    </div>
+    <div id="element-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+            <button class="absolute top-2 right-2 text-gray-600 hover:text-gray-900" onclick="closeModal();">
+                &#10008;
+            </button>
+            <h2 id="element-name" class="text-xl font-bold mb-2 text-indigo-500">
+                Element Name
+            </h2>
+            <p class="mb-1">
+                <strong>Symbol:</strong>
+                <span id="element-symbol" class="font-bold text-xl text-indigo-400">H</span>
+            </p>
+            <p class="mb-1">
+                <strong>Atomic Number:</strong>
+                <span id="element-number" class="text-gray-700">1</span>
+            </p>
+            <p class="mb-1">
+                <strong>Intresting Uses:</strong>
+            </p>
+            <p id="element-use" class="text-sm text-gray-600 mt-2">
+                Description goes here.
+            </p>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    let elements = [
+      { "name": "Hydrogen", "symbol": "H", "number": 1, "use": "Used in fuel cells and as rocket fuel.", "color": "from-red-400 to-red-600" },
+      { "name": "Helium", "symbol": "He", "number": 2, "use": "Used in balloons and as a coolant.", "color": "from-orange-400 to-orange-600" },
+      { "name": "Lithium", "symbol": "Li", "number": 3, "use": "Used in rechargeable batteries.", "color": "from-yellow-400 to-yellow-600" },
+      { "name": "Beryllium", "symbol": "Be", "number": 4, "use": "Used in aerospace materials.", "color": "from-green-400 to-green-600" },
+      { "name": "Boron", "symbol": "B", "number": 5, "use": "Used in detergents and glass manufacturing.", "color": "from-teal-400 to-teal-600" },
+      { "name": "Carbon", "symbol": "C", "number": 6, "use": "Foundation of organic chemistry.", "color": "from-blue-400 to-blue-600" },
+      { "name": "Nitrogen", "symbol": "N", "number": 7, "use": "Used in fertilizers and refrigerants.", "color": "from-indigo-400 to-indigo-600" },
+      { "name": "Oxygen", "symbol": "O", "number": 8, "use": "Essential for respiration and combustion.", "color": "from-purple-400 to-purple-600" },
+      { "name": "Fluorine", "symbol": "F", "number": 9, "use": "Used in toothpaste and Teflon.", "color": "from-pink-400 to-pink-600" },
+      { "name": "Neon", "symbol": "Ne", "number": 10, "use": "Used in neon signs and lighting.", "color": "from-gray-400 to-gray-600" }
+    ];
+
+    function loadElements(){
+        const table = document.getElementById('periodic-table');
+        elements.forEach(element => {
+            const elementCard = document.createElement('div');
+            elementCard.className = `group rounded-lg shadow-md bg-gradient-to-br ${element.color} text-white p-3 flex flex-col items-center justify-center hover:scale-105 transition transform`
+            elementCard.innerHTML = `
+                <span class="text-3xl font-bold">${element.symbol}</span>
+                <span class="text-sm">${element.number}</span>
+            `;
+            elementCard.addEventListener('click', () => {
+                showDetails(element.name, element.symbol, element.number, element.use);
+            });
+            table.appendChild(elementCard);
+        })
+    };
+    function showDetails(name, symbol, number, use){
+        document.getElementById('element-name').textContent = name;
+        document.getElementById('element-symbol').textContent = symbol;
+        document.getElementById('element-number').textContent = number;
+        document.getElementById('element-use').textContent = use;
+        document.getElementById('element-modal').classList.remove('hidden');
+    }
+    function closeModal(){
+        document.getElementById('element-modal').classList.add('hidden');
+    }
+    loadElements();
+</script>

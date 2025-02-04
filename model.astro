@@ -1,0 +1,48 @@
+<div class="bg-gradient-to-r from-blue-500 to-indigo-700 min-h-screen flex flex-col items-center justify-center text-white">
+    <h1 class="text-4xl font-bold mb-6">
+        Interactive 3D Object Viewer
+    </h1>
+    <model-viewer
+        src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+        alt="A 3D model of astronaut"
+        auto-rotate
+        camera-controls
+        background-color="#374151"
+        class="w-full max-w-xl h-96 rounded-lg shadow-lg border-4 border-blue-300">
+    </model-viewer>
+    <div class="mt-6 flex space-x-4">
+        <button
+            id="reset-view"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded shadow transition">
+            Reset View
+        </button>
+        <input 
+            type="file"
+            id="file-input"
+            accept=".glb, .gltf"
+            class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded shadow cursor-pointer transition" 
+        />
+    </div>
+    <p class="mt-8 text-sm opacity-80">
+        Built with 
+        <a href="https://modelviewer.dev/" target="_blank" class="text-blue-200 underline">
+            Model Viewer
+        </a>
+        and styled with TailwindCss.
+    </p>
+</div>
+<script is:inline type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<script is:inline>
+    const modelViewer = document.querySelector('model-viewer');
+    document.getElementById('reset-view').addEventListener('click', () => {
+        modelViewer.cameraOrbit = "0deg 75deg auto";
+    });
+    document.getElementById('file-input').addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if(file){
+            const url = URL.createObjectURL(file)
+            modelViewer.src = url;
+        }
+    });
+</script>

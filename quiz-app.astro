@@ -1,0 +1,103 @@
+<div class="flex items-center justify-center h-screen bg-gradient-to-r from-green-400 to-blue-500">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg text-center">
+        <h2 class="text-3xl font-bold mb-6 text-blue-600">Quiz App</h2>
+        <div id="quizContainer" class="mb-4">
+            <p id="question" class="text-xl font-semibold text-gray-800"></p>
+            <div id="options" class="mt-6 grid grid-cols-2 gap-4"></div>
+        </div>
+        <button id="nextButton" class="hidden bg-blue-500 hover:bg-blue-700 
+            text-white font-bold py-2 px-4 rounded mt-6">
+            Next Question
+        </button>
+        <p id="result" class="text-lg font-bold mt-4 hidden"></p>
+        <p id="score" class="text-lg font-semibold mt-2 hidden text-gray-700"></p>
+    </div>
+</div>
+<script is:inline>
+        const questions = [
+        {
+            question: "What is the capital of France?",
+            options: ["Paris", "Berlin", "Rome", "London"],
+            correctAnswer: "Paris"
+        },
+        {
+            question: "Which planet is known as the Red Planet?",
+            options: ["Earth", "Mars", "Jupiter", "Venus"],
+            correctAnswer: "Mars"
+        },
+        {
+            question: "Who wrote 'To Kill a Mockingbird'?",
+            options: ["Harper Lee", "Mark Twain", "F. Scott Fitzgerald", "Ernest Hemingway"],
+            correctAnswer: "Harper Lee"
+        },
+        {
+            question: "What is the largest ocean on Earth?",
+            options: ["Atlantic Ocean", "Indian Ocean", "Southern Ocean", "Pacific Ocean"],
+            correctAnswer: "Pacific Ocean"
+        }
+    ];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    const questionElement = document.getElementById('question');
+    const optionsContainer = document.getElementById('options');
+    const nextButton = document.getElementById('nextButton');
+    const resultElement = document.getElementById('result');
+    const scoreElement = document.getElementById('score');
+
+    function loadQuestion(){
+        const currentQuestion = questions[currentQuestionIndex];
+        questionElement.textContent = currentQuestion.question;
+        optionsContainer.innerHTML = '';
+
+        currentQuestion.options.forEach(option => {
+            const button = document.createElement('button');
+            button.textContent = option;
+            button.classList.add('option', 'bg-blue-300', 'hover:bg-blue-500', 'text-white', 'font-bold', 'py-2', 'px-4', 'rounded', 'transition', 'duration-300');
+            button.addEventListener('click', () => handleAnswer(option, button));
+            optionsContainer.appendChild(button);
+        });
+        nextButton.classList.add('hidden');
+        resultElement.classList.add('hidden');
+    };
+    function handleAnswer(selectedAnswer, selectedButton){
+        const currentQuestion = questions[currentQuestionIndex];
+        const allOptions = document.querySelectorAll('.option');
+        allOptions.forEach(option => {
+            option.disabled = true;
+            option.classList.remove('hover:bg-blue-500');
+        });
+
+        selectedButton.classList.remove('bg-blue-300');
+        selectedButton.classList.add('bg-blue-500');
+        if(selectedAnswer === currentQuestion.correctAnswer){
+            resultElement.textContent = 'Correct!';
+            resultElement.classList.remove('text-red-500');
+            resultElement.classList.add('text-green-500');
+            score++;
+        } else{
+            resultElement.textContent = `Wrong! The Correct Answr is ${currentQuestion.correctAnswer}`;
+            resultElement.classList.remove('text-green-500');
+            resultElement.classList.add('text-red-500');
+        }
+        resultElement.classList.remove('hidden');
+        nextButton.classList.remove('hidden');
+    };
+    nextButton.addEventListener('click', () => {
+        currentQuestionIndex++;
+        if(currentQuestionIndex < questions.length){
+            loadQuestion();
+        } else{
+            showFinalScore()
+        }
+    });
+    function showFinalScore(){
+        questionElement.textContent = `Quiz Finished! Your final score is ${score} / ${questions.length}.`;
+        optionsContainer.innerHTML = '';
+        nextButton.classList.add('hidden');
+        resultElement.classList.add('hidden');
+    };
+    loadQuestion();
+</script>
+<style>
+    @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
+</style>

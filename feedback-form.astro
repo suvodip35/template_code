@@ -1,0 +1,104 @@
+<div class="flex items-center justify-center h-screen bg-gradient-to-r from-purple-500 to-indigo-600">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">
+            Feedback Form
+        </h2>
+        <form id="feedBackForm">
+            <div  class="mb-4">
+                <label 
+                    class="block text-gray-700 text-sm font-bold mb-2"
+                    for="name">
+                    Name
+                </label>
+                <input 
+                    type="text" 
+                    placeholder="Your Name"
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight
+                    focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    required 
+                    id="name">
+                    <p id="nameError" class="text-red-500 text-xs hidden"></p>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="feedback">
+                    Feedback
+                </label>
+                <textarea 
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight
+                    focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    required
+                    placeholder="Your feedback here..."
+                    rows="4"
+                    id="feedback"></textarea>
+                <p id="feedbackError" class="text-red-500 text-xs hidden"></p>
+            </div>
+            <div class="flex items-center justify-between">
+                <button class="submit-button bg-blue-500 text-white font-bold py-2 px-4 rounded
+                    `focus:outline-none focus:shadow-outline" 
+                    type="submit">
+                    Submit
+                </button>
+                <button type="button"
+                    id="clearButton"
+                    class="clear-button bg-red-500 text-white font-bold py-2 px-4 rounded
+                    focus:outline-none focus:shadow-outline">
+                    Clear
+                </button>
+            </div>
+        </form>
+        <div id="submittedFeedback" class="mt-6">
+            <h3 class="text-lg font-bold">
+                Submitted Feedback:
+            </h3>
+            <ul id="feedbackList" class="list-disc pl-5"></ul>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    const feedBackForm = document.getElementById('feedBackForm');
+    const feedbackList = document.getElementById('feedbackList');
+    const clearButton = document.getElementById('clearButton');
+
+    const nameError = document.getElementById('nameError');
+    const feedbackError = document.getElementById('feedbackError');
+    feedBackForm.addEventListener('submit', function(event){
+        event.preventDefault();
+        const name = document.getElementById('name').value.trim();
+        const feedback = document.getElementById('feedback').value.trim();
+
+        nameError.classList.add('hidden');
+        feedbackError.classList.add('hidden');
+        if(!name){
+            nameError.classList.remove('hidden');
+            return;
+        }
+        if(!feedback){
+            feedbackError.classList.remove('hidden');
+            return;
+        }
+        const listItem = document.createElement('li');
+        listItem.textContent = `${name}: ${feedback}`;
+        feedbackList.appendChild(listItem);
+    });
+    clearButton.addEventListener('click', function(){
+        feedBackForm.reset();
+        feedbackList.innerHTML = '';
+    });
+</script>
+<style>
+    @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
+    .submit-button{
+        transition: background-color 0.3s, transform 0.2s;
+    }
+    .submit-button:hover{
+        background-color: #3563eb;
+        transform: scale(1.05);
+    }
+    .clear-button{
+        transition: background-color 0.3s, transform 0.2s;
+    }
+    .clear-button:hover{
+        background-color: #ef4444;
+        transform: scale(1.05);
+    }
+</style>

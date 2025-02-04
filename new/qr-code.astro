@@ -1,0 +1,130 @@
+<div class="bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-2xl premium-shadow max-w-md w-full">
+        <h2 class="text-4xl font-extrabold text-center text-gray-800 mb-6">
+            QR Code Generator
+        </h2>
+        <p class="text-gray-500 text-center mb-8">
+            Generate your custom QR codes with a modern and premium design.
+        </p>
+        <form id="qrForm" class="space-y-6">
+            <div>
+                <label 
+                class="block text-gray-700 font-semibold mb-2"    
+                for="textInput">
+                Enter Text or URL:
+            </label>
+            <input 
+                type="text"
+                id="textInput"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none
+                focus:ring-2 focus:ring-indigo-500"
+                placeholder="e.g., https://example.com"
+                required />
+            </div>
+            <div class="flex space-x-4 items-center">
+                <div class="w-1/2">
+                    <label 
+                        class="block text-gray-700 font-semibold mb-2"    
+                        for="colorInput">
+                        Code Color:
+                    </label>
+                    <input 
+                        type="color"
+                        id="colorInput"
+                        class="w-full h-12 border border-gray-300 rounded-lg cursor-pointer focus:outline-none
+                         focus:ring-2 focus:ring-indigo-500"
+                        value="#000000"
+                        />
+                </div>
+                <div class="w-1/2">
+                    <label 
+                        class="block text-gray-700 font-semibold mb-2"
+                        for="sizeSelect">
+                        Code Size:
+                    </label>
+                    <select 
+                        id="sizeSelect" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none 
+                        focus:ring-2 focus:ring-indigo-500">
+                        <option value="100">100px</option>
+                        <option value="120">120px</option>
+                        <option value="130">130px</option>
+                        <option value="150">150px</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-center">
+                <button 
+                    type="submit"    
+                    class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-full 
+                    font-bold shadow-lg hover:shadow-xl hover:bg-gradient-to-r hover:from-pink-500 hover:via-purple-500 hover:to-indigo-500">
+                    Generate QR Code
+                </button>
+            </div>
+        </form>
+        <div id="qrContainer" class="mt-8">
+            <div class="flex justify-center">
+                <canvas id="qrCode"  class="p-4 bg-gray-100 rounded-lg border border-gray-200 shadow-sm"></canvas>
+            </div>
+            <div class="flex justify-center mt-4">
+                <button 
+                    id="downloadButton" 
+                    class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">
+                    Download QR Code
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script is:inline src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+<script is:inline>
+    const qr = new QRious({
+        element: document.getElementById('qrCode'),
+        size: 150,
+        background: 'white',
+        foreground: '#000000'
+    });
+    const qrContainer = document.getElementById('qrContainer');
+    const downloadButton = document.getElementById('downloadButton');
+    document.getElementById('qrForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const text = document.getElementById('textInput').value;
+        const color = document.getElementById('colorInput').value;
+        const size = document.getElementById('sizeSelect').value;
+
+        qr.set({
+            value: text,
+            size: parseInt(size),
+            foreground: color
+        });
+        qrContainer.style.display = 'block';
+    });
+    document.getElementById('colorInput').addEventListener('input', function() {
+        const newColor = document.getElementById('colorInput').value;
+        qr.set({
+            foreground: newColor
+        });
+    });
+    downloadButton.addEventListener('click', function(){
+        const canvas = document.getElementById('qrCode');
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = 'qr-code.png';
+        link.click();
+
+    })
+</script>
+<style>
+    .premium-shadow{
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 15px 40px rgba(0, 0, 0, 0.1);
+    }
+    input, select, button{
+        transition: all 0.3s ease;
+    }
+    button:hover{
+        transform: translateY(-2px);
+    }
+    #qrContainer{
+        display: none;
+    }
+</style>

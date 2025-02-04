@@ -1,0 +1,133 @@
+<div
+    class="bg-gradient-to-r from-blue-800 to-blue-600 
+    flex items-center justify-center min-h-screen">
+    <div 
+        class="bg-gray-800 shadow-lg rounded-lg p-6 max-w-sm">
+        <div
+            class="mb-4 text-white text-center text-3xl font-semibold">
+            Calculator
+        </div>
+        <div class="mb-4">
+            <input
+            id="display"
+            class="w-full p-4 text-right bg-black text-green-400 rounded-lg text-3xl"
+            disabled
+            type="text">
+        </div>
+        <div 
+            class="grid grid-cols-4 gap-4">
+            <button
+                class="bg-gray-200 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="appendNumber('7')">7
+                </button>
+                <button
+                class="bg-gray-200 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="appendNumber('8')">8
+                </button>
+                <button
+                class="bg-gray-200 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="appendNumber('9')">9
+                </button>
+                <button
+                class="bg-red-500 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="clearDisplay()">C
+                </button>
+                <button
+                class="bg-gray-200 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="appendNumber('4')">4
+                </button>
+                <button
+                class="bg-gray-200 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="appendNumber('5')">5
+                </button>
+                <button
+                class="bg-gray-200 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="appendNumber('6')">6
+                </button>
+                <button
+                class="bg-orange-500 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="appendOperator('+')">+
+                </button>
+                <button
+                class="bg-gray-200 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="appendNumber('1')">1
+                </button>
+                <button
+                class="bg-gray-200 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="appendNumber('2')">2
+                </button>
+                <button
+                class="bg-gray-200 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="appendNumber('3')">3
+                </button>
+                <button
+                class="bg-orange-500 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="appendOperator('-')">-
+                </button>
+                <button
+                class="bg-gray-200 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="appendNumber('0')">0
+                </button>
+                <button
+                class="bg-gray-200 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="appendNumber('.')">.
+                </button>
+                <button
+                class="bg-green-500 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="calculate()">=
+                </button>
+                <button
+                class="bg-orange-500 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="appendOperator('*')">*
+                </button>
+
+                <button
+                class="col-span-4 bg-orange-500 p-4 rounded-lg text-xl font-semibold
+                text-black"
+                    onclick="appendOperator('/')">
+                    &#247;
+                </button>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    let displayValue = '';
+
+    function appendNumber(number){
+        displayValue += number;
+        document.getElementById('display').value = displayValue;
+    }
+    function appendOperator(operator){
+        displayValue += operator;
+        document.getElementById('display').value = displayValue;
+    }
+
+    function clearDisplay(){
+        displayValue = '';
+        document.getElementById('display').value = '';
+    }
+    function calculate(){
+        try{
+            displayValue = eval(displayValue);
+            document.getElementById('display').value = displayValue;
+        } catch (error){
+            document.getElementById('display').value = 'Error';
+        }
+    }
+</script>
