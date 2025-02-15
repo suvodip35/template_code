@@ -1,0 +1,90 @@
+<div class="flex items-center justify-center h-screen bg-gradient-to-r from-blue-400 to-indigo-700">
+    <div class="max-w-lg w-full bg-white bg-opacity-90 shadow-xl rounded-2xl p-6 flex flex-col backdrop-blur-lg">
+        <div class="text-xl font-bold text-gray-900 text-center">
+            AI Chat Bot
+        </div>
+        <p class="text-gray-600 text-center font-medium text-sm mb-4">
+            Chat with AI in Real time. Ask anything and get instant response!
+        </p>
+        <div id="chatbox" class="flex flex-col space-y-3 h-96 overflow-y-auto p-4 border rounded-xl bg-gray-50 shadow-inner"></div>
+        <div class="mt-4 flex items-center">
+            <input 
+                type="text"
+                id="userInput"
+                class="w-full px-4 py-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800 shadow-md"
+                placeholder="Type a message..." 
+            />
+            <button
+                onclick="sendMessage()"
+                class="ml-3 px-5 py-3 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 shadow-md">
+                Send
+            </button>
+        </div>
+    </div>
+</div>
+<script is:inline>
+    async function sendMessage(){
+        const userInput = document.getElementById('userInput');
+        const chatbox = document.getElementById('chatbox');
+        const message = userInput.value.trim();
+        const API_KEY = 'YOUR_API_KEY';
+
+        if(!message) return;
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+        chatbox.innerHTML += `
+            <div class="flex justify-end">
+                <div class="bg-indigo-500 text-white px-4 py-2 rounded-2xl max-w-xs shadow-md">
+                    ${message}
+                    <div class="text-xs text-gray-200 text-right mt-1">${time}</div>    
+                </div>
+            </div>
+        `;
+
+        userInput.value = '';
+        chatbox.scrollTop = chatbox.scrollHeight;
+
+        chatbox.innerHTML += `
+            <div class=""flex justify-start>
+                <div id="typing" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-2xl max-w-xs italic shadow-md">
+                    ChatBot is typing...    
+                </div>
+            </div>
+        `;
+
+        chatbox.scrollTop = chatbox.scrollHeight;
+        try{
+            const response = await fetch(`https://api.openai.com/v1/chat/completions`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization' : `Bearer ${API_KEY}`,
+                },
+                body: JSON.stringify({
+                    model: 'gpt-3.5-turbo',
+                    messages: [{role: 'user', content: message}],
+                    max_tokens: 100,
+                })
+            });
+            const data = await response.json();
+            document.getElementById('typing').remove();
+            chatbox.innerHTML += `
+                <div class="flex justify-start">
+                    <div class="bg-gray-200 px-4 py-2 rounded-2xl max-w-xs shadow-md">
+                        ${data.choices[0].message.content.trim()}
+                        <div class="text-xs text-gray-600 text-left mt-1">${time}</div>    
+                    </div>
+                </div>
+            `;
+            chatbox.scrollTop = chatbox.scrollHeight;
+        } catch(error){
+            document.getElementById('typing').remove();
+            chatbox.innerHTML += `
+                <div class="flex justify-start">
+                    <div class="bg-red-500 text-white px-4 py-2 rounded-2xl max-w-xs shadow-md">
+                        Error: Unable to fetch response    
+                    <div>
+                </div>
+            `;
+        }
+    }
+</script>
