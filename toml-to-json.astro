@@ -1,0 +1,90 @@
+<div class="bg-gradient-to-r from-blue-500 to-purple-600 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-xl">
+        <h2 class="text-2xl font-bold text-center text-indigo-700 mb-4">
+            TOML to JSON Converter
+        </h2>
+        <textarea
+            id="tomlInput"
+            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            rows="5"
+            placeholder="Paste your TOML here..."
+        ></textarea>
+        <p id="message" class="text-center mt-2 text-sm font-semibold"></p>
+        <div class="flex justify-center mt-3">
+            <button id="convertBtn" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                Convert
+            </button>
+        </div>
+        <div class="mt-4">
+            <textarea
+                id="jsonOutput"
+                class="w-full p-3 border rounded-lg bg-gray-100 focus:outline-none"
+                rows="5"
+                placeholder="Converted JSON will appear here..."
+                readonly
+            ></textarea>
+        </div>
+        <div class="flex justify-between mt-3">
+            <button id="copyBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                Copy JSON
+            </button>
+            <button id="downloadBtn" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
+                Download JSON
+            </button>
+        </div>
+    </div>
+</div>
+<script is:inline type="module">
+    import * as TOML from 'https://cdn.jsdelivr.net/npm/toml@3.0.0/+esm';
+    document.getElementById('convertBtn').addEventListener('click', () => {
+        const tomlText = document.getElementById('tomlInput').value;
+        const message = document.getElementById('message');
+
+        try{
+            const json = TOML.parse(tomlText);
+            document.getElementById('jsonOutput').value = JSON.stringify(json, null, 2);
+            message.innerHTML = '&#9989; Successfully converted!';
+            message.className = 'text-green-600 text-center mt-2 text-sm font-semibold';
+        } catch(error){
+            message.innerHTML = '&#10060; Invalid TOML Syntax!';
+            message.className = 'text-red-600 text-center mt-2 text-sm font-semibold';
+        }
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', () => {
+        const output = document.getElementById('jsonOutput');
+        const message = document.getElementById('message');
+
+        if(!output.value.trim()){
+            message.innerHTML = '&#9888; No JSON to copy!';
+            message.className = 'text-yellow-600 text-center mt-2 text-sm font-semibold';
+            return;
+        }
+
+        output.select();
+        document.execCommand('copy');
+        message.innerHTML = '&#9989; JSON copied to clipboard!';
+        message.className = 'text-blue-600 text-center mt-2 text-sm font-semibold';
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+        const jsonText = document.getElementById('jsonOutput').value;
+        const message = document.getElementById('message');
+
+        if(!jsonText.trim()){
+            message.innerHTML = '&#9888; No JSON to download!';
+            message.className = 'text-yellow-600 text-center mt-2 text-sm font-semibold';
+            return;
+        }
+        const blob = new Blob([jsonText], {type: 'application/json'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'converted.json';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        message.innerHTML = '&#9989; JSON download!';
+        message.className = 'text-blue-600 text-center mt-2 text-sm font-semibold';
+    })
+</script>
