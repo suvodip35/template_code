@@ -1,0 +1,107 @@
+<div class="flex items-center justify-center min-h-screen bg-gradient-to-r 
+    from-indigo-500 via-purple-500 to-pink-500 p-4">
+    <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-md text-center">
+        <h1 class="text-3xl font-bold text-purple-500">
+            QR Code Scanner
+        </h1>
+        <label 
+            for="qrInput"
+            class="cursor-pointer mt-6 inline-block bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 transition-all">
+            &#128247; Upload QR Code
+        </label>
+        <input 
+            type="file"
+            id="qrInput"
+            accept="image/*"
+            class="hidden"
+        />
+        <div id="preview" class="mt-4 hidden">
+            <img 
+                id="qrImage"
+                class="w-32 h-32 mx-auto rounded-lg shadow-lg opacity-0 transition-opacity duration-500" 
+                src="" 
+                alt=""
+            />
+        </div>
+        <p 
+            id="result"
+            class="mt-4 text-gray-700 text-lg hidden bg-gray-100 p-2 rounded-lg shadow-md">
+        </p>
+        <div class="mt-4 flex justify-center space-x-4">
+            <button 
+                id="copyBtn"
+                class="hidden bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 transition-all">
+                &#128203; Copy Result
+            </button>
+            <button
+                id="scanAnotherBtn"
+                class="hidden bg-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-700 transition-all">
+                &#128472; Scan Another
+            </button>
+        </div>
+        <p id="copyMessage" class="mt-2 text-green-600 hidden"></p>
+        <canvas id="qrCanvas" class="hidden"></canvas>
+    </div>
+</div>
+<script is:inline src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+<script is:inline>
+    document.getElementById('qrInput').addEventListener('change', function (event){
+        const file = event.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = function () {
+            const img = document.getElementById('qrImage');
+            img.src = reader.result;
+            img.classList.add('opacity-0');
+            document.getElementById('preview').classList.remove('hidden');
+
+            img.onload = function (){
+                img.classList.remove('opacity-0');
+                scanQRCode(img)
+            };
+        };
+        reader.readAsDataURL(file)
+    });
+
+    function scanQRCode(img){
+        const canvas = document.getElementById('qrCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+        if(code){
+            document.getElementById('result').innerHTML = `&#128204; <strong>Result:</strong> ${code.data}`;
+            document.getElementById('result').classList.remove('hidden');
+            document.getElementById('copyBtn').classList.remove('hidden');
+            document.getElementById('scanAnotherBtn').classList.remove('hidden');
+        } else{
+            document.getElementById('result').innerHTML = `&#9888; No QR code detected.`;
+            document.getElementById('result').classList.remove('hidden');
+            document.getElementById('copyBtn').classList.add('hidden');
+        }
+    }
+
+    document.getElementById('copyBtn').addEventListener('click', function(){
+        const resultText = document.getElementById('result').textContent.replace('📌 Result:', '');
+        navigator.clipboard.writeText(resultText);
+        document.getElementById('copyMessage').innerHTML = '&#9989; QR Code result copied!';
+        document.getElementById('copyMessage').classList.remove('hidden');
+        setTimeout(() => {
+            document.getElementById('copyMessage').classList.add('hidden');
+        }, 2000)
+    });
+
+    document.getElementById('scanAnotherBtn').addEventListener('click', function(){
+        document.getElementById('preview').classList.add('hidden');
+        document.getElementById('result').classList.add('hidden');
+        document.getElementById('copyBtn').classList.add('hidden');
+        document.getElementById('scanAnotherBtn').classList.add('hidden');
+        document.getElementById('qrInput').value = '';
+    });
+</script>
