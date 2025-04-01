@@ -1,0 +1,52 @@
+<div class="bg-gradient-to-br from-gray-900 via-gray-800 to-black min-h-screen flex items-center justify-center p-6">
+  <div class="bg-gray-900/90 backdrop-blur-md shadow-2xl rounded-xl w-full max-w-xl p-6 space-y-6 text-white">
+    <h1 class="text-2xl font-bold text-center">
+      &lt; Code to Image Generator &gt; 
+    </h1>
+    <textarea
+      class="w-full h-40 p-4 bg-gray-800 text-green-300 font-mono text-sm rounded-lg resize-none focus:outline-none" 
+      id="codeInput"
+      placeholder="// Write your code here..."
+    ></textarea>
+    <div id="codePreviewContainer" class="bg-gray-800 rounded-lg p-4 overflow-auto max-h-96 relative">
+      <pre class="language-javascript"><code class="language-javascript text-left" id="codeOutput">// Your code will appear here</code></pre>
+    </div>
+    <div class="flex gap-4">
+      <button onclick="generatePreview();" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white font-semibold transition">&orarr; Preview</button>
+      <button onclick="downloadImage();" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-semibold transition">&darr; Save as Image</button>
+      <button onclick="clearInput();" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-white font-semibold transition">&times; Clear</button>
+    </div>
+  </div>
+</div>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script is:inline>
+  const codeInput = document.getElementById('codeInput');
+  const codeOutput = document.getElementById('codeOutput');
+  const previewContainer = document.getElementById('codePreviewContainer');
+
+  function generatePreview(){
+    const code = codeInput.value;
+    codeOutput.textContent = code;
+    Prism.highlightElement(codeOutput);
+  }
+
+  function downloadImage(){
+    html2canvas(previewContainer, {backgroundColor: null}).then(canvas => {
+      const link = document.createElement('a');
+      link.download = 'code-snippet.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  }
+
+  function clearInput(){
+    codeInput.value = '';
+    codeOutput.textContent = '// Your code will appear here';
+    Prism.highlightElement(codeOutput);
+  }
+
+  generatePreview();
+</script>

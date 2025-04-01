@@ -1,0 +1,122 @@
+<div class="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-600 to-purple-500">
+    <div id="otp-container" class="bg-white p-6 rounded-lg w-96 text-center">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">
+            Enter OTP
+        </h2>
+        <p id="otp-display" class="text-green-600 font-semibold mb-2">
+            &#10004; Your OTP: <strong id="current-otp"></strong>
+        </p>
+        <div class="flex justify-center gap-3">
+            <input type="text" maxlength="1" class="otp-input w-12 h-12 text-xl text-center border-2 border-gray-300 rounded-md focus:border-blue-500 focus:outline-none" />
+            <input type="text" maxlength="1" class="otp-input w-12 h-12 text-xl text-center border-2 border-gray-300 rounded-md focus:border-blue-500 focus:outline-none" />
+            <input type="text" maxlength="1" class="otp-input w-12 h-12 text-xl text-center border-2 border-gray-300 rounded-md focus:border-blue-500 focus:outline-none" />
+            <input type="text" maxlength="1" class="otp-input w-12 h-12 text-xl text-center border-2 border-gray-300 rounded-md focus:border-blue-500 focus:outline-none" />
+        </div>
+        <p id="success-msg" class="text-green-600 text-sm mt-2 hidden">
+            &#10004; OTP Verified Successfully!
+        </p>
+        <p id="error-msg" class="text-red-500 text-sm mt-2 hidden">
+            &#10060; Invalid OTP! Please try again.
+        </p>
+        <button
+            id="verify-btn"
+            class="mt-4 w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700 transition">
+            Verify OTP
+        </button>
+        <p class="text-gray-600 text-sm mt-3">
+            Didn't receive the code?
+            <button
+                id="resend-btn"
+                class="text-blue-500 font-semibold"
+                disabled>
+                &#128260; Resend OTP in
+                <span id="timer">10</span>s
+            </button>
+        </p>
+    </div>
+    <div
+        id="congrats-container"
+        class="hidden bg-white p-6 rounded-lg shadow-lg w-96 text-center">
+        <h2 class="text-3xl font-bold text-green-600">
+            Congratulations! <br> &#127881; &#127881;
+        </h2>
+        <p
+            class="text-gray-700 mt-2">
+            You have successfully verified your OTP.
+        </p>
+    </div>
+</div>
+<script is:inline>
+    const otpInputs = document.querySelectorAll('.otp-input');
+    const verifyBtn = document.getElementById('verify-btn');
+    const errorMsg = document.getElementById('error-msg');
+    const successMsg = document.getElementById('success-msg');
+    const resendBtn = document.getElementById('resend-btn');
+    const timerSpan = document.getElementById('timer');
+    const otpContainer = document.getElementById('otp-container');
+    const congratsContainer = document.getElementById('congrats-container');
+    const otpDisplay = document.getElementById('current-otp');
+
+    let otpCode = generateOTP();
+    let timer = 10;
+    let countdown;
+    otpDisplay.textContent = otpCode;
+    function generateOTP(){
+        return Math.floor(1000 + Math.random() * 9000).toString();
+    }
+
+    otpInputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+            if(e.target.value && index < otpInputs.length - 1){
+                otpInputs[index + 1].focus();
+            }
+        });
+
+        input.addEventListener('keydown', (e) => {
+            if(e.key === 'Backspace' && !input.value && index > 0){
+                otpInputs[index - 1].focus();
+            }
+        });
+    });
+
+    verifyBtn.addEventListener('click', () => {
+        let enteredOtp = [...otpInputs].map(input => input.value).join('');
+        if(enteredOtp === otpCode){
+            errorMsg.classList.add('hidden');
+            successMsg.classList.remove('hidden');
+
+            setTimeout(() => {
+                otpContainer.classList.add('hidden');
+                congratsContainer.classList.remove('hidden');
+            }, 1000);
+        }else{
+            successMsg.classList.add('hidden');
+            errorMsg.classList.remove('hidden');
+        }
+    });
+
+    function startTimer(){
+        resendBtn.disabled = true;
+        countdown = setInterval(() => {
+            timer--;
+            timerSpan.textContent = timer;
+            if(timer === 0){
+                clearInterval(countdown);
+                resendBtn.disabled = false;
+                resendBtn.innerHTML = '&#128260; Resend OTP';
+            }
+        }, 1000);
+    }
+    resendBtn.addEventListener('click', () => {
+        otpInputs.forEach(input => input.value = '');
+        errorMsg.classList.add('hidden');
+        successMsg.classList.add('hidden');
+        otpCode = generateOTP();
+        otpDisplay.textContent = otpCode;
+        timer = 10;
+        timerSpan.textContent = timer;
+        startTimer();
+    });
+
+    startTimer();
+</script>
