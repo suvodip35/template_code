@@ -1,22 +1,4 @@
----
-// WebCraft & Devs - Swipeable Job Card App
----
-<div class="bg-gradient-to-br from-indigo-600 to-purple-500 min-h-screen flex items-center justify-center p-4 relative overflow-hidden select-none">
-  <div id="jobContainer" class="relative w-full max-w-md h-[500px]"></div>
-  <div class="absolute bottom-8 flex gap-4">
-    <button
-      id="undoBtn"
-      class="px-4 py-2 bg-yellow-500 text-white font-semibold rounded-full shadow-md">
-      Undo
-    </button>
-    <div id="savedMessage" class="text-green-600 font-medium hidden">
-      &#10004; Job Saved!
-    </div>
-  </div>
-</div>
-
-<script is:inline>
-  const jobs = [
+const jobs = [
     {
       title: "Frontend Developer",
       company: "Google",
@@ -126,11 +108,3 @@
   });
 
   renderCards();
-</script>
-
-<style>
-  .card {
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    touch-action: none;
-  }
-</style>
