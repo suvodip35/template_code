@@ -1,0 +1,66 @@
+---
+// WebCraft & Devs - Interactive Poll Voting UI
+---
+<div class="w-full min-h-screen bg-gradient-to-b from-[#2563eb] to-[#0d9488] flex flex-col items-center justify-center p-6 select-none font-sans">
+  <div class="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm">
+    <div class="flex items-center gap-2 mb-6">
+      <span class="text-2xl">📊</span>
+      <h2 class="text-lg font-bold text-gray-800">What's your favorite front-end framework?</h2>
+    </div>
+    <div id="pollOptions" class="space-y-4 mb-6"></div>
+    <button id="voteBtn" class="w-full py-3 bg-[#818cf8] text-white font-bold rounded-2xl shadow-md text-sm hover:bg-[#6366f1] transition active:scale-95">
+      Vote Now
+    </button>
+  </div>
+</div>
+
+<script is:inline>
+  const pollData = {
+    question: "What's your favorite front-end framework?",
+    options: [
+      { id: "react", label: "React", votes: 0 },
+      { id: "vue", label: "Vue", votes: 0 },
+      { id: "svelte", label: "Svelte", votes: 0 },
+      { id: "angular", label: "Angular", votes: 0 }
+    ]
+  };
+
+  const pollKey = "user_voted_framework";
+  let hasVoted = false;
+  let selected = null;
+
+  const pollOptionsDiv = document.getElementById('pollOptions');
+  const voteBtn = document.getElementById('voteBtn');
+
+  function renderResults() {
+    const totalVotes = pollData.options.reduce((sum, opt) => sum + opt.votes, 0) || 1;
+    pollOptionsDiv.innerHTML = "";
+
+    pollData.options.forEach((opt) => {
+      const percent = Math.round((opt.votes / totalVotes) * 100);
+      const row = document.createElement('div');
+      row.className = "space-y-1";
+      row.innerHTML = `
+        <div class="flex justify-between text-sm font-semibold text-gray-700">
+          <span>${opt.label}</span>
+          <span>${percent}%</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+          <div class="bg-teal-500 h-full rounded-full transition-all duration-700" style="width: ${percent}%"></div>
+        </div>
+      `;
+      pollOptionsDiv.appendChild(row);
+    });
+
+    voteBtn.disabled = true;
+    voteBtn.textContent = "Thank you for voting!";
+  }
+
+  voteBtn.addEventListener('click', () => {
+    if (!selected || hasVoted) return;
+    const option = pollData.options.find(o => o.id === selected);
+    if (option) option.votes += 1;
+    hasVoted = true;
+    renderResults();
+  });
+</script>
