@@ -1,64 +1,43 @@
-<div class="min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center justify-center p-4">
-  <div class="w-full max-w-2xl bg-slate-800/90 border border-slate-700/80 rounded-2xl shadow-2xl p-6 backdrop-blur-md">
-    
-    <!-- Title & Badge -->
+<div class="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center p-4">
+  <div class="w-full max-w-xl bg-slate-800/90 border border-slate-700 rounded-2xl shadow-2xl p-6 backdrop-blur">
     <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-700">
-      <div class="flex items-center gap-2.5">
-        <span class="text-2xl">🔐</span>
-        <h1 class="text-2xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">JWT Decoder</h1>
-      </div>
+      <h1 class="text-2xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent flex items-center gap-2">
+        <span>🔐</span> JWT Decoder
+      </h1>
       <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Base64URL</span>
     </div>
 
-    <!-- Actions Bar -->
     <div class="flex items-center justify-between mb-2">
-      <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Encoded Token</label>
+      <span class="text-xs font-semibold text-slate-400 uppercase">Encoded Token</span>
       <div class="flex gap-2">
-        <button id="sampleBtn" class="px-3 py-1 text-xs font-medium rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition active:scale-95 flex items-center gap-1">
-          <span>📋</span> Sample
-        </button>
-        <button id="clearBtn" class="px-3 py-1 text-xs font-medium rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 transition active:scale-95">
-          Clear
-        </button>
+        <button id="sampleBtn" class="px-3 py-1 text-xs rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition active:scale-95">📋 Sample</button>
+        <button id="clearBtn" class="px-3 py-1 text-xs rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 transition active:scale-95">Clear</button>
       </div>
     </div>
 
-    <!-- JWT Token Input -->
-    <textarea id="jwtInput" rows="3" placeholder="Paste your token (eyJhbGciOi...)" class="w-full bg-slate-950 text-slate-300 font-mono text-xs p-3 rounded-xl border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none resize-none transition mb-4"></textarea>
+    <textarea id="jwtInput" rows="3" placeholder="Paste your token (eyJhbGciOi...)" class="w-full bg-slate-950 text-slate-300 font-mono text-xs p-3 rounded-xl border border-slate-700 focus:border-indigo-500 outline-none resize-none mb-4"></textarea>
 
-    <!-- Decoded Display Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      
-      <!-- Header Section -->
-      <div class="bg-slate-950/70 rounded-xl p-3.5 border border-rose-500/30">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1">
-            <span class="w-2 h-2 rounded-full bg-rose-400"></span> Header
-          </span>
-          <span class="text-[10px] text-slate-500 font-mono">Algorithm & Type</span>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div class="bg-slate-950/70 rounded-xl p-3 border border-rose-500/30">
+        <div class="text-xs font-bold text-rose-400 uppercase mb-2 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-rose-400"></span> Header
         </div>
-        <pre id="jwtHeader" class="text-xs font-mono text-rose-300 min-h-[90px] overflow-x-auto whitespace-pre-wrap">{/* Header output */}</pre>
+        <pre id="jwtHeader" class="text-xs font-mono text-rose-300 min-h-[90px] whitespace-pre-wrap">// Header</pre>
       </div>
 
-      <!-- Payload Section -->
-      <div class="bg-slate-950/70 rounded-xl p-3.5 border border-purple-500/30">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center gap-1">
-            <span class="w-2 h-2 rounded-full bg-purple-400"></span> Payload
-          </span>
+      <div class="bg-slate-950/70 rounded-xl p-3 border border-purple-500/30">
+        <div class="flex items-center justify-between text-xs font-bold text-purple-400 uppercase mb-2">
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-purple-400"></span> Payload</span>
           <button id="copyBtn" class="text-[10px] text-purple-300 hover:text-white transition">Copy</button>
         </div>
-        <pre id="jwtPayload" class="text-xs font-mono text-purple-300 min-h-[90px] overflow-x-auto whitespace-pre-wrap">{/* Payload output */}</pre>
+        <pre id="jwtPayload" class="text-xs font-mono text-purple-300 min-h-[90px] whitespace-pre-wrap">// Payload</pre>
       </div>
-
     </div>
 
-    <!-- Status & Expiry Bar -->
     <div id="jwtStatus" class="mt-4 p-2.5 rounded-xl bg-slate-950/50 border border-slate-700 text-xs text-slate-400 flex items-center justify-between">
-      <span>Ready to decode token</span>
+      <span>Ready to decode</span>
       <span class="font-mono text-[11px] text-slate-500">RFC 7519</span>
     </div>
-
   </div>
 </div>
 
@@ -84,14 +63,14 @@
     if (!trimmed) {
       jwtHeader.textContent = '// Header will appear here';
       jwtPayload.textContent = '// Payload will appear here';
-      jwtStatus.innerHTML = '<span>Ready to decode token</span><span class="font-mono text-[11px] text-slate-500">RFC 7519</span>';
+      jwtStatus.innerHTML = '<span>Ready to decode</span><span class="font-mono text-[11px] text-slate-500">RFC 7519</span>';
       return;
     }
 
     const parts = trimmed.split('.');
     if (parts.length < 2) {
       jwtHeader.textContent = '// Invalid JWT format';
-      jwtPayload.textContent = '// Expected 3 dot-separated parts';
+      jwtPayload.textContent = '// Expected 3 segments';
       jwtStatus.innerHTML = '<span class="text-rose-400 font-semibold">⚠️ Invalid Token: Missing segments</span>';
       return;
     }
@@ -103,11 +82,11 @@
       const payloadObj = JSON.parse(base64UrlDecode(parts[1]));
       jwtPayload.textContent = JSON.stringify(payloadObj, null, 2);
 
-      let statusMsg = `<span class="text-emerald-400 font-semibold flex items-center gap-1.5">✅ Valid JWT (${headerObj.alg || 'Unknown'})</span>`;
+      let statusMsg = `<span class="text-emerald-400 font-semibold flex items-center gap-1.5">✅ Valid JWT (${headerObj.alg || 'HS256'})</span>`;
       if (payloadObj.exp) {
-        const isExpired = Date.now() / 1000 > payloadObj.exp;
+        const isExp = Date.now() / 1000 > payloadObj.exp;
         const expDate = new Date(payloadObj.exp * 1000).toLocaleDateString();
-        statusMsg += `<span class="text-xs ${isExpired ? 'text-amber-400' : 'text-slate-400'}">${isExpired ? 'Expired' : 'Expires'}: ${expDate}</span>`;
+        statusMsg += `<span class="text-xs ${isExp ? 'text-amber-400' : 'text-slate-400'}">${isExp ? 'Expired' : 'Expires'}: ${expDate}</span>`;
       }
       jwtStatus.innerHTML = statusMsg;
     } catch (err) {
