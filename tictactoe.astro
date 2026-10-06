@@ -1,0 +1,131 @@
+<div class="min-h-screen bg-gradient-to-tr from-purple-500 via-pink-500 to-rose-400 flex items-center justify-center p-4">
+  <div class="bg-white/20 backdrop-blur-md p-8 rounded-3xl shadow-2xl flex flex-col items-center max-w-sm w-full">
+    <h1 class="text-3xl font-extrabold text-white mb-6">Tic-Tac-Toe vs AI</h1>
+    <div id="board" class="grid grid-cols-3 gap-3"></div>
+    <p id="status" class="mt-6 text-xl font-bold text-white min-h-[28px] text-center"></p>
+    <button id="restartBtn" class="mt-4 px-6 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-95 text-white font-semibold rounded-full shadow-lg transition active:scale-95 flex items-center gap-2">
+      <span>🔄</span> Restart Game
+    </button>
+  </div>
+</div>
+
+<script is:inline>
+  const boardEl = document.getElementById('board');
+  const statusEl = document.getElementById('status');
+  const restartBtn = document.getElementById('restartBtn');
+
+  let board = Array(9).fill(null);
+  const human = 'X';
+  const ai = 'O';
+  let gameOver = false;
+
+  function createBoard() {
+    boardEl.innerHTML = '';
+    board.forEach((cell, i) => {
+      const cellEl = document.createElement('div');
+      cellEl.className = 'w-20 h-20 bg-white/90 rounded-2xl text-4xl font-extrabold flex items-center justify-center text-gray-800 shadow cursor-pointer hover:bg-white transition select-none';
+      cellEl.textContent = cell ? cell : '';
+      cellEl.onclick = () => handleMove(i);
+      boardEl.appendChild(cellEl);
+    });
+  }
+
+  function handleMove(index) {
+    if (board[index] || gameOver) return;
+    board[index] = human;
+    createBoard();
+
+    if (checkWin(board, human)) {
+      statusEl.textContent = 'You Win! 🎉';
+      gameOver = true;
+      return;
+    }
+    if (isTie(board)) {
+      statusEl.textContent = "It's a tie! 🤝";
+      gameOver = true;
+      return;
+    }
+
+    const bestMove = minimax(board, ai);
+    if (bestMove && bestMove.index !== undefined) {
+      board[bestMove.index] = ai;
+      createBoard();
+      if (checkWin(board, ai)) {
+        statusEl.textContent = 'AI Wins! 🤖';
+        gameOver = true;
+      }
+    }
+  }
+
+  function minimax(newBoard, player) {
+    const availSpots = newBoard.map((val, idx) => val === null ? idx : null).filter(val => val !== null);
+
+    if (checkWin(newBoard, human)) return { score: -10 };
+    if (checkWin(newBoard, ai)) return { score: 10 };
+    if (availSpots.length === 0) return { score: 0 };
+
+    const moves = [];
+    for (let i = 0; i < availSpots.length; i++) {
+      const move = {};
+      move.index = availSpots[i];
+      newBoard[availSpots[i]] = player;
+
+      if (player === ai) {
+        const result = minimax(newBoard, human);
+        move.score = result.score;
+      } else {
+        const result = minimax(newBoard, ai);
+        move.score = result.score;
+      }
+
+      newBoard[availSpots[i]] = null;
+      moves.push(move);
+    }
+
+    let bestMove;
+    if (player === ai) {
+      let bestScore = -Infinity;
+      moves.forEach((m, i) => {
+        if (m.score > bestScore) {
+          bestScore = m.score;
+          bestMove = i;
+        }
+      });
+    } else {
+      let bestScore = Infinity;
+      moves.forEach((m, i) => {
+        if (m.score < bestScore) {
+          bestScore = m.score;
+          bestMove = i;
+        }
+      });
+    }
+
+    return moves[bestMove];
+  }
+
+  function checkWin(b, player) {
+    const winPatterns = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6]
+    ];
+    return winPatterns.some(pattern =>
+      pattern.every(i => b[i] === player)
+    );
+  }
+
+  function isTie(b) {
+    return b.every(cell => cell !== null);
+  }
+
+  function restartGame() {
+    board = Array(9).fill(null);
+    gameOver = false;
+    statusEl.textContent = '';
+    createBoard();
+  }
+
+  restartBtn.onclick = restartGame;
+  createBoard();
+</script>
