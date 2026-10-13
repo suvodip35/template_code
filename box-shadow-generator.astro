@@ -96,12 +96,15 @@
     });
 
     copyCssBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(cssOutput.textContent).then(() => {
-            copyCssBtn.innerHTML = '<span>Copied to Clipboard! ✓</span>';
-            setTimeout(() => {
-                copyCssBtn.innerHTML = '<span>Copy CSS Rule</span>';
-            }, 1800);
-        });
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(cssOutput.textContent).catch(() => {});
+            }
+        } catch (e) {}
+        copyCssBtn.innerHTML = '<span>Copied to Clipboard! ✓</span>';
+        setTimeout(() => {
+            copyCssBtn.innerHTML = '<span>Copy CSS Rule</span>';
+        }, 1800);
     });
 
     updateShadow();
