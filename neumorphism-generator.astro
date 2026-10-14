@@ -1,0 +1,153 @@
+<div class="bg-slate-900 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden">
+    <!-- Ambient background glows -->
+    <div class="absolute -top-16 -left-16 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-md bg-slate-800/90 backdrop-blur-xl p-6 rounded-3xl shadow-2xl border border-slate-700/60 relative z-10">
+        <h2 class="text-2xl font-bold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
+            Neumorphism Generator
+        </h2>
+
+        <!-- Interactive Soft UI Preview Canvas -->
+        <div class="flex items-center justify-center h-44 bg-slate-900/80 rounded-2xl mb-6 p-4 border border-slate-800 relative">
+            <div id="neuPreview" class="w-32 h-32 rounded-2xl flex items-center justify-center transition-all duration-150 cursor-pointer text-slate-400 font-semibold text-sm">
+                <span id="previewLabel">Soft UI</span>
+            </div>
+        </div>
+
+        <!-- User Controls -->
+        <div class="space-y-3.5 text-sm text-slate-300 mb-6">
+            <!-- Shape Type Selector -->
+            <div class="flex justify-between items-center">
+                <span class="text-slate-400">Shape</span>
+                <div class="flex space-x-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-700/60 text-xs font-medium">
+                    <button id="btnFlat" class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white transition">Flat</button>
+                    <button id="btnConcave" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition">Concave</button>
+                    <button id="btnConvex" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition">Convex</button>
+                    <button id="btnInset" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition">Inset</button>
+                </div>
+            </div>
+
+            <!-- Distance Slider -->
+            <div class="flex justify-between items-center">
+                <span>Distance (<span id="valDistance" class="font-mono text-indigo-400 font-semibold">12px</span>)</span>
+                <input id="rangeDistance" type="range" min="2" max="30" value="12" class="w-40 accent-indigo-500 cursor-pointer" />
+            </div>
+
+            <!-- Blur Slider -->
+            <div class="flex justify-between items-center">
+                <span>Blur (<span id="valBlur" class="font-mono text-indigo-400 font-semibold">24px</span>)</span>
+                <input id="rangeBlur" type="range" min="4" max="50" value="24" class="w-40 accent-indigo-500 cursor-pointer" />
+            </div>
+
+            <!-- Radius Slider -->
+            <div class="flex justify-between items-center">
+                <span>Radius (<span id="valRadius" class="font-mono text-indigo-400 font-semibold">24px</span>)</span>
+                <input id="rangeRadius" type="range" min="0" max="64" value="24" class="w-40 accent-indigo-500 cursor-pointer" />
+            </div>
+        </div>
+
+        <!-- Generated CSS Code Block -->
+        <div class="relative">
+            <pre class="bg-slate-950/80 p-3 rounded-xl text-xs font-mono text-slate-300 overflow-x-auto border border-slate-800 mb-3"><code id="cssOutput">border-radius: 24px;
+background: #1e293b;
+box-shadow: 12px 12px 24px #141b27,
+            -12px -12px 24px #28374f;</code></pre>
+
+            <button id="copyCssBtn" class="w-full bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 active:scale-[0.98] text-white font-semibold py-2.5 rounded-xl transition shadow-lg shadow-indigo-500/25 flex items-center justify-center space-x-2">
+                <span>Copy Neumorphic CSS</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script is:inline>
+    const neuPreview = document.getElementById('neuPreview');
+    const rangeDistance = document.getElementById('rangeDistance');
+    const rangeBlur = document.getElementById('rangeBlur');
+    const rangeRadius = document.getElementById('rangeRadius');
+    const valDistance = document.getElementById('valDistance');
+    const valBlur = document.getElementById('valBlur');
+    const valRadius = document.getElementById('valRadius');
+    const cssOutput = document.getElementById('cssOutput');
+    const copyCssBtn = document.getElementById('copyCssBtn');
+
+    const shapeButtons = {
+        flat: document.getElementById('btnFlat'),
+        concave: document.getElementById('btnConcave'),
+        convex: document.getElementById('btnConvex'),
+        inset: document.getElementById('btnInset')
+    };
+
+    let currentShape = 'flat';
+    const baseColor = '#1e293b';
+    const darkShadow = '#141b27';
+    const lightShadow = '#28374f';
+
+    function updateNeumorphism() {
+        const d = parseInt(rangeDistance.value);
+        const b = parseInt(rangeBlur.value);
+        const r = parseInt(rangeRadius.value);
+
+        valDistance.textContent = d + 'px';
+        valBlur.textContent = b + 'px';
+        valRadius.textContent = r + 'px';
+
+        let bgStyle = baseColor;
+        let shadowStyle = '';
+
+        if (currentShape === 'flat') {
+            shadowStyle = `${d}px ${d}px ${b}px ${darkShadow}, -${d}px -${d}px ${b}px ${lightShadow}`;
+        } else if (currentShape === 'inset') {
+            shadowStyle = `inset ${d}px ${d}px ${b}px ${darkShadow}, inset -${d}px -${d}px ${b}px ${lightShadow}`;
+        } else if (currentShape === 'concave') {
+            bgStyle = `linear-gradient(145deg, #1b2535, #202c3f)`;
+            shadowStyle = `${d}px ${d}px ${b}px ${darkShadow}, -${d}px -${d}px ${b}px ${lightShadow}`;
+        } else if (currentShape === 'convex') {
+            bgStyle = `linear-gradient(145deg, #202c3f, #1b2535)`;
+            shadowStyle = `${d}px ${d}px ${b}px ${darkShadow}, -${d}px -${d}px ${b}px ${lightShadow}`;
+        }
+
+        neuPreview.style.borderRadius = r + 'px';
+        neuPreview.style.background = bgStyle;
+        neuPreview.style.boxShadow = shadowStyle;
+
+        const cssText = `border-radius: ${r}px;\nbackground: ${bgStyle};\nbox-shadow: ${shadowStyle};`;
+        cssOutput.textContent = cssText;
+    }
+
+    Object.keys(shapeButtons).forEach(shape => {
+        const btn = shapeButtons[shape];
+        if (!btn) return;
+        btn.addEventListener('click', () => {
+            currentShape = shape;
+            Object.values(shapeButtons).forEach(b => {
+                b.className = 'px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition';
+            });
+            btn.className = 'px-2.5 py-1 rounded-lg bg-indigo-600 text-white transition';
+            updateNeumorphism();
+        });
+    });
+
+    [rangeDistance, rangeBlur, rangeRadius].forEach(slider => {
+        slider.addEventListener('input', updateNeumorphism);
+    });
+
+    copyCssBtn.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(cssOutput.textContent);
+            const originalHTML = copyCssBtn.innerHTML;
+            copyCssBtn.innerHTML = '<span>Copied! ✓</span>';
+            copyCssBtn.classList.add('bg-emerald-600');
+            setTimeout(() => {
+                copyCssBtn.innerHTML = originalHTML;
+                copyCssBtn.classList.remove('bg-emerald-600');
+            }, 1800);
+        } catch (e) {
+            copyCssBtn.textContent = 'Copied! ✓';
+        }
+    });
+
+    // Initial render
+    updateNeumorphism();
+</script>
