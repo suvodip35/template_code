@@ -1,0 +1,211 @@
+<div class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-xl bg-slate-900/90 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl shadow-2xl border border-slate-800/80 relative z-10">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6 border-b border-slate-800/80 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xl font-bold">¶</div>
+                <div>
+                    <h2 class="text-xl font-bold text-white tracking-tight">Lorem Ipsum Generator</h2>
+                    <p class="text-xs text-slate-400">Generate placeholder text for UI layouts & designs</p>
+                </div>
+            </div>
+            <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-semibold">DEV TOOL</span>
+        </div>
+
+        <!-- Controls Form -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            <!-- Type Tabs -->
+            <div class="bg-slate-950/60 p-1.5 rounded-2xl border border-slate-800/80 flex gap-1">
+                <button id="typeParas" class="type-btn flex-1 py-2 text-xs font-semibold rounded-xl bg-indigo-600 text-white shadow-md transition">Paragraphs</button>
+                <button id="typeSentences" class="type-btn flex-1 py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition">Sentences</button>
+                <button id="typeWords" class="type-btn flex-1 py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition">Words</button>
+            </div>
+
+            <!-- Count Stepper -->
+            <div class="bg-slate-950/60 px-4 py-2 rounded-2xl border border-slate-800/80 flex items-center justify-between">
+                <span class="text-xs text-slate-400 font-medium">Quantity:</span>
+                <div class="flex items-center gap-2">
+                    <button id="btnDec" class="w-7 h-7 rounded-lg bg-slate-800 text-white font-bold hover:bg-slate-700 transition flex items-center justify-center active:scale-95">-</button>
+                    <span id="countDisplay" class="font-mono text-base font-bold text-indigo-400 w-8 text-center">3</span>
+                    <button id="btnInc" class="w-7 h-7 rounded-lg bg-slate-800 text-white font-bold hover:bg-slate-700 transition flex items-center justify-center active:scale-95">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Option Toggles -->
+        <div class="flex flex-wrap items-center gap-4 mb-5 text-xs text-slate-300">
+            <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="chkStartLorem" checked class="w-4 h-4 rounded accent-indigo-500 cursor-pointer" />
+                <span>Start with "Lorem ipsum..."</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="chkHtmlTags" class="w-4 h-4 rounded accent-indigo-500 cursor-pointer" />
+                <span>Wrap in &lt;p&gt; tags</span>
+            </label>
+        </div>
+
+        <!-- Output Area -->
+        <div class="relative mb-5">
+            <div class="flex items-center justify-between text-xs text-slate-400 px-1 mb-2">
+                <span class="font-medium">Generated Text Preview:</span>
+                <span id="statsBadge" class="font-mono text-indigo-400">142 words • 984 chars</span>
+            </div>
+            <div id="textOutput" class="h-48 overflow-y-auto bg-slate-950/80 border border-slate-800 p-4 rounded-2xl text-xs sm:text-sm text-slate-300 font-mono leading-relaxed select-text space-y-3">
+                <p>Loading dummy text...</p>
+            </div>
+        </div>
+
+        <!-- Action Row -->
+        <div class="flex items-center gap-3">
+            <button id="btnGenerate" class="flex-1 bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-indigo-500/25 transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+                <span>⚡ Generate New</span>
+            </button>
+            <button id="btnCopy" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-5 rounded-xl border border-slate-700 transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+                <span id="copyIcon">📋</span>
+                <span id="copyText">Copy Text</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script is:inline>
+(function() {
+    const VOCAB = [
+        "lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
+        "sed", "do", "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore",
+        "magna", "aliqua", "enim", "ad", "minim", "veniam", "quis", "nostrud",
+        "exercitation", "ullamco", "laboris", "nisi", "aliquip", "ex", "ea", "commodo",
+        "consequat", "duis", "aute", "irure", "in", "reprehenderit", "voluptate",
+        "velit", "esse", "cillum", "fugiat", "nulla", "pariatur", "excepteur", "sint",
+        "occaecat", "cupidatat", "non", "proident", "sunt", "culpa", "qui", "officia",
+        "deserunt", "mollit", "anim", "id", "est", "laborum"
+    ];
+
+    let currentType = 'paras';
+    let currentCount = 3;
+
+    const countDisplay = document.getElementById('countDisplay');
+    const textOutput = document.getElementById('textOutput');
+    const statsBadge = document.getElementById('statsBadge');
+    const chkStartLorem = document.getElementById('chkStartLorem');
+    const chkHtmlTags = document.getElementById('chkHtmlTags');
+    const btnCopy = document.getElementById('btnCopy');
+    const copyText = document.getElementById('copyText');
+
+    function randomWord() {
+        return VOCAB[Math.floor(Math.random() * VOCAB.length)];
+    }
+
+    function makeSentence(startWithLorem = false) {
+        const len = Math.floor(Math.random() * 8) + 8;
+        const words = [];
+        for (let i = 0; i < len; i++) {
+            words.push(randomWord());
+        }
+        if (startWithLorem) {
+            words[0] = "lorem";
+            words[1] = "ipsum";
+            words[2] = "dolor";
+            words[3] = "sit";
+            words[4] = "amet";
+        }
+        words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
+        return words.join(' ') + '.';
+    }
+
+    function makeParagraph(startWithLorem = false) {
+        const sentences = [];
+        const count = Math.floor(Math.random() * 3) + 4;
+        for (let i = 0; i < count; i++) {
+            sentences.push(makeSentence(startWithLorem && i === 0));
+        }
+        return sentences.join(' ');
+    }
+
+    function generate() {
+        const wrapP = chkHtmlTags.checked;
+        const startLorem = chkStartLorem.checked;
+        let items = [];
+
+        if (currentType === 'paras') {
+            for (let i = 0; i < currentCount; i++) {
+                items.push(makeParagraph(startLorem && i === 0));
+            }
+        } else if (currentType === 'sentences') {
+            for (let i = 0; i < currentCount; i++) {
+                items.push(makeSentence(startLorem && i === 0));
+            }
+        } else {
+            for (let i = 0; i < currentCount; i++) {
+                items.push(randomWord());
+            }
+            if (startLorem && items.length >= 2) {
+                items[0] = "lorem";
+                items[1] = "ipsum";
+            }
+            items = [items.join(' ')];
+        }
+
+        let fullText = "";
+        textOutput.innerHTML = '';
+        items.forEach(text => {
+            const formatted = wrapP ? `<p>&lt;p&gt;${text}&lt;/p&gt;</p>` : `<p>${text}</p>`;
+            fullText += wrapP ? `<p>${text}</p>\n` : `${text}\n\n`;
+            textOutput.innerHTML += formatted;
+        });
+
+        const wordCount = fullText.trim().split(/\s+/).filter(Boolean).length;
+        const charCount = fullText.length;
+        statsBadge.textContent = `${wordCount} words • ${charCount} chars`;
+    }
+
+    document.getElementById('typeParas').onclick = function() {
+        setType('paras', this);
+    };
+    document.getElementById('typeSentences').onclick = function() {
+        setType('sentences', this);
+    };
+    document.getElementById('typeWords').onclick = function() {
+        setType('words', this);
+    };
+
+    function setType(type, btn) {
+        currentType = type;
+        document.querySelectorAll('.type-btn').forEach(b => {
+            b.className = 'type-btn flex-1 py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition';
+        });
+        btn.className = 'type-btn flex-1 py-2 text-xs font-semibold rounded-xl bg-indigo-600 text-white shadow-md transition';
+        generate();
+    }
+
+    document.getElementById('btnInc').onclick = () => {
+        if (currentCount < 15) { currentCount++; countDisplay.textContent = currentCount; generate(); }
+    };
+    document.getElementById('btnDec').onclick = () => {
+        if (currentCount > 1) { currentCount--; countDisplay.textContent = currentCount; generate(); }
+    };
+    document.getElementById('btnGenerate').onclick = generate;
+    chkStartLorem.onchange = generate;
+    chkHtmlTags.onchange = generate;
+
+    btnCopy.onclick = async () => {
+        const textToCopy = Array.from(textOutput.querySelectorAll('p')).map(p => p.textContent).join('\n\n');
+        try {
+            await navigator.clipboard.writeText(textToCopy);
+            copyText.textContent = "Copied! ✓";
+            btnCopy.classList.add('bg-emerald-600');
+            setTimeout(() => {
+                copyText.textContent = "Copy Text";
+                btnCopy.classList.remove('bg-emerald-600');
+            }, 1800);
+        } catch (e) {
+            copyText.textContent = "Copied! ✓";
+        }
+    };
+
+    generate();
+})();
+</script>
