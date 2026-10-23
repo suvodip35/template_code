@@ -1,0 +1,117 @@
+<div class="bg-gradient-to-br from-slate-50 via-cyan-50/40 to-slate-100 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-80 h-80 bg-cyan-200/50 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-blue-200/50 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-xl bg-white/95 backdrop-blur-xl p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-200/80 relative z-10">
+        <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-cyan-200/50 border border-cyan-500/30 flex items-center justify-center text-cyan-700 text-lg font-bold">🔗</div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 tracking-tight">URL Encoder & Decoder</h2>
+                    <p class="text-xs text-slate-500">Percent-encoding with live query parameter breakdown</p>
+                </div>
+            </div>
+            <div class="flex bg-slate-50 p-1 rounded-xl border border-slate-200">
+                <button id="modeEncode" class="px-3 py-1 rounded-lg text-xs font-semibold bg-white text-cyan-700 shadow-sm border border-slate-200/60 transition">Encode</button>
+                <button id="modeDecode" class="px-3 py-1 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-900 transition">Decode</button>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="mb-4">
+            <label class="block text-xs font-medium text-slate-400 mb-1.5">Input String</label>
+            <textarea id="urlInput" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs sm:text-sm font-mono text-slate-700 focus:outline-none focus:border-cyan-500 transition resize-none">https://webcraft.dev/search?q=frontend engineering & tags=astro+tailwind#results</textarea>
+        </div>
+
+        <!-- Output Area -->
+        <div class="mb-4">
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-1.5">
+                <span>Result:</span>
+                <span id="charDiff" class="text-cyan-400 font-mono">+12 chars</span>
+            </div>
+            <textarea id="urlOutput" rows="3" readonly class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs sm:text-sm font-mono text-cyan-700 select-all focus:outline-none resize-none"></textarea>
+        </div>
+
+        <!-- Query Parameters Inspector -->
+        <div class="mb-5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center justify-between">
+                <span>Query Parameter Inspector</span>
+                <span id="paramCount" class="text-cyan-400 font-mono">2 params</span>
+            </div>
+            <div id="paramList" class="space-y-1.5 max-h-28 overflow-y-auto font-mono text-xs"></div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button id="btnCopyURL" class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-slate-950 font-bold py-3 px-4 rounded-xl shadow-lg shadow-cyan-500/20 transition active:scale-[0.98] text-sm">
+                Copy Output
+            </button>
+        </div>
+    </div>
+</div>
+
+<script is:inline>
+(function() {
+    let mode = 'encode';
+    const input = document.getElementById('urlInput');
+    const output = document.getElementById('urlOutput');
+    const charDiff = document.getElementById('charDiff');
+    const paramList = document.getElementById('paramList');
+    const paramCount = document.getElementById('paramCount');
+
+    function update() {
+        const val = input.value;
+        let res = '';
+        try {
+            res = mode === 'encode' ? encodeURI(val) : decodeURI(val);
+        } catch(e) {
+            res = val;
+        }
+        output.value = res;
+        const diff = res.length - val.length;
+        charDiff.textContent = `${diff >= 0 ? '+' : ''}${diff} chars`;
+
+        // Inspect query params
+        paramList.innerHTML = '';
+        try {
+            const rawUrl = mode === 'encode' ? val : res;
+            const u = new URL(rawUrl.startsWith('http') ? rawUrl : 'http://dummy.io/' + rawUrl);
+            const params = Array.from(u.searchParams.entries());
+            paramCount.textContent = `${params.length} param${params.length === 1 ? '' : 's'}`;
+            if (params.length === 0) {
+                paramList.innerHTML = '<span class="text-slate-600 italic">No query parameters found</span>';
+            } else {
+                params.forEach(([k, v]) => {
+                    paramList.innerHTML += `<div class="flex items-center justify-between p-1.5 rounded-lg bg-slate-900 border border-slate-200"><span class="text-cyan-400 font-semibold">${k}</span><span class="text-slate-700 truncate max-w-[200px]">${v}</span></div>`;
+                });
+            }
+        } catch(e) {
+            paramList.innerHTML = '<span class="text-slate-600 italic">Plain text string</span>';
+            paramCount.textContent = '0 params';
+        }
+    }
+
+    document.getElementById('modeEncode').onclick = function() {
+        mode = 'encode';
+        this.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-cyan-500 text-slate-950 shadow transition';
+        document.getElementById('modeDecode').className = 'px-3 py-1 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-900 transition';
+        update();
+    };
+
+    document.getElementById('modeDecode').onclick = function() {
+        mode = 'decode';
+        this.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-cyan-500 text-slate-950 shadow transition';
+        document.getElementById('modeEncode').className = 'px-3 py-1 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-900 transition';
+        update();
+    };
+
+    input.addEventListener('input', update);
+    document.getElementById('btnCopyURL').onclick = () => {
+        navigator.clipboard.writeText(output.value);
+        const b = document.getElementById('btnCopyURL');
+        b.textContent = 'Copied! ✓';
+        setTimeout(() => b.textContent = 'Copy Output', 1400);
+    };
+
+    update();
+})();
+</script>
