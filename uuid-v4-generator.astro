@@ -1,0 +1,171 @@
+<div class="bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-emerald-600/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-cyan-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-xl bg-slate-900/90 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl shadow-2xl border border-slate-800/80 relative z-10">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6 border-b border-slate-800/80 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-lg font-mono font-bold">#4</div>
+                <div>
+                    <h2 class="text-xl font-bold text-white tracking-tight">UUID v4 & GUID Generator</h2>
+                    <p class="text-xs text-slate-400">RFC 4122 compliant cryptographically secure IDs</p>
+                </div>
+            </div>
+            <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">SECURITY</span>
+        </div>
+
+        <!-- Hero Primary UUID Display -->
+        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 mb-6 relative group">
+            <div class="text-[10px] uppercase font-mono text-slate-400 tracking-wider mb-1 flex justify-between">
+                <span>Active Primary UUID</span>
+                <span class="text-emerald-400 font-semibold">128-BIT CRYPTO</span>
+            </div>
+            <div class="flex items-center justify-between gap-3">
+                <span id="heroUUID" class="font-mono text-sm sm:text-base font-bold text-emerald-300 tracking-wide break-all select-all">c4a8f921-7b02-4d1e-8e39-123456789abc</span>
+                <button id="btnHeroCopy" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition active:scale-95 shrink-0" title="Copy UUID">
+                    📋
+                </button>
+            </div>
+        </div>
+
+        <!-- Customization Controls -->
+        <div class="grid grid-cols-2 gap-3 mb-5 text-xs text-slate-300">
+            <label class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="chkUppercase" class="w-4 h-4 rounded accent-emerald-500 cursor-pointer" />
+                <span>UPPERCASE</span>
+            </label>
+            <label class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="chkHyphens" checked class="w-4 h-4 rounded accent-emerald-500 cursor-pointer" />
+                <span>Include Hyphens</span>
+            </label>
+            <label class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="chkBraces" class="w-4 h-4 rounded accent-emerald-500 cursor-pointer" />
+                <span>Enclose in &lbrace; &rbrace;</span>
+            </label>
+            <div class="bg-slate-950/60 px-3 py-2 rounded-xl border border-slate-800 flex items-center justify-between">
+                <span class="text-slate-400">Bulk Count:</span>
+                <div class="flex items-center gap-2 font-mono">
+                    <button id="btnBulkMinus" class="px-2 py-0.5 rounded bg-slate-800 text-white hover:bg-slate-700">-</button>
+                    <span id="bulkCount" class="font-bold text-emerald-400">4</span>
+                    <button id="btnBulkPlus" class="px-2 py-0.5 rounded bg-slate-800 text-white hover:bg-slate-700">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bulk UUID List -->
+        <div class="mb-5">
+            <div class="flex items-center justify-between text-xs text-slate-400 px-1 mb-2">
+                <span>Generated Batch:</span>
+                <span id="batchInfo" class="font-mono text-emerald-400">4 items ready</span>
+            </div>
+            <div id="uuidList" class="bg-slate-950/70 border border-slate-800 rounded-2xl p-2.5 max-h-40 overflow-y-auto space-y-1.5 font-mono text-xs"></div>
+        </div>
+
+        <!-- Action Row -->
+        <div class="flex items-center gap-3">
+            <button id="btnGenFresh" class="flex-1 bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-emerald-500/25 transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+                <span>🔄 Generate Fresh Batch</span>
+            </button>
+            <button id="btnCopyAll" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-5 rounded-xl border border-slate-700 transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+                <span id="copyAllText">Copy All</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script is:inline>
+(function() {
+    let bulkCountVal = 4;
+    const heroUUID = document.getElementById('heroUUID');
+    const uuidList = document.getElementById('uuidList');
+    const chkUppercase = document.getElementById('chkUppercase');
+    const chkHyphens = document.getElementById('chkHyphens');
+    const chkBraces = document.getElementById('chkBraces');
+    const bulkCount = document.getElementById('bulkCount');
+    const btnCopyAll = document.getElementById('btnCopyAll');
+    const copyAllText = document.getElementById('copyAllText');
+
+    function createUUID() {
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+            return crypto.randomUUID();
+        }
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0;
+            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
+    function formatUUID(raw) {
+        let val = raw;
+        if (!chkHyphens.checked) val = val.replace(/-/g, '');
+        if (chkUppercase.checked) val = val.toUpperCase();
+        if (chkBraces.checked) val = `{${val}}`;
+        return val;
+    }
+
+    let generatedBatch = [];
+
+    function generateBatch() {
+        generatedBatch = [];
+        for (let i = 0; i < bulkCountVal; i++) {
+            generatedBatch.push(createUUID());
+        }
+        render();
+    }
+
+    function render() {
+        if (generatedBatch.length === 0) generateBatch();
+        heroUUID.textContent = formatUUID(generatedBatch[0]);
+
+        uuidList.innerHTML = '';
+        generatedBatch.forEach((raw, idx) => {
+            const formatted = formatUUID(raw);
+            const row = document.createElement('div');
+            row.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-800/60 hover:border-emerald-500/40 transition group';
+            row.innerHTML = `
+                <span class="text-slate-300 font-medium truncate select-all">${formatted}</span>
+                <button class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-emerald-400 transition ml-2 text-xs" title="Copy">📋</button>
+            `;
+            const cBtn = row.querySelector('button');
+            cBtn.onclick = () => {
+                navigator.clipboard.writeText(formatted);
+                cBtn.textContent = '✓';
+                setTimeout(() => cBtn.textContent = '📋', 1200);
+            };
+            uuidList.appendChild(row);
+        });
+        document.getElementById('batchInfo').textContent = `${generatedBatch.length} items ready`;
+    }
+
+    document.getElementById('btnGenFresh').onclick = generateBatch;
+    document.getElementById('btnHeroCopy').onclick = () => {
+        navigator.clipboard.writeText(heroUUID.textContent);
+        document.getElementById('btnHeroCopy').textContent = '✓';
+        setTimeout(() => document.getElementById('btnHeroCopy').textContent = '📋', 1200);
+    };
+
+    [chkUppercase, chkHyphens, chkBraces].forEach(el => el.onchange = render);
+
+    document.getElementById('btnBulkPlus').onclick = () => {
+        if (bulkCountVal < 10) { bulkCountVal++; bulkCount.textContent = bulkCountVal; generateBatch(); }
+    };
+    document.getElementById('btnBulkMinus').onclick = () => {
+        if (bulkCountVal > 1) { bulkCountVal--; bulkCount.textContent = bulkCountVal; generateBatch(); }
+    };
+
+    btnCopyAll.onclick = async () => {
+        const text = generatedBatch.map(formatUUID).join('\n');
+        await navigator.clipboard.writeText(text);
+        copyAllText.textContent = 'Copied! ✓';
+        btnCopyAll.classList.add('bg-emerald-600');
+        setTimeout(() => {
+            copyAllText.textContent = 'Copy All';
+            btnCopyAll.classList.remove('bg-emerald-600');
+        }, 1600);
+    };
+
+    generateBatch();
+})();
+</script>
