@@ -1,73 +1,73 @@
-<div class="bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
-    <div class="absolute -top-24 -left-24 w-96 h-96 bg-emerald-600/15 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-cyan-600/15 rounded-full blur-3xl pointer-events-none"></div>
+<div class="bg-gradient-to-br from-slate-50 via-emerald-50/40 to-slate-100 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-emerald-200/50 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-cyan-200/50 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="w-full max-w-xl bg-slate-900/90 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl shadow-2xl border border-slate-800/80 relative z-10">
+    <div class="w-full max-w-xl bg-white/95 backdrop-blur-xl p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-200/80 relative z-10">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-6 border-b border-slate-800/80 pb-4">
+        <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-lg font-mono font-bold">#4</div>
+                <div class="w-10 h-10 rounded-xl bg-emerald-200/50 border border-emerald-500/30 flex items-center justify-center text-emerald-700 text-lg font-mono font-bold">#4</div>
                 <div>
-                    <h2 class="text-xl font-bold text-white tracking-tight">UUID v4 & GUID Generator</h2>
-                    <p class="text-xs text-slate-400">RFC 4122 compliant cryptographically secure IDs</p>
+                    <h2 class="text-xl font-bold text-slate-900 tracking-tight">UUID v4 & GUID Generator</h2>
+                    <p class="text-xs text-slate-500">RFC 4122 compliant cryptographically secure IDs</p>
                 </div>
             </div>
-            <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold">SECURITY</span>
+            <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">SECURITY</span>
         </div>
 
         <!-- Hero Primary UUID Display -->
-        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 mb-6 relative group">
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-6 relative group">
             <div class="text-[10px] uppercase font-mono text-slate-400 tracking-wider mb-1 flex justify-between">
                 <span>Active Primary UUID</span>
                 <span class="text-emerald-400 font-semibold">128-BIT CRYPTO</span>
             </div>
             <div class="flex items-center justify-between gap-3">
-                <span id="heroUUID" class="font-mono text-sm sm:text-base font-bold text-emerald-300 tracking-wide break-all select-all">c4a8f921-7b02-4d1e-8e39-123456789abc</span>
-                <button id="btnHeroCopy" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition active:scale-95 shrink-0" title="Copy UUID">
+                <span id="heroUUID" class="font-mono text-sm sm:text-base font-bold text-emerald-700 font-bold tracking-wide break-all select-all">c4a8f921-7b02-4d1e-8e39-123456789abc</span>
+                <button id="btnHeroCopy" class="p-2 rounded-xl bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-200 shadow-sm transition active:scale-95 shrink-0" title="Copy UUID">
                     📋
                 </button>
             </div>
         </div>
 
         <!-- Customization Controls -->
-        <div class="grid grid-cols-2 gap-3 mb-5 text-xs text-slate-300">
-            <label class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" id="chkUppercase" class="w-4 h-4 rounded accent-emerald-500 cursor-pointer" />
+        <div class="grid grid-cols-2 gap-3 mb-5 text-xs text-slate-600">
+            <label class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="chkUppercase" class="w-4 h-4 rounded accent-emerald-600 cursor-pointer" />
                 <span>UPPERCASE</span>
             </label>
-            <label class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" id="chkHyphens" checked class="w-4 h-4 rounded accent-emerald-500 cursor-pointer" />
+            <label class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="chkHyphens" checked class="w-4 h-4 rounded accent-emerald-600 cursor-pointer" />
                 <span>Include Hyphens</span>
             </label>
-            <label class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" id="chkBraces" class="w-4 h-4 rounded accent-emerald-500 cursor-pointer" />
+            <label class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="chkBraces" class="w-4 h-4 rounded accent-emerald-600 cursor-pointer" />
                 <span>Enclose in &lbrace; &rbrace;</span>
             </label>
-            <div class="bg-slate-950/60 px-3 py-2 rounded-xl border border-slate-800 flex items-center justify-between">
+            <div class="bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 flex items-center justify-between">
                 <span class="text-slate-400">Bulk Count:</span>
                 <div class="flex items-center gap-2 font-mono">
-                    <button id="btnBulkMinus" class="px-2 py-0.5 rounded bg-slate-800 text-white hover:bg-slate-700">-</button>
+                    <button id="btnBulkMinus" class="px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 shadow-sm">-</button>
                     <span id="bulkCount" class="font-bold text-emerald-400">4</span>
-                    <button id="btnBulkPlus" class="px-2 py-0.5 rounded bg-slate-800 text-white hover:bg-slate-700">+</button>
+                    <button id="btnBulkPlus" class="px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 shadow-sm">+</button>
                 </div>
             </div>
         </div>
 
         <!-- Bulk UUID List -->
         <div class="mb-5">
-            <div class="flex items-center justify-between text-xs text-slate-400 px-1 mb-2">
+            <div class="flex items-center justify-between text-xs text-slate-500 px-1 mb-2">
                 <span>Generated Batch:</span>
                 <span id="batchInfo" class="font-mono text-emerald-400">4 items ready</span>
             </div>
-            <div id="uuidList" class="bg-slate-950/70 border border-slate-800 rounded-2xl p-2.5 max-h-40 overflow-y-auto space-y-1.5 font-mono text-xs"></div>
+            <div id="uuidList" class="bg-slate-50 border border-slate-200 rounded-2xl p-2.5 max-h-40 overflow-y-auto space-y-1.5 font-mono text-xs"></div>
         </div>
 
         <!-- Action Row -->
         <div class="flex items-center gap-3">
-            <button id="btnGenFresh" class="flex-1 bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-600 hover:to-cyan-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-emerald-500/25 transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+            <button id="btnGenFresh" class="flex-1 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md shadow-emerald-200 transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
                 <span>🔄 Generate Fresh Batch</span>
             </button>
-            <button id="btnCopyAll" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-5 rounded-xl border border-slate-700 transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+            <button id="btnCopyAll" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-5 rounded-xl border border-slate-200 transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
                 <span id="copyAllText">Copy All</span>
             </button>
         </div>
@@ -123,9 +123,9 @@
         generatedBatch.forEach((raw, idx) => {
             const formatted = formatUUID(raw);
             const row = document.createElement('div');
-            row.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-800/60 hover:border-emerald-500/40 transition group';
+            row.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-200/60 hover:border-emerald-500/40 transition group';
             row.innerHTML = `
-                <span class="text-slate-300 font-medium truncate select-all">${formatted}</span>
+                <span class="text-slate-700 font-medium truncate select-all">${formatted}</span>
                 <button class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-emerald-400 transition ml-2 text-xs" title="Copy">📋</button>
             `;
             const cBtn = row.querySelector('button');
