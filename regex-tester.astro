@@ -1,0 +1,126 @@
+<div class="bg-gradient-to-br from-slate-50 via-indigo-50/40 to-slate-100 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-20 -left-20 w-80 h-80 bg-indigo-200/50 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-purple-200/50 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-xl bg-white/95 backdrop-blur-xl p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-200/80 relative z-10">
+        <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-200/50 border border-indigo-500/30 flex items-center justify-center text-indigo-600 font-mono text-base font-bold">.*</div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 tracking-tight">Regex Pattern Tester</h2>
+                    <p class="text-xs text-slate-500">Live regular expression syntax validator & match highlighter</p>
+                </div>
+            </div>
+            <span id="matchBadge" class="text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">3 Matches</span>
+        </div>
+
+        <!-- Pattern Input & Flags -->
+        <div class="mb-4">
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-1.5 font-medium">
+                <span>Regular Expression</span>
+                <div class="flex gap-2">
+                    <label class="cursor-pointer hover:text-slate-900"><input type="checkbox" id="flagG" checked class="accent-indigo-600" /> g</label>
+                    <label class="cursor-pointer hover:text-slate-900"><input type="checkbox" id="flagI" checked class="accent-indigo-600" /> i</label>
+                    <label class="cursor-pointer hover:text-slate-900"><input type="checkbox" id="flagM" class="accent-indigo-600" /> m</label>
+                </div>
+            </div>
+            <div class="flex items-center bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 font-mono text-sm text-indigo-700 focus-within:border-indigo-500 transition shadow-inner">
+                <span class="text-slate-500 mr-1 select-none">/</span>
+                <input id="regexInput" type="text" value="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" class="bg-transparent text-indigo-700 w-full focus:outline-none" placeholder="Enter regex pattern..." />
+                <span class="text-slate-500 ml-1 select-none" id="flagsSuffix">/gi</span>
+            </div>
+        </div>
+
+        <!-- Test String Input -->
+        <div class="mb-4">
+            <label class="block text-xs font-medium text-slate-400 mb-1.5">Test String</label>
+            <textarea id="testInput" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs sm:text-sm font-mono text-slate-700 focus:outline-none focus:border-indigo-500 transition resize-none">Contact our lead dev at alice@webcraft.io or support@domain.com. You can also reach hello@test.org for inquiries!</textarea>
+        </div>
+
+        <!-- Live Matches Display -->
+        <div class="mb-5">
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-1.5">
+                <span>Match Highlight Preview:</span>
+                <span id="execSpeed" class="text-slate-500 font-mono">0.3ms</span>
+            </div>
+            <div id="highlightBox" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-xs sm:text-sm font-mono text-slate-700 leading-relaxed min-h-[70px]"></div>
+        </div>
+
+        <!-- Presets Row -->
+        <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+            <div class="flex gap-2">
+                <button class="preset-btn text-[11px] font-medium px-3 py-1.5 rounded-lg bg-slate-800 text-slate-700 hover:text-slate-900 hover:bg-slate-700 transition" data-regex="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}">Email</button>
+                <button class="preset-btn text-[11px] font-medium px-3 py-1.5 rounded-lg bg-slate-800 text-slate-700 hover:text-slate-900 hover:bg-slate-700 transition" data-regex="https?:\/\/[^\s/$.?#].[^\s]*">URL</button>
+                <button class="preset-btn text-[11px] font-medium px-3 py-1.5 rounded-lg bg-slate-800 text-slate-700 hover:text-slate-900 hover:bg-slate-700 transition" data-regex="\b\d{3}[-.]?\d{3}[-.]?\d{4}\b">Phone</button>
+            </div>
+            <button id="btnCopyRegex" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs py-2 px-4 rounded-xl transition shadow shadow-indigo-500/20 active:scale-95">Copy Regex</button>
+        </div>
+    </div>
+</div>
+
+<script is:inline>
+(function() {
+    const regexInput = document.getElementById('regexInput');
+    const testInput = document.getElementById('testInput');
+    const highlightBox = document.getElementById('highlightBox');
+    const matchBadge = document.getElementById('matchBadge');
+    const flagsSuffix = document.getElementById('flagsSuffix');
+    const flagG = document.getElementById('flagG');
+    const flagI = document.getElementById('flagI');
+    const flagM = document.getElementById('flagM');
+
+    function update() {
+        const p = regexInput.value;
+        let flags = '';
+        if (flagG.checked) flags += 'g';
+        if (flagI.checked) flags += 'i';
+        if (flagM.checked) flags += 'm';
+        flagsSuffix.textContent = '/' + flags;
+
+        if (!p) {
+            highlightBox.textContent = testInput.value;
+            matchBadge.textContent = '0 Matches';
+            matchBadge.className = 'text-xs font-mono px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-200 font-semibold';
+            return;
+        }
+
+        try {
+            const re = new RegExp(p, flags);
+            const str = testInput.value;
+            const matches = str.match(re) || [];
+
+            matchBadge.textContent = `${matches.length} Match${matches.length === 1 ? '' : 'es'}`;
+            matchBadge.className = matches.length > 0
+                ? 'text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold'
+                : 'text-xs font-mono px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-semibold';
+
+            // Highlighting
+            const safe = str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const highlighted = safe.replace(re, '<mark class="bg-emerald-500/30 text-emerald-300 font-bold px-1 rounded border border-emerald-500/40">$&</mark>');
+            highlightBox.innerHTML = highlighted;
+        } catch (e) {
+            matchBadge.textContent = 'Invalid Regex';
+            matchBadge.className = 'text-xs font-mono px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-semibold';
+            highlightBox.textContent = testInput.value;
+        }
+    }
+
+    [regexInput, testInput, flagG, flagI, flagM].forEach(el => el.addEventListener('input', update));
+
+    document.querySelectorAll('.preset-btn').forEach(b => {
+        b.onclick = () => {
+            regexInput.value = b.dataset.regex;
+            update();
+        };
+    });
+
+    document.getElementById('btnCopyRegex').onclick = () => {
+        navigator.clipboard.writeText('/' + regexInput.value + '/' + (flagG.checked ? 'g' : '') + (flagI.checked ? 'i' : ''));
+        const btn = document.getElementById('btnCopyRegex');
+        btn.textContent = 'Copied! ✓';
+        setTimeout(() => btn.textContent = 'Copy Regex', 1400);
+    };
+
+    update();
+})();
+</script>
