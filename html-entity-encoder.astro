@@ -1,0 +1,163 @@
+<div class="bg-gradient-to-br from-slate-950 via-pink-950 to-rose-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-pink-600/30 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-rose-600/30 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-xl bg-slate-900/85 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl shadow-2xl shadow-pink-950/60 border border-pink-500/30 relative z-10">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-5 border-b border-slate-800/80 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-pink-950/60 border border-pink-500/40 flex items-center justify-center text-pink-400 font-mono text-lg font-bold">&amp;;</div>
+                <div>
+                    <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-300 to-fuchsia-400 tracking-tight">HTML Entity Encoder</h2>
+                    <p class="text-xs text-slate-400">Convert special characters to HTML safe entities</p>
+                </div>
+            </div>
+            <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-pink-950/80 text-pink-300 border border-pink-500/40 font-semibold">WEB UTILITY</span>
+        </div>
+
+        <!-- Mode Tabs -->
+        <div class="bg-slate-950/60 p-1.5 rounded-2xl border border-slate-800 flex gap-1 mb-4">
+            <button id="modeEncode" class="flex-1 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-md transition">Encode (Text ➔ Entity)</button>
+            <button id="modeDecode" class="flex-1 py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition">Decode (Entity ➔ Text)</button>
+        </div>
+
+        <!-- Symbol Palette -->
+        <div class="mb-4">
+            <div class="text-[11px] font-medium text-slate-400 mb-2 flex items-center justify-between">
+                <span>Quick Character Palette:</span>
+                <span class="text-slate-500">Click to insert</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5" id="palette">
+                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&lt;</button>
+                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&gt;</button>
+                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&amp;</button>
+                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&quot;</button>
+                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&#39;</button>
+                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&copy;</button>
+                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&reg;</button>
+                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&trade;</button>
+                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&euro;</button>
+                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&hearts;</button>
+                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&rarr;</button>
+            </div>
+        </div>
+
+        <!-- Input Box -->
+        <div class="mb-4">
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-1.5">
+                <span id="inputLabel" class="font-medium">Plain Text Input:</span>
+                <span id="charCount" class="font-mono text-indigo-400">32 chars</span>
+            </div>
+            <textarea id="sourceText" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 resize-none"><h1>Hello & Welcome to WebCraft! &copy; 2026</h1></textarea>
+        </div>
+
+        <!-- Output Box -->
+        <div class="mb-5">
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-1.5">
+                <span id="outputLabel" class="font-medium">HTML Entities Result:</span>
+                <span id="entityCount" class="font-mono text-emerald-400">4 entities found</span>
+            </div>
+            <div id="resultBox" class="h-28 overflow-y-auto bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs sm:text-sm text-indigo-700 font-mono break-all select-all leading-relaxed">
+                &amp;lt;h1&amp;gt;Hello &amp;amp; Welcome to WebCraft! &amp;copy; 2026&amp;lt;/h1&amp;gt;
+            </div>
+        </div>
+
+        <!-- Action Row -->
+        <div class="flex items-center gap-3">
+            <button id="btnConvert" class="flex-1 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md shadow-indigo-200 transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+                <span>⚡ Convert Now</span>
+            </button>
+            <button id="btnCopy" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-5 rounded-xl border border-slate-200 transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+                <span id="copyIcon">📋</span>
+                <span id="copyText">Copy Result</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script is:inline>
+(function() {
+    let mode = 'encode';
+    const sourceText = document.getElementById('sourceText');
+    const resultBox = document.getElementById('resultBox');
+    const btnEncode = document.getElementById('modeEncode');
+    const btnDecode = document.getElementById('modeDecode');
+    const inputLabel = document.getElementById('inputLabel');
+    const outputLabel = document.getElementById('outputLabel');
+    const charCount = document.getElementById('charCount');
+    const entityCount = document.getElementById('entityCount');
+    const btnConvert = document.getElementById('btnConvert');
+    const btnCopy = document.getElementById('btnCopy');
+    const copyText = document.getElementById('copyText');
+
+    const ENTITY_MAP = {
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+        '©': '&copy;', '®': '&reg;', '™': '&trade;', '€': '&euro;', '£': '&pound;',
+        '♥': '&hearts;', '★': '&#9733;', '→': '&rarr;'
+    };
+
+    function encodeEntities(str) {
+        return str.replace(/[&<>"'©®™€£♥★→]/g, c => ENTITY_MAP[c] || c);
+    }
+
+    function decodeEntities(str) {
+        const doc = new DOMParser().parseFromString(str, 'text/html');
+        return doc.documentElement.textContent || str;
+    }
+
+    function process() {
+        const val = sourceText.value;
+        charCount.textContent = `${val.length} chars`;
+        if (mode === 'encode') {
+            const encoded = encodeEntities(val);
+            resultBox.textContent = encoded;
+            const matches = val.match(/[&<>"'©®™€£♥★→]/g) || [];
+            entityCount.textContent = `${matches.length} entities encoded`;
+        } else {
+            const decoded = decodeEntities(val);
+            resultBox.textContent = decoded;
+            entityCount.textContent = `Decoded to plain text`;
+        }
+    }
+
+    btnEncode.onclick = () => {
+        mode = 'encode';
+        btnEncode.className = "flex-1 py-2 text-xs font-semibold rounded-xl bg-indigo-600 text-white shadow-md transition";
+        btnDecode.className = "flex-1 py-2 text-xs font-semibold rounded-xl text-slate-500 hover:text-slate-900 transition";
+        inputLabel.textContent = "Plain Text Input:";
+        outputLabel.textContent = "HTML Entities Result:";
+        process();
+    };
+
+    btnDecode.onclick = () => {
+        mode = 'decode';
+        btnDecode.className = "flex-1 py-2 text-xs font-semibold rounded-xl bg-indigo-600 text-white shadow-md transition";
+        btnEncode.className = "flex-1 py-2 text-xs font-semibold rounded-xl text-slate-500 hover:text-slate-900 transition";
+        inputLabel.textContent = "HTML Entities Input:";
+        outputLabel.textContent = "Decoded Plain Text:";
+        process();
+    };
+
+    document.querySelectorAll('.palette-btn').forEach(btn => {
+        btn.onclick = () => {
+            sourceText.value += btn.textContent;
+            process();
+        };
+    });
+
+    btnConvert.onclick = process;
+    sourceText.oninput = process;
+
+    btnCopy.onclick = async () => {
+        await navigator.clipboard.writeText(resultBox.textContent);
+        copyText.textContent = 'Copied! ✓';
+        btnCopy.classList.add('bg-emerald-600', 'border-emerald-500');
+        setTimeout(() => {
+            copyText.textContent = 'Copy Result';
+            btnCopy.classList.remove('bg-emerald-600', 'border-emerald-500');
+        }, 1400);
+    };
+
+    process();
+})();
+</script>
