@@ -1,37 +1,38 @@
-<div class="bg-gradient-to-br from-slate-950 via-amber-950 to-orange-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
-    <div class="absolute -top-24 -left-24 w-80 h-80 bg-amber-200/50 rounded-full blur-3xl pointer-events-none"></div>
+<div class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-white/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-indigo-300/30 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="w-full max-w-xl bg-slate-900/85 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl shadow-2xl shadow-blue-950/60 border border-blue-500/30 relative z-10">
+    <div class="w-full max-w-xl bg-white shadow-2xl rounded-3xl p-6 sm:p-8 border border-slate-100 relative z-10 transition-all duration-300">
         <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-4">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-amber-200/50 border border-amber-500/30 flex items-center justify-center text-amber-400 text-lg font-mono font-bold">{ }</div>
+                <div class="w-11 h-11 rounded-2xl bg-indigo-50 border border-indigo-200/80 flex items-center justify-center text-indigo-600 text-xl font-mono font-bold shadow-sm">{ }</div>
                 <div>
-                    <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 tracking-tight">JSON Formatter & Minifier</h2>
-                    <p class="text-xs text-slate-500">Validate, beautify, and compress JSON payloads</p>
+                    <h2 class="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">JSON Formatter & Minifier</h2>
+                    <p class="text-xs text-slate-500 font-medium">Validate, beautify, and compress JSON payloads</p>
                 </div>
             </div>
-            <span id="jsonStatus" class="text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">VALID JSON ✓</span>
+            <span id="jsonStatus" class="text-xs font-mono px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold shadow-sm">VALID JSON ✓</span>
         </div>
 
         <div class="mb-4">
-            <div class="flex items-center justify-between text-xs text-slate-500 mb-1.5">
-                <span>Input / Editor</span>
-                <span id="byteCounter" class="text-amber-400 font-mono">112 Bytes</span>
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-600 mb-2">
+                <span>Input JSON Payload:</span>
+                <span id="byteCounter" class="text-indigo-600 font-mono font-bold bg-indigo-50 px-2.5 py-0.5 rounded-md border border-indigo-100">112 Bytes</span>
             </div>
-            <textarea id="jsonArea" rows="8" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3.5 text-xs sm:text-sm font-mono text-amber-200/90 focus:outline-none focus:border-amber-500 transition resize-none leading-relaxed select-text">{"channel":"WebCraft & Devs","active":true,"subscribers":125000,"topics":["Astro","Tailwind CSS","JavaScript"],"metrics":{"views":4500000,"retentionRate":84.5}}</textarea>
+            <textarea id="jsonArea" rows="7" class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-xs sm:text-sm font-mono text-slate-900 focus:outline-none focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100 transition resize-none leading-relaxed select-text shadow-inner">{"channel":"WebCraft & Devs","active":true,"subscribers":125000,"topics":["Astro","Tailwind CSS","JavaScript"],"metrics":{"views":4500000,"retentionRate":84.5}}</textarea>
         </div>
 
         <div class="grid grid-cols-3 gap-2.5 mb-5 text-xs">
-            <button id="btnBeautify2" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl border border-slate-200 font-semibold transition active:scale-95">Beautify (2s)</button>
-            <button id="btnBeautify4" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl border border-slate-200 font-semibold transition active:scale-95">Beautify (4s)</button>
-            <button id="btnMinify" class="py-2.5 bg-amber-600 hover:bg-amber-500 text-slate-950 rounded-xl font-bold transition active:scale-95 shadow shadow-amber-500/20">Minify JSON</button>
+            <button id="btnBeautify2" class="py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl border border-indigo-200 font-semibold transition active:scale-95 shadow-sm">Beautify (2s)</button>
+            <button id="btnBeautify4" class="py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl border border-purple-200 font-semibold transition active:scale-95 shadow-sm">Beautify (4s)</button>
+            <button id="btnMinify" class="py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition active:scale-95 shadow-md shadow-indigo-200">Minify JSON</button>
         </div>
 
         <div class="flex items-center gap-3">
-            <button id="btnCopyJSON" class="flex-1 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-slate-950 font-bold py-3 px-4 rounded-xl shadow-lg shadow-amber-500/20 transition active:scale-[0.98] text-sm">
-                Copy Formatted JSON
+            <button id="btnCopyJSON" class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-200 transition active:scale-[0.98] text-sm flex items-center justify-center gap-2">
+                <span>📋 Copy Formatted JSON</span>
             </button>
-            <button id="btnClear" class="bg-slate-800 hover:bg-slate-700 text-slate-700 font-semibold py-3 px-4 rounded-xl border border-slate-200 text-xs">Clear</button>
+            <button id="btnClear" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3.5 px-5 rounded-xl border border-slate-300 transition active:scale-[0.98] text-xs">Clear</button>
         </div>
     </div>
 </div>
@@ -46,12 +47,12 @@
         try {
             const parsed = JSON.parse(area.value);
             status.textContent = 'VALID JSON ✓';
-            status.className = 'text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold';
+            status.className = 'text-xs font-mono px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold shadow-sm';
             byteCounter.textContent = `${new Blob([area.value]).size} Bytes`;
             return parsed;
         } catch(e) {
             status.textContent = 'SYNTAX ERROR ✗';
-            status.className = 'text-xs font-mono px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-semibold';
+            status.className = 'text-xs font-mono px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-semibold shadow-sm';
             return null;
         }
     }
@@ -75,8 +76,8 @@
     document.getElementById('btnCopyJSON').onclick = () => {
         navigator.clipboard.writeText(area.value);
         const b = document.getElementById('btnCopyJSON');
-        b.textContent = 'Copied! ✓';
-        setTimeout(() => b.textContent = 'Copy Formatted JSON', 1400);
+        b.innerHTML = '<span>Copied! ✓</span>';
+        setTimeout(() => b.innerHTML = '<span>📋 Copy Formatted JSON</span>', 1400);
     };
 
     area.addEventListener('input', checkValid);
