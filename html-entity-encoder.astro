@@ -1,73 +1,73 @@
-<div class="bg-gradient-to-br from-slate-950 via-pink-950 to-rose-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
-    <div class="absolute -top-24 -left-24 w-96 h-96 bg-pink-600/30 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-rose-600/30 rounded-full blur-3xl pointer-events-none"></div>
+<div class="bg-gradient-to-br from-pink-500 via-rose-500 to-purple-600 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-white/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-pink-300/30 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="w-full max-w-xl bg-slate-900/85 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl shadow-2xl shadow-pink-950/60 border border-pink-500/30 relative z-10">
+    <div class="w-full max-w-xl bg-white shadow-2xl rounded-3xl p-6 sm:p-8 border border-slate-100 relative z-10 transition-all duration-300">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-5 border-b border-slate-800/80 pb-4">
+        <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-4">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-pink-950/60 border border-pink-500/40 flex items-center justify-center text-pink-400 font-mono text-lg font-bold">&amp;;</div>
+                <div class="w-11 h-11 rounded-2xl bg-pink-50 border border-pink-200/80 flex items-center justify-center text-pink-600 font-mono text-xl font-bold shadow-sm">&amp;;</div>
                 <div>
-                    <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-300 to-fuchsia-400 tracking-tight">HTML Entity Encoder</h2>
-                    <p class="text-xs text-slate-400">Convert special characters to HTML safe entities</p>
+                    <h2 class="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">HTML Entity Encoder</h2>
+                    <p class="text-xs text-slate-500 font-medium">Convert special characters to HTML safe entities</p>
                 </div>
             </div>
-            <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-pink-950/80 text-pink-300 border border-pink-500/40 font-semibold">WEB UTILITY</span>
+            <span class="text-xs font-mono px-3 py-1 rounded-full bg-pink-50 text-pink-700 border border-pink-200 font-semibold shadow-sm">WEB UTILITY</span>
         </div>
 
         <!-- Mode Tabs -->
-        <div class="bg-slate-950/60 p-1.5 rounded-2xl border border-slate-800 flex gap-1 mb-4">
-            <button id="modeEncode" class="flex-1 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-md transition">Encode (Text ➔ Entity)</button>
-            <button id="modeDecode" class="flex-1 py-2 text-xs font-semibold rounded-xl text-slate-400 hover:text-white transition">Decode (Entity ➔ Text)</button>
+        <div class="bg-slate-100 p-1.5 rounded-2xl border border-slate-200 flex gap-1 mb-4">
+            <button id="modeEncode" class="flex-1 py-2 text-xs font-semibold rounded-xl bg-pink-600 text-white shadow-md transition">Encode (Text ➔ Entity)</button>
+            <button id="modeDecode" class="flex-1 py-2 text-xs font-semibold rounded-xl text-slate-600 hover:text-slate-900 transition">Decode (Entity ➔ Text)</button>
         </div>
 
         <!-- Symbol Palette -->
         <div class="mb-4">
-            <div class="text-[11px] font-medium text-slate-400 mb-2 flex items-center justify-between">
+            <div class="text-[11px] font-semibold text-slate-600 mb-2 flex items-center justify-between">
                 <span>Quick Character Palette:</span>
-                <span class="text-slate-500">Click to insert</span>
+                <span class="text-slate-500 font-normal">Click to insert</span>
             </div>
             <div class="flex flex-wrap gap-1.5" id="palette">
-                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&lt;</button>
-                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&gt;</button>
-                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&amp;</button>
-                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&quot;</button>
-                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&#39;</button>
-                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&copy;</button>
-                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&reg;</button>
-                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&trade;</button>
-                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&euro;</button>
-                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&hearts;</button>
-                <button class="palette-btn px-2.5 py-1 bg-pink-950/60 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-pink-200 border border-pink-800/60 transition">&rarr;</button>
+                <button class="palette-btn px-2.5 py-1 bg-slate-100 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-slate-800 border border-slate-200 transition font-semibold">&lt;</button>
+                <button class="palette-btn px-2.5 py-1 bg-slate-100 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-slate-800 border border-slate-200 transition font-semibold">&gt;</button>
+                <button class="palette-btn px-2.5 py-1 bg-slate-100 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-slate-800 border border-slate-200 transition font-semibold">&amp;</button>
+                <button class="palette-btn px-2.5 py-1 bg-slate-100 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-slate-800 border border-slate-200 transition font-semibold">&quot;</button>
+                <button class="palette-btn px-2.5 py-1 bg-slate-100 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-slate-800 border border-slate-200 transition font-semibold">&#39;</button>
+                <button class="palette-btn px-2.5 py-1 bg-slate-100 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-slate-800 border border-slate-200 transition font-semibold">&copy;</button>
+                <button class="palette-btn px-2.5 py-1 bg-slate-100 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-slate-800 border border-slate-200 transition font-semibold">&reg;</button>
+                <button class="palette-btn px-2.5 py-1 bg-slate-100 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-slate-800 border border-slate-200 transition font-semibold">&trade;</button>
+                <button class="palette-btn px-2.5 py-1 bg-slate-100 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-slate-800 border border-slate-200 transition font-semibold">&euro;</button>
+                <button class="palette-btn px-2.5 py-1 bg-slate-100 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-slate-800 border border-slate-200 transition font-semibold">&hearts;</button>
+                <button class="palette-btn px-2.5 py-1 bg-slate-100 hover:bg-pink-600 hover:text-white rounded-lg text-xs font-mono text-slate-800 border border-slate-200 transition font-semibold">&rarr;</button>
             </div>
         </div>
 
         <!-- Input Box -->
         <div class="mb-4">
-            <div class="flex items-center justify-between text-xs text-slate-500 mb-1.5">
-                <span id="inputLabel" class="font-medium">Plain Text Input:</span>
-                <span id="charCount" class="font-mono text-indigo-400">32 chars</span>
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-600 mb-2">
+                <span id="inputLabel">Plain Text Input:</span>
+                <span id="charCount" class="font-mono text-pink-600 font-bold bg-pink-50 px-2.5 py-0.5 rounded-md border border-pink-100">32 chars</span>
             </div>
-            <textarea id="sourceText" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 resize-none"><h1>Hello & Welcome to WebCraft! &copy; 2026</h1></textarea>
+            <textarea id="sourceText" rows="3" class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-xs sm:text-sm font-mono text-slate-900 focus:outline-none focus:border-pink-500 focus:bg-white focus:ring-4 focus:ring-pink-100 transition resize-none leading-relaxed select-text shadow-inner"><h1>Hello & Welcome to WebCraft! &copy; 2026</h1></textarea>
         </div>
 
         <!-- Output Box -->
         <div class="mb-5">
-            <div class="flex items-center justify-between text-xs text-slate-500 mb-1.5">
-                <span id="outputLabel" class="font-medium">HTML Entities Result:</span>
-                <span id="entityCount" class="font-mono text-emerald-400">4 entities found</span>
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-600 mb-2">
+                <span id="outputLabel">HTML Entities Result:</span>
+                <span id="entityCount" class="font-mono text-emerald-700 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-100">4 entities found</span>
             </div>
-            <div id="resultBox" class="h-28 overflow-y-auto bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs sm:text-sm text-indigo-700 font-mono break-all select-all leading-relaxed">
+            <div id="resultBox" class="h-28 overflow-y-auto bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-xs sm:text-sm text-pink-900 font-mono font-bold break-all select-all leading-relaxed shadow-inner">
                 &amp;lt;h1&amp;gt;Hello &amp;amp; Welcome to WebCraft! &amp;copy; 2026&amp;lt;/h1&amp;gt;
             </div>
         </div>
 
         <!-- Action Row -->
         <div class="flex items-center gap-3">
-            <button id="btnConvert" class="flex-1 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md shadow-indigo-200 transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+            <button id="btnConvert" class="flex-1 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-pink-200 transition active:scale-[0.98] text-sm flex items-center justify-center gap-2">
                 <span>⚡ Convert Now</span>
             </button>
-            <button id="btnCopy" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-5 rounded-xl border border-slate-200 transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+            <button id="btnCopy" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-3.5 px-5 rounded-xl border border-slate-300 transition active:scale-[0.98] text-sm flex items-center justify-center gap-2">
                 <span id="copyIcon">📋</span>
                 <span id="copyText">Copy Result</span>
             </button>
@@ -122,8 +122,8 @@
 
     btnEncode.onclick = () => {
         mode = 'encode';
-        btnEncode.className = "flex-1 py-2 text-xs font-semibold rounded-xl bg-indigo-600 text-white shadow-md transition";
-        btnDecode.className = "flex-1 py-2 text-xs font-semibold rounded-xl text-slate-500 hover:text-slate-900 transition";
+        btnEncode.className = "flex-1 py-2 text-xs font-semibold rounded-xl bg-pink-600 text-white shadow-md transition";
+        btnDecode.className = "flex-1 py-2 text-xs font-semibold rounded-xl text-slate-600 hover:text-slate-900 transition";
         inputLabel.textContent = "Plain Text Input:";
         outputLabel.textContent = "HTML Entities Result:";
         process();
@@ -131,8 +131,8 @@
 
     btnDecode.onclick = () => {
         mode = 'decode';
-        btnDecode.className = "flex-1 py-2 text-xs font-semibold rounded-xl bg-indigo-600 text-white shadow-md transition";
-        btnEncode.className = "flex-1 py-2 text-xs font-semibold rounded-xl text-slate-500 hover:text-slate-900 transition";
+        btnDecode.className = "flex-1 py-2 text-xs font-semibold rounded-xl bg-pink-600 text-white shadow-md transition";
+        btnEncode.className = "flex-1 py-2 text-xs font-semibold rounded-xl text-slate-600 hover:text-slate-900 transition";
         inputLabel.textContent = "HTML Entities Input:";
         outputLabel.textContent = "Decoded Plain Text:";
         process();
@@ -151,10 +151,10 @@
     btnCopy.onclick = async () => {
         await navigator.clipboard.writeText(resultBox.textContent);
         copyText.textContent = 'Copied! ✓';
-        btnCopy.classList.add('bg-emerald-600', 'border-emerald-500');
+        btnCopy.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
         setTimeout(() => {
             copyText.textContent = 'Copy Result';
-            btnCopy.classList.remove('bg-emerald-600', 'border-emerald-500');
+            btnCopy.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600');
         }, 1400);
     };
 

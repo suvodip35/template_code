@@ -1,13 +1,13 @@
-<div class="bg-gradient-to-br from-slate-50 via-cyan-50/40 to-slate-100 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
-    <div class="absolute -top-24 -left-24 w-80 h-80 bg-cyan-200/50 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-blue-200/50 rounded-full blur-3xl pointer-events-none"></div>
+<div class="bg-gradient-to-br from-slate-950 via-cyan-950 to-blue-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-80 h-80 bg-cyan-500/25 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-blue-600/25 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="w-full max-w-xl bg-white/95 backdrop-blur-xl p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-200/80 relative z-10">
+    <div class="w-full max-w-xl bg-slate-900/85 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl shadow-2xl shadow-blue-950/60 border border-blue-500/30 relative z-10">
         <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-4">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-cyan-200/50 border border-cyan-500/30 flex items-center justify-center text-cyan-700 text-lg font-bold">🔗</div>
                 <div>
-                    <h2 class="text-xl font-bold text-slate-900 tracking-tight">URL Encoder & Decoder</h2>
+                    <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-400 tracking-tight">URL Encoder & Decoder</h2>
                     <p class="text-xs text-slate-500">Percent-encoding with live query parameter breakdown</p>
                 </div>
             </div>
@@ -81,7 +81,7 @@
                 paramList.innerHTML = '<span class="text-slate-600 italic">No query parameters found</span>';
             } else {
                 params.forEach(([k, v]) => {
-                    paramList.innerHTML += `<div class="flex items-center justify-between p-1.5 rounded-lg bg-slate-900 border border-slate-200"><span class="text-cyan-400 font-semibold">${k}</span><span class="text-slate-700 truncate max-w-[200px]">${v}</span></div>`;
+                    paramList.innerHTML += `<div class="flex items-center justify-between p-1.5 rounded-lg bg-slate-900 border border-slate-700"><span class="text-cyan-400 font-semibold">${k}</span><span class="text-slate-200 truncate max-w-[200px]">${v}</span></div>`;
                 });
             }
         } catch(e) {
