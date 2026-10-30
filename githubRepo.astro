@@ -96,7 +96,11 @@
         displayRepositories(repositories);
     };
     function copyToClipboard(text){
-        navigator.clipboard.writeText(text);
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text);
+            }
+        } catch(e) {}
         updateNotification("Clone URL copied to clipboard!", "text-green-500");
     };
     function updateNotification(message, className){

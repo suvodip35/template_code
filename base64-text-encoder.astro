@@ -145,7 +145,11 @@
     btnAction.onclick = process;
 
     btnCopy.onclick = async () => {
-        await navigator.clipboard.writeText(output.textContent);
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(output.textContent);
+            }
+        } catch (e) {}
         const orig = copyText.textContent;
         copyText.textContent = 'Copied! ✓';
         btnCopy.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');

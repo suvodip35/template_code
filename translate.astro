@@ -114,7 +114,11 @@
         translateText();
     });
     copyText.addEventListener('click', () => {
-        navigator.clipboard.writeText(outputText.textContent)
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(outputText.textContent)
+            }
+        } catch(e) {}
         .then(() => {
             copyMessage.classList.remove('hidden');
             setTimeout(() => copyMessage.classList.add('hidden'), 2000);

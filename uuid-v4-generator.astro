@@ -129,8 +129,12 @@
                 <button class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-emerald-400 transition ml-2 text-xs" title="Copy">📋</button>
             `;
             const cBtn = row.querySelector('button');
-            cBtn.onclick = () => {
-                navigator.clipboard.writeText(formatted);
+            cBtn.onclick = async () => {
+                try {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(formatted);
+                    }
+                } catch (e) {}
                 cBtn.textContent = '✓';
                 setTimeout(() => cBtn.textContent = '📋', 1200);
             };
@@ -140,8 +144,12 @@
     }
 
     document.getElementById('btnGenFresh').onclick = generateBatch;
-    document.getElementById('btnHeroCopy').onclick = () => {
-        navigator.clipboard.writeText(heroUUID.textContent);
+    document.getElementById('btnHeroCopy').onclick = async () => {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(heroUUID.textContent);
+            }
+        } catch (e) {}
         document.getElementById('btnHeroCopy').textContent = '✓';
         setTimeout(() => document.getElementById('btnHeroCopy').textContent = '📋', 1200);
     };
@@ -157,7 +165,11 @@
 
     btnCopyAll.onclick = async () => {
         const text = generatedBatch.map(formatUUID).join('\n');
-        await navigator.clipboard.writeText(text);
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(text);
+            }
+        } catch (e) {}
         copyAllText.textContent = 'Copied! ✓';
         btnCopyAll.classList.add('bg-emerald-600');
         setTimeout(() => {

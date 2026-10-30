@@ -149,7 +149,11 @@
     sourceText.oninput = process;
 
     btnCopy.onclick = async () => {
-        await navigator.clipboard.writeText(resultBox.textContent);
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(resultBox.textContent);
+            }
+        } catch (e) {}
         copyText.textContent = 'Copied! ✓';
         btnCopy.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
         setTimeout(() => {

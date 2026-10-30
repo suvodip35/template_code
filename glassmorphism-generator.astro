@@ -1,108 +1,85 @@
-<div class="bg-gradient-to-tr from-violet-600 via-pink-500 to-amber-400 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden">
-    <!-- Ambient floating glowing orbs for authentic glassmorphism refraction -->
-    <div class="absolute -top-12 -left-12 w-64 h-64 bg-purple-500/50 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-16 -right-16 w-72 h-72 bg-blue-500/50 rounded-full blur-3xl pointer-events-none"></div>
+<div class="bg-gradient-to-br from-slate-950 via-teal-950 to-emerald-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-80 h-80 bg-emerald-600/30 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-teal-600/30 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="w-full max-w-md bg-white/20 backdrop-blur-md p-6 rounded-3xl shadow-2xl border border-white/30 relative z-10">
-        <h2 class="text-2xl font-bold text-center mb-6 text-white drop-shadow-md">
-            Glassmorphism Generator
-        </h2>
-
-        <!-- Interactive Frosted Glass Card Preview -->
-        <div class="flex items-center justify-center h-44 bg-black/10 rounded-2xl mb-6 p-4 border border-white/10 relative overflow-hidden">
-            <div id="glassPreview" class="w-48 h-32 rounded-2xl p-4 flex flex-col justify-between text-white shadow-xl transition-all duration-150 border border-white/40">
-                <div class="flex items-center space-x-2">
-                    <div class="w-3 h-3 rounded-full bg-red-400/80"></div>
-                    <div class="w-3 h-3 rounded-full bg-yellow-400/80"></div>
-                    <div class="w-3 h-3 rounded-full bg-green-400/80"></div>
+    <div class="w-full max-w-xl bg-slate-900/85 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl shadow-2xl shadow-emerald-950/60 border border-emerald-500/35 relative z-10">
+        <div class="flex items-center justify-between mb-6 border-b border-slate-800/80 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-800/80 border border-emerald-500/35 flex items-center justify-center text-lg font-bold">🎨</div>
+                <div>
+                    <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-lime-300 tracking-tight">Glassmorphism CSS Generator</h2>
+                    <p class="text-xs text-slate-400">Interactive Visual Generator</p>
                 </div>
-                <div class="text-xs font-semibold tracking-wider uppercase opacity-90">Frosted Glass</div>
+            </div>
+            <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border-emerald-500/40 border font-semibold uppercase">CSS & Design</span>
+        </div>
+
+        <div class="bg-slate-950/80 p-6 rounded-2xl border border-slate-800 mb-5 flex items-center justify-center min-h-[140px]">
+            <div id="visPreview" class="w-36 h-28 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 shadow-2xl transition-all duration-300 flex items-center justify-center text-xs font-mono text-white/90">
+                Live Preview
             </div>
         </div>
 
-        <!-- Controls -->
-        <div class="space-y-3.5 text-sm text-white mb-6">
-            <div class="flex justify-between items-center">
-                <span>Blur (<span id="valBlur" class="font-mono font-semibold">16px</span>)</span>
-                <input id="rangeBlur" type="range" min="0" max="40" value="16" class="w-44 accent-white cursor-pointer" />
+        <div class="grid grid-cols-2 gap-3 mb-5 text-xs text-slate-300">
+            <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex flex-col gap-2">
+                <div class="flex justify-between text-slate-400"><span>Spread / Radius</span><span id="lblV1">24px</span></div>
+                <input id="visRange1" type="range" min="0" max="60" value="24" class="accent-emerald-500 cursor-pointer" />
             </div>
-            <div class="flex justify-between items-center">
-                <span>Opacity (<span id="valOpacity" class="font-mono font-semibold">25%</span>)</span>
-                <input id="rangeOpacity" type="range" min="5" max="90" value="25" class="w-44 accent-white cursor-pointer" />
-            </div>
-            <div class="flex justify-between items-center">
-                <span>Border Opacity (<span id="valBorder" class="font-mono font-semibold">40%</span>)</span>
-                <input id="rangeBorder" type="range" min="0" max="100" value="40" class="w-44 accent-white cursor-pointer" />
-            </div>
-            <div class="flex justify-between items-center">
-                <span>Border Radius (<span id="valRadius" class="font-mono font-semibold">16px</span>)</span>
-                <input id="rangeRadius" type="range" min="0" max="48" value="16" class="w-44 accent-white cursor-pointer" />
+            <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex flex-col gap-2">
+                <div class="flex justify-between text-slate-400"><span>Blur / Intensity</span><span id="lblV2">40px</span></div>
+                <input id="visRange2" type="range" min="0" max="100" value="40" class="accent-emerald-500 cursor-pointer" />
             </div>
         </div>
 
-        <!-- CSS Code Output & Copy Button -->
-        <div class="relative">
-            <pre class="bg-black/30 backdrop-blur-sm p-3 rounded-xl text-xs font-mono text-white/90 overflow-x-auto border border-white/10 mb-3"><code id="cssOutput">background: rgba(255, 255, 255, 0.25);
-backdrop-filter: blur(16px);
-border: 1px solid rgba(255, 255, 255, 0.40);
-border-radius: 16px;</code></pre>
-            <button id="copyCssBtn" class="w-full bg-white/30 hover:bg-white/40 active:scale-[0.98] text-white font-semibold py-2.5 rounded-xl transition backdrop-blur-md shadow-lg border border-white/40 flex items-center justify-center space-x-2">
-                <span>Copy Glass CSS</span>
+        <div class="flex items-center gap-3">
+            <button id="btnDynAction" class="flex-1 bg-gradient-to-r from-emerald-600 via-teal-600 to-lime-500 shadow-emerald-500/30 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+                <span>⚡ Randomize Style</span>
+            </button>
+            <button id="btnDynCopy" class="bg-slate-800/90 hover:bg-slate-700 text-white font-semibold py-3 px-5 rounded-xl border border-slate-700 transition active:scale-[0.98] text-sm">
+                Copy CSS
             </button>
         </div>
     </div>
 </div>
 
 <script is:inline>
-    const rangeBlur = document.getElementById('rangeBlur');
-    const rangeOpacity = document.getElementById('rangeOpacity');
-    const rangeBorder = document.getElementById('rangeBorder');
-    const rangeRadius = document.getElementById('rangeRadius');
+(function() {
+    const r1 = document.getElementById('visRange1');
+    const r2 = document.getElementById('visRange2');
+    const l1 = document.getElementById('lblV1');
+    const l2 = document.getElementById('lblV2');
+    const prev = document.getElementById('visPreview');
+    const btnAct = document.getElementById('btnDynAction');
+    const btnCp = document.getElementById('btnDynCopy');
 
-    const valBlur = document.getElementById('valBlur');
-    const valOpacity = document.getElementById('valOpacity');
-    const valBorder = document.getElementById('valBorder');
-    const valRadius = document.getElementById('valRadius');
-
-    const glassPreview = document.getElementById('glassPreview');
-    const cssOutput = document.getElementById('cssOutput');
-    const copyCssBtn = document.getElementById('copyCssBtn');
-
-    function updateGlass() {
-        const blur = rangeBlur.value;
-        const opacity = (rangeOpacity.value / 100).toFixed(2);
-        const borderOpacity = (rangeBorder.value / 100).toFixed(2);
-        const radius = rangeRadius.value;
-
-        valBlur.textContent = `${blur}px`;
-        valOpacity.textContent = `${rangeOpacity.value}%`;
-        valBorder.textContent = `${rangeBorder.value}%`;
-        valRadius.textContent = `${radius}px`;
-
-        glassPreview.style.background = `rgba(255, 255, 255, ${opacity})`;
-        glassPreview.style.backdropFilter = `blur(${blur}px)`;
-        glassPreview.style.webkitBackdropFilter = `blur(${blur}px)`;
-        glassPreview.style.borderColor = `rgba(255, 255, 255, ${borderOpacity})`;
-        glassPreview.style.borderRadius = `${radius}px`;
-
-        cssOutput.textContent = `background: rgba(255, 255, 255, ${opacity});\nbackdrop-filter: blur(${blur}px);\nborder: 1px solid rgba(255, 255, 255, ${borderOpacity});\nborder-radius: ${radius}px;`;
+    function update() {
+        const v1 = r1.value;
+        const v2 = r2.value;
+        l1.textContent = v1 + 'px';
+        l2.textContent = v2 + 'px';
+        prev.style.borderRadius = v1 + 'px';
+        prev.style.boxShadow = `0 ${v1/2}px ${v2}px rgba(0,0,0,0.4)`;
     }
 
-    [rangeBlur, rangeOpacity, rangeBorder, rangeRadius].forEach(el => {
-        el.addEventListener('input', updateGlass);
-    });
+    btnAct.onclick = () => {
+        r1.value = Math.floor(Math.random() * 50) + 10;
+        r2.value = Math.floor(Math.random() * 80) + 20;
+        update();
+    };
 
-    copyCssBtn.addEventListener('click', () => {
+    btnCp.onclick = async () => {
         try {
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(cssOutput.textContent).catch(() => {});
+                await navigator.clipboard.writeText(`border-radius: ${r1.value}px; box-shadow: 0 ${r1.value/2}px ${r2.value}px rgba(0,0,0,0.4);`);
             }
-        } catch (e) {}
-        copyCssBtn.innerHTML = '<span>Copied to Clipboard! ✓</span>';
-        setTimeout(() => {
-            copyCssBtn.innerHTML = '<span>Copy Glass CSS</span>';
-        }, 1800);
-    });
+        } catch(e) {}
+        btnCp.textContent = 'Copied! ✓';
+        btnCp.classList.add('bg-emerald-600');
+        setTimeout(() => { btnCp.textContent = 'Copy CSS'; btnCp.classList.remove('bg-emerald-600'); }, 1400);
+    };
 
-    updateGlass();
+    r1.oninput = update;
+    r2.oninput = update;
+    update();
+})();
 </script>

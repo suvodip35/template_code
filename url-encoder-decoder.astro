@@ -105,8 +105,12 @@
     };
 
     input.addEventListener('input', update);
-    document.getElementById('btnCopyURL').onclick = () => {
-        navigator.clipboard.writeText(output.value);
+    document.getElementById('btnCopyURL').onclick = async () => {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(output.value);
+            }
+        } catch (e) {}
         const b = document.getElementById('btnCopyURL');
         b.textContent = 'Copied! ✓';
         setTimeout(() => b.textContent = 'Copy Output', 1400);

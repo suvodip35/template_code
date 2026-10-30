@@ -108,7 +108,11 @@
 
   copyBtn.onclick = () => {
     if (jwtPayload.textContent && !jwtPayload.textContent.startsWith('//')) {
-      navigator.clipboard.writeText(jwtPayload.textContent);
+      try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(jwtPayload.textContent);
+          }
+      } catch(e) {}
       copyBtn.textContent = 'Copied! ✓';
       setTimeout(() => copyBtn.textContent = 'Copy', 1500);
     }

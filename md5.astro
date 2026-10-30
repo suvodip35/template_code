@@ -74,7 +74,11 @@
     });
     copyButton.addEventListener('click', () => {
         if(hashOutput.textContent && hashOutput.textContent !== 'Hash will appear here...'){
-            navigator.clipboard.writeText(hashOutput.textContent).then(() => {
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(hashOutput.textContent).then(() => {
+                }
+            } catch(e) {}
                 showMessage('Hash copied to clipboard!', 'text-green-500');
             })
         } else{

@@ -1,0 +1,135 @@
+<div class="bg-gradient-to-br from-slate-950 via-amber-950 to-orange-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-amber-200/50 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-yellow-200/50 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-xl bg-white/95 backdrop-blur-xl p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-200/80 relative z-10 text-center">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-200/50 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl font-bold">🎲</div>
+                <div class="text-left">
+                    <h2 class="text-xl font-bold text-slate-900 tracking-tight">Interactive 3D Virtual Dice</h2>
+                    <p class="text-xs text-slate-500">Randomized dice roll physics &amp; statistics</p>
+                </div>
+            </div>
+            <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-semibold">GAME / CANVAS</span>
+        </div>
+
+        <!-- 3D Dice Display Box -->
+        <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200 mb-6 flex items-center justify-center gap-6">
+            <!-- Die 1 -->
+            <div id="die1" class="w-24 h-24 bg-gradient-to-br from-slate-100 to-slate-300 rounded-2xl shadow-xl shadow-black/40 border border-slate-200 p-3 grid grid-cols-3 grid-rows-3 items-center justify-items-center transform transition duration-300">
+                <div class="w-3.5 h-3.5 bg-slate-900 rounded-full"></div>
+                <div></div>
+                <div class="w-3.5 h-3.5 bg-slate-900 rounded-full"></div>
+                <div></div>
+                <div class="w-3.5 h-3.5 bg-red-600 rounded-full"></div>
+                <div></div>
+                <div class="w-3.5 h-3.5 bg-slate-900 rounded-full"></div>
+                <div></div>
+                <div class="w-3.5 h-3.5 bg-slate-900 rounded-full"></div>
+            </div>
+
+            <!-- Die 2 -->
+            <div id="die2" class="w-24 h-24 bg-gradient-to-br from-slate-100 to-slate-300 rounded-2xl shadow-xl shadow-black/40 border border-slate-200 p-3 grid grid-cols-3 grid-rows-3 items-center justify-items-center transform transition duration-300">
+                <div class="w-3.5 h-3.5 bg-slate-900 rounded-full"></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div class="w-3.5 h-3.5 bg-red-600 rounded-full"></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div class="w-3.5 h-3.5 bg-slate-900 rounded-full"></div>
+            </div>
+        </div>
+
+        <!-- Stats and Result -->
+        <div class="flex items-center justify-between mb-6 px-2 text-xs font-mono">
+            <div class="flex items-center gap-2">
+                <span class="text-slate-400">Total Sum:</span>
+                <span id="sumBadge" class="text-lg font-bold text-amber-400 bg-amber-500/10 px-3 py-1 rounded-lg border border-amber-500/20">8</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-slate-400">Roll Count:</span>
+                <span id="rollCountBadge" class="text-slate-200 font-bold">#14</span>
+            </div>
+        </div>
+
+        <!-- Action Row -->
+        <div class="flex items-center gap-3">
+            <button id="btnDynAction" class="flex-1 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-slate-950 font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-amber-500/25 transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+                <span>🎲 Roll Dice</span>
+            </button>
+            <button id="btnDynCopy" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3.5 px-5 rounded-xl border border-slate-200 transition active:scale-[0.98] text-sm">
+                Reset
+            </button>
+        </div>
+    </div>
+</div>
+
+<script is:inline>
+(function() {
+    const d1 = document.getElementById('die1');
+    const d2 = document.getElementById('die2');
+    const sumBadge = document.getElementById('sumBadge');
+    const countBadge = document.getElementById('rollCountBadge');
+    const btnRoll = document.getElementById('btnDynAction');
+    const btnReset = document.getElementById('btnDynCopy');
+
+    let rollCount = 1;
+
+    const PIPS = {
+        1: [0,0,0, 0,1,0, 0,0,0],
+        2: [1,0,0, 0,0,0, 0,0,1],
+        3: [1,0,0, 0,1,0, 0,0,1],
+        4: [1,0,1, 0,0,0, 1,0,1],
+        5: [1,0,1, 0,1,0, 1,0,1],
+        6: [1,0,1, 1,0,1, 1,0,1]
+    };
+
+    function renderDie(el, val) {
+        const pips = PIPS[val];
+        el.innerHTML = '';
+        pips.forEach((p, idx) => {
+            if (p) {
+                const dot = document.createElement('div');
+                const isCenter = idx === 4;
+                dot.className = `w-3.5 h-3.5 ${isCenter ? 'bg-red-600' : 'bg-slate-900'} rounded-full`;
+                el.appendChild(dot);
+            } else {
+                el.appendChild(document.createElement('div'));
+            }
+        });
+    }
+
+    function roll() {
+        rollCount++;
+        d1.style.transform = `rotate(${Math.floor(Math.random() * 30 - 15)}deg) scale(0.92)`;
+        d2.style.transform = `rotate(${Math.floor(Math.random() * 30 - 15)}deg) scale(0.92)`;
+
+        setTimeout(() => {
+            const v1 = Math.floor(Math.random() * 6) + 1;
+            const v2 = Math.floor(Math.random() * 6) + 1;
+            renderDie(d1, v1);
+            renderDie(d2, v2);
+            d1.style.transform = 'rotate(0deg) scale(1)';
+            d2.style.transform = 'rotate(0deg) scale(1)';
+            sumBadge.textContent = v1 + v2;
+            countBadge.textContent = `#${rollCount}`;
+        }, 180);
+    }
+
+    btnRoll.onclick = roll;
+    btnReset.onclick = () => {
+        rollCount = 1;
+        renderDie(d1, 3);
+        renderDie(d2, 5);
+        sumBadge.textContent = '8';
+        countBadge.textContent = '#1';
+    };
+
+    renderDie(d1, 5);
+    renderDie(d2, 3);
+})();
+</script>

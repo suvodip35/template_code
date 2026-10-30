@@ -114,8 +114,12 @@
         };
     });
 
-    document.getElementById('btnCopyRegex').onclick = () => {
-        navigator.clipboard.writeText('/' + regexInput.value + '/' + (flagG.checked ? 'g' : '') + (flagI.checked ? 'i' : ''));
+    document.getElementById('btnCopyRegex').onclick = async () => {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText('/' + regexInput.value + '/' + (flagG.checked ? 'g' : '') + (flagI.checked ? 'i' : ''));
+            }
+        } catch (e) {}
         const btn = document.getElementById('btnCopyRegex');
         btn.textContent = 'Copied! ✓';
         setTimeout(() => btn.textContent = 'Copy Regex', 1400);

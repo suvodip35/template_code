@@ -68,8 +68,12 @@
         area.value = '';
         checkValid();
     };
-    document.getElementById('btnCopyJSON').onclick = () => {
-        navigator.clipboard.writeText(area.value);
+    document.getElementById('btnCopyJSON').onclick = async () => {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(area.value);
+            }
+        } catch (e) {}
         const b = document.getElementById('btnCopyJSON');
         b.innerHTML = '<span>Copied! ✓</span>';
         setTimeout(() => b.innerHTML = '<span>📋 Copy Formatted JSON</span>', 1400);

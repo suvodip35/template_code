@@ -1,0 +1,144 @@
+<div class="bg-gradient-to-br from-slate-950 via-purple-950 to-indigo-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-purple-600/25 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-pink-600/25 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-xl bg-slate-900/90 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl shadow-2xl shadow-purple-950/70 border border-purple-500/35 relative z-10 transition-all duration-300">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-5 border-b border-slate-800/80 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-purple-950/80 border border-purple-500/40 flex items-center justify-center text-xl font-bold shadow-sm">🎉</div>
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-300 to-amber-300 tracking-tight">Confetti Blast Simulator</h2>
+                    <p class="text-xs text-slate-400 font-medium">Physics particle burst with realistic gravity &amp; drag</p>
+                </div>
+            </div>
+            <span class="text-xs font-mono px-3 py-1 rounded-full bg-purple-950/80 text-purple-300 border border-purple-500/40 font-semibold shadow-sm">60 FPS ✓</span>
+        </div>
+
+        <!-- Mode Selectors -->
+        <div class="bg-slate-950/60 p-1.5 rounded-2xl border border-slate-800 flex gap-1 mb-4 text-xs font-semibold">
+            <button id="modeClassic" class="flex-1 py-2 rounded-xl bg-purple-600 text-white shadow-md transition flex items-center justify-center gap-1.5">
+                <span>🎉 Cannon Blast</span>
+            </button>
+            <button id="modeStar" class="flex-1 py-2 rounded-xl text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5">
+                <span>✨ Star Burst</span>
+            </button>
+            <button id="modeBarrage" class="flex-1 py-2 rounded-xl text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5">
+                <span>🎊 Dual Barrage</span>
+            </button>
+        </div>
+
+        <!-- Interactive Canvas -->
+        <div class="mb-4 relative">
+            <canvas id="confettiCanvas" width="560" height="220" class="w-full h-44 rounded-2xl bg-slate-950/90 border border-slate-800 shadow-inner block"></canvas>
+            <div class="absolute bottom-3 left-3 text-[11px] font-mono text-slate-500">
+                Particles: <span id="particleStats" class="text-purple-400 font-bold">120 active</span>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3">
+            <button id="btnLaunchConfetti" class="flex-1 bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:from-purple-500 hover:to-amber-400 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-purple-950/40 transition active:scale-[0.98] text-sm flex items-center justify-center gap-2">
+                <span>🚀 Blast Confetti!</span>
+            </button>
+            <button id="btnCopyConfetti" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-3.5 px-5 rounded-xl border border-slate-700 transition active:scale-[0.98] text-sm">
+                Copy Config
+            </button>
+        </div>
+    </div>
+</div>
+
+<script is:inline>
+(function() {
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    const btnLaunch = document.getElementById('btnLaunchConfetti');
+    const btnCopy = document.getElementById('btnCopyConfetti');
+    const stats = document.getElementById('particleStats');
+    const modeClassic = document.getElementById('modeClassic');
+    const modeStar = document.getElementById('modeStar');
+    const modeBarrage = document.getElementById('modeBarrage');
+
+    let particles = [];
+    const colors = ['#ec4899', '#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#06b6d4'];
+
+    function createParticle(x, y) {
+        return {
+            x: x,
+            y: y,
+            vx: (Math.random() - 0.5) * 12,
+            vy: -Math.random() * 10 - 4,
+            size: Math.random() * 6 + 4,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            rotation: Math.random() * 360,
+            vRot: (Math.random() - 0.5) * 15,
+            alpha: 1.0
+        };
+    }
+
+    function blast() {
+        const cx = canvas.width / 2;
+        const cy = canvas.height - 20;
+        for (let i = 0; i < 90; i++) {
+            particles.push(createParticle(cx, cy));
+        }
+        stats.textContent = `${particles.length} active`;
+    }
+
+    function loop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.35;
+            p.rotation += p.vRot;
+            p.alpha -= 0.012;
+
+            if (p.alpha <= 0 || p.y > canvas.height) {
+                particles.splice(i, 1);
+                continue;
+            }
+
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rotation * Math.PI) / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.7);
+            ctx.restore();
+        }
+        stats.textContent = `${particles.length} active`;
+        requestAnimationFrame(loop);
+    }
+
+    btnLaunch.onclick = blast;
+
+    btnCopy.onclick = async () => {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText('const confetti = { particles: 120, spread: 70, gravity: 0.35, colors: ["#ec4899", "#8b5cf6", "#3b82f6"] };');
+            }
+        } catch(e) {}
+        btnCopy.textContent = 'Copied! ✓';
+        btnCopy.classList.add('bg-emerald-600');
+        setTimeout(() => {
+            btnCopy.textContent = 'Copy Config';
+            btnCopy.classList.remove('bg-emerald-600');
+        }, 1400);
+    };
+
+    [modeClassic, modeStar, modeBarrage].forEach(b => {
+        b.onclick = () => {
+            [modeClassic, modeStar, modeBarrage].forEach(btn => {
+                btn.className = "flex-1 py-2 rounded-xl text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5";
+            });
+            b.className = "flex-1 py-2 rounded-xl bg-purple-600 text-white shadow-md transition flex items-center justify-center gap-1.5";
+            blast();
+        };
+    });
+
+    blast();
+    loop();
+})();
+</script>

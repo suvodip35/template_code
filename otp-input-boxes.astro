@@ -1,0 +1,108 @@
+<div class="bg-gradient-to-br from-slate-950 via-blue-950 to-sky-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-200/50 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-indigo-200/50 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-xl bg-white/95 backdrop-blur-xl p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-200/80 relative z-10 text-center">
+        <!-- Header -->
+        <div class="w-12 h-12 rounded-2xl bg-blue-200/50 border border-blue-500/30 flex items-center justify-center text-blue-400 text-2xl mx-auto mb-4 shadow-lg shadow-blue-500/10">🛡️</div>
+        <h2 class="text-xl font-bold text-slate-900 tracking-tight mb-1">Two-Factor Authentication</h2>
+        <p class="text-xs text-slate-500 mb-6 max-w-sm mx-auto">Enter the 6-digit verification code sent to your registered authenticator device.</p>
+
+        <!-- 6-Digit OTP Inputs -->
+        <div class="flex items-center justify-center gap-2 sm:gap-3 mb-6" id="otpBoxContainer">
+            <input type="text" maxlength="1" class="otp-box w-11 h-14 sm:w-13 sm:h-16 text-center text-xl sm:text-2xl font-mono font-bold bg-slate-50 border-2 border-slate-300 focus:border-blue-600 focus:bg-white rounded-xl text-slate-900 outline-none transition shadow-inner" value="8" />
+            <input type="text" maxlength="1" class="otp-box w-11 h-14 sm:w-13 sm:h-16 text-center text-xl sm:text-2xl font-mono font-bold bg-slate-50 border-2 border-slate-300 focus:border-blue-600 focus:bg-white rounded-xl text-slate-900 outline-none transition shadow-inner" value="4" />
+            <input type="text" maxlength="1" class="otp-box w-11 h-14 sm:w-13 sm:h-16 text-center text-xl sm:text-2xl font-mono font-bold bg-slate-50 border-2 border-slate-300 focus:border-blue-600 focus:bg-white rounded-xl text-slate-900 outline-none transition shadow-inner" value="2" />
+            <span class="text-slate-600 font-bold">-</span>
+            <input type="text" maxlength="1" class="otp-box w-11 h-14 sm:w-13 sm:h-16 text-center text-xl sm:text-2xl font-mono font-bold bg-slate-50 border-2 border-slate-300 focus:border-blue-600 focus:bg-white rounded-xl text-slate-900 outline-none transition shadow-inner" value="9" />
+            <input type="text" maxlength="1" class="otp-box w-11 h-14 sm:w-13 sm:h-16 text-center text-xl sm:text-2xl font-mono font-bold bg-slate-50 border-2 border-slate-300 focus:border-blue-600 focus:bg-white rounded-xl text-slate-900 outline-none transition shadow-inner" value="0" />
+            <input type="text" maxlength="1" class="otp-box w-11 h-14 sm:w-13 sm:h-16 text-center text-xl sm:text-2xl font-mono font-bold bg-slate-50 border-2 border-slate-300 focus:border-blue-600 focus:bg-white rounded-xl text-slate-900 outline-none transition shadow-inner" value="6" />
+        </div>
+
+        <!-- Status Notification Box -->
+        <div id="otpStatus" class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-mono text-emerald-700 font-semibold mb-6 flex items-center justify-center gap-2">
+            <span>✅ Code ready for validation</span>
+        </div>
+
+        <!-- Action Row -->
+        <div class="flex items-center gap-3">
+            <button id="btnDynAction" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+                <span>⚡ Verify Code</span>
+            </button>
+            <button id="btnDynCopy" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3.5 px-5 rounded-xl border border-slate-300 transition active:scale-[0.98] text-sm">
+                Resend (28s)
+            </button>
+        </div>
+    </div>
+</div>
+
+<script is:inline>
+(function() {
+    const inputs = Array.from(document.querySelectorAll('.otp-box'));
+    const status = document.getElementById('otpStatus');
+    const btnVerify = document.getElementById('btnDynAction');
+    const btnResend = document.getElementById('btnDynCopy');
+
+    inputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+            const val = e.target.value.replace(/[^0-9]/g, '');
+            e.target.value = val;
+            if (val && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+            checkComplete();
+        });
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !input.value && index > 0) {
+                inputs[index - 1].focus();
+            }
+        });
+
+        input.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
+            text.split('').slice(0, inputs.length).forEach((char, i) => {
+                inputs[i].value = char;
+            });
+            checkComplete();
+        });
+    });
+
+    function getCode() {
+        return inputs.map(i => i.value).join('');
+    }
+
+    function checkComplete() {
+        const code = getCode();
+        if (code.length === 6) {
+            status.innerHTML = `<span class="text-blue-400 font-semibold">🔒 Ready: <strong>${code}</strong></span>`;
+        } else {
+            status.innerHTML = `<span class="text-slate-400">Enter ${6 - code.length} more digits...</span>`;
+        }
+    }
+
+    btnVerify.onclick = () => {
+        const code = getCode();
+        if (code.length === 6) {
+            btnVerify.innerHTML = `<span class="animate-spin">⏳</span> Verifying...`;
+            setTimeout(() => {
+                btnVerify.innerHTML = `<span>✓ Verified!</span>`;
+                btnVerify.classList.remove('from-blue-500', 'to-indigo-600');
+                btnVerify.classList.add('bg-emerald-600');
+                status.innerHTML = `<span class="text-emerald-400 font-bold">🎉 Authorization Token Granted!</span>`;
+            }, 600);
+        }
+    };
+
+    btnResend.onclick = () => {
+        inputs.forEach(i => i.value = '');
+        inputs[0].focus();
+        status.innerHTML = `<span class="text-amber-400">⚡ New code dispatched to device</span>`;
+        btnResend.textContent = 'Sent! ✓';
+        setTimeout(() => { btnResend.textContent = 'Resend (30s)'; }, 1500);
+    };
+
+    checkComplete();
+})();
+</script>

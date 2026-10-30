@@ -133,7 +133,11 @@
     function copyOutput(){
         const outputText = document.getElementById('output').innerText;
         if(outputText){
-            navigator.clipboard.writeText(outputText).then(() => {
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(outputText).then(() => {
+                }
+            } catch(e) {}
                 document.getElementById('statusMessage').innerHTML = '<span class="text-green-600 font-semibold">Output copied to clipboard!</span>';
             });
         } else{

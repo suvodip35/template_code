@@ -1,0 +1,143 @@
+<div class="bg-gradient-to-br from-slate-950 via-teal-950 to-emerald-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-emerald-500/25 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-teal-200/50 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-xl bg-slate-900/85 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl shadow-2xl shadow-blue-950/60 border border-blue-500/30 relative z-10">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-200/50 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl font-bold">🔔</div>
+                <div>
+                    <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-lime-300 to-teal-400 tracking-tight">Toast Notification Center</h2>
+                    <p class="text-xs text-slate-500">Animated feedback toasts with auto-dismiss timer</p>
+                </div>
+            </div>
+            <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">UI SYSTEM</span>
+        </div>
+
+        <!-- Trigger Buttons Grid -->
+        <div class="grid grid-cols-2 gap-3 mb-5">
+            <button id="btnSuccessToast" class="flex items-center gap-2.5 p-3 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 hover:border-emerald-500/60 hover:bg-emerald-900/30 transition text-left active:scale-[0.98]">
+                <span class="w-8 h-8 rounded-xl bg-emerald-200/50 flex items-center justify-center text-emerald-400 font-bold">✓</span>
+                <div>
+                    <div class="text-xs font-bold text-white">Success Toast</div>
+                    <div class="text-[10px] text-slate-400">Operation confirmed</div>
+                </div>
+            </button>
+
+            <button id="btnErrorToast" class="flex items-center gap-2.5 p-3 rounded-2xl bg-rose-950/40 border border-rose-500/30 hover:border-rose-500/60 hover:bg-rose-900/30 transition text-left active:scale-[0.98]">
+                <span class="w-8 h-8 rounded-xl bg-rose-200/50 flex items-center justify-center text-rose-400 font-bold">✕</span>
+                <div>
+                    <div class="text-xs font-bold text-white">Error Alert</div>
+                    <div class="text-[10px] text-slate-400">Request failed 500</div>
+                </div>
+            </button>
+
+            <button id="btnWarnToast" class="flex items-center gap-2.5 p-3 rounded-2xl bg-amber-950/40 border border-amber-500/30 hover:border-amber-500/60 hover:bg-amber-900/30 transition text-left active:scale-[0.98]">
+                <span class="w-8 h-8 rounded-xl bg-amber-200/50 flex items-center justify-center text-amber-400 font-bold">⚠</span>
+                <div>
+                    <div class="text-xs font-bold text-white">Warning Notice</div>
+                    <div class="text-[10px] text-slate-400">Unsaved file edits</div>
+                </div>
+            </button>
+
+            <button id="btnInfoToast" class="flex items-center gap-2.5 p-3 rounded-2xl bg-sky-950/40 border border-sky-500/30 hover:border-sky-500/60 hover:bg-sky-900/30 transition text-left active:scale-[0.98]">
+                <span class="w-8 h-8 rounded-xl bg-sky-200/50 flex items-center justify-center text-sky-400 font-bold">ℹ</span>
+                <div>
+                    <div class="text-xs font-bold text-white">Info Update</div>
+                    <div class="text-[10px] text-slate-400">New build deployed</div>
+                </div>
+            </button>
+        </div>
+
+        <!-- Active Toasts Stack Container -->
+        <div class="mb-5">
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+                <span>Active Toast Queue:</span>
+                <span id="toastCountBadge" class="font-mono text-emerald-400">1 Toast active</span>
+            </div>
+            <div id="toastStack" class="h-44 overflow-y-auto space-y-2.5 bg-slate-50 border border-slate-200 rounded-2xl p-3 flex flex-col justify-end">
+                <div class="p-3 bg-slate-900 border border-emerald-500/40 rounded-xl flex items-center justify-between shadow-lg relative overflow-hidden">
+                    <div class="flex items-center gap-3">
+                        <span class="text-emerald-400 text-base">✓</span>
+                        <div>
+                            <p class="text-xs font-bold text-white">Settings saved successfully!</p>
+                            <p class="text-[10px] text-slate-400">Synced to cloud repository</p>
+                        </div>
+                    </div>
+                    <span class="text-xs text-slate-500 cursor-pointer hover:text-slate-900">✕</span>
+                    <div class="absolute bottom-0 left-0 h-0.5 bg-emerald-500 w-full animate-pulse"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Row -->
+        <div class="flex items-center gap-3">
+            <button id="btnDynAction" class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md shadow-emerald-200 transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+                <span>⚡ Spawn Success Toast</span>
+            </button>
+            <button id="btnDynCopy" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-5 rounded-xl border border-slate-200 transition active:scale-[0.98] text-sm">
+                Clear All
+            </button>
+        </div>
+    </div>
+</div>
+
+<script is:inline>
+(function() {
+    const stack = document.getElementById('toastStack');
+    const badge = document.getElementById('toastCountBadge');
+    const btnSuccess = document.getElementById('btnSuccessToast');
+    const btnError = document.getElementById('btnErrorToast');
+    const btnWarn = document.getElementById('btnWarnToast');
+    const btnInfo = document.getElementById('btnInfoToast');
+    const btnAction = document.getElementById('btnDynAction');
+    const btnClear = document.getElementById('btnDynCopy');
+
+    function addToast(type, title, desc, icon, colorBorder, colorIcon, colorBar) {
+        const el = document.createElement('div');
+        el.className = `p-3 bg-slate-900 ${colorBorder} rounded-xl flex items-center justify-between shadow-lg relative overflow-hidden transform transition duration-300`;
+        el.innerHTML = `
+            <div class="flex items-center gap-3">
+                <span class="${colorIcon} text-base font-bold">${icon}</span>
+                <div>
+                    <p class="text-xs font-bold text-white">${title}</p>
+                    <p class="text-[10px] text-slate-400">${desc}</p>
+                </div>
+            </div>
+            <span class="text-xs text-slate-500 hover:text-slate-900 cursor-pointer px-1">✕</span>
+            <div class="absolute bottom-0 left-0 h-0.5 ${colorBar} w-full transition-all duration-3000 ease-linear"></div>
+        `;
+
+        el.querySelector('span:last-child').onclick = () => removeToast(el);
+        stack.appendChild(el);
+        stack.scrollTop = stack.scrollHeight;
+        badge.textContent = `${stack.children.length} Toasts active`;
+
+        setTimeout(() => removeToast(el), 4500);
+    }
+
+    function removeToast(el) {
+        if (!el || !el.parentNode) return;
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(-10px)';
+        setTimeout(() => {
+            if (el.parentNode) el.parentNode.removeChild(el);
+            badge.textContent = `${stack.children.length} Toasts active`;
+        }, 250);
+    }
+
+    btnSuccess.onclick = () => addToast('success', 'Changes deployed successfully!', 'Commit #8fa23 live in production', '✓', 'border-emerald-500/40', 'text-emerald-400', 'bg-emerald-500');
+    btnError.onclick = () => addToast('error', 'Connection timed out', '504 Gateway Error from upstream server', '✕', 'border-rose-500/40', 'text-rose-400', 'bg-rose-500');
+    btnWarn.onclick = () => addToast('warn', 'Uncommitted changes detected', 'Local branch is 2 commits ahead of master', '⚠', 'border-amber-500/40', 'text-amber-400', 'bg-amber-500');
+    btnInfo.onclick = () => addToast('info', 'Cache invalidated', 'Reloaded 14 modules in 18ms', 'ℹ', 'border-sky-500/40', 'text-sky-400', 'bg-sky-500');
+    btnAction.onclick = btnSuccess.onclick;
+
+    btnClear.onclick = () => {
+        stack.innerHTML = '';
+        badge.textContent = '0 Toasts active';
+        btnClear.textContent = 'Cleared! ✓';
+        setTimeout(() => { btnClear.textContent = 'Clear All'; }, 1200);
+    };
+})();
+</script>

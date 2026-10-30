@@ -100,7 +100,11 @@
     }
 
     function copyToClipboard(text){
-        navigator.clipboard.writeText(text);
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text);
+            }
+        } catch(e) {}
         copyMessage.textContent = 'GIF URL copied to clipboard!';
         copyMessage.classList.remove('hidden');
         setTimeout(() => {

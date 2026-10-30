@@ -89,7 +89,11 @@
 
     document.getElementById('copyBtn').addEventListener('click', function(){
         const resultText = document.getElementById('result').textContent.replace('📌 Result:', '');
-        navigator.clipboard.writeText(resultText);
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(resultText);
+            }
+        } catch(e) {}
         document.getElementById('copyMessage').innerHTML = '&#9989; QR Code result copied!';
         document.getElementById('copyMessage').classList.remove('hidden');
         setTimeout(() => {

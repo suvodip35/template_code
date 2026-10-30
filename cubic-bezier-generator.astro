@@ -146,7 +146,11 @@
     btnPlay.onclick = play;
 
     btnCopy.onclick = async () => {
-        await navigator.clipboard.writeText(cssResult.textContent);
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(cssResult.textContent);
+            }
+        } catch (e) {}
         copyText.textContent = 'Copied! ✓';
         btnCopy.classList.add('bg-emerald-600', 'border-emerald-500');
         setTimeout(() => {

@@ -1,107 +1,85 @@
-<div class="bg-slate-900 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden">
-    <!-- Ambient glowing backgrounds -->
-    <div class="absolute -top-16 -left-16 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="bg-gradient-to-br from-slate-950 via-cyan-950 to-sky-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-80 h-80 bg-cyan-600/30 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-sky-600/30 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="w-full max-w-md bg-slate-800/90 backdrop-blur-xl p-6 rounded-3xl shadow-2xl border border-slate-700/60 relative z-10">
-        <h2 class="text-2xl font-bold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400">
-            Fluid Mesh Gradient Generator
-        </h2>
+    <div class="w-full max-w-xl bg-slate-900/85 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl shadow-2xl shadow-cyan-950/60 border border-cyan-500/35 relative z-10">
+        <div class="flex items-center justify-between mb-6 border-b border-slate-800/80 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-800/80 border border-cyan-500/35 flex items-center justify-center text-lg font-bold">🎨</div>
+                <div>
+                    <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-400 tracking-tight">Fluid Mesh Gradient Generator</h2>
+                    <p class="text-xs text-slate-400">Interactive Visual Generator</p>
+                </div>
+            </div>
+            <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-cyan-950/80 text-cyan-300 border-cyan-500/40 border font-semibold uppercase">CSS & Design</span>
+        </div>
 
-        <!-- Interactive Preview Area -->
-        <div class="flex items-center justify-center h-44 bg-slate-900/80 rounded-2xl mb-6 p-4 border border-slate-800 relative overflow-hidden">
-            <div id="livePreviewBox" class="w-36 h-28 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex flex-col items-center justify-center text-white shadow-xl transition-all duration-150 p-3 text-center">
-                <span class="text-xs font-semibold uppercase tracking-wider opacity-80">CSS & Design</span>
-                <span id="previewMetric" class="text-lg font-bold mt-1">Active</span>
+        <div class="bg-slate-950/80 p-6 rounded-2xl border border-slate-800 mb-5 flex items-center justify-center min-h-[140px]">
+            <div id="visPreview" class="w-36 h-28 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 shadow-2xl transition-all duration-300 flex items-center justify-center text-xs font-mono text-white/90">
+                Live Preview
             </div>
         </div>
 
-        <!-- User Controls -->
-        <div class="space-y-3.5 text-sm text-slate-300 mb-6">
-            <div class="flex justify-between items-center">
-                <span>4 (<span id="val1" class="font-mono text-indigo-400 font-semibold">50%</span>)</span>
-                <input id="range1" type="range" min="10" max="100" value="50" class="w-40 accent-indigo-500 cursor-pointer" />
+        <div class="grid grid-cols-2 gap-3 mb-5 text-xs text-slate-300">
+            <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex flex-col gap-2">
+                <div class="flex justify-between text-slate-400"><span>Spread / Radius</span><span id="lblV1">24px</span></div>
+                <input id="visRange1" type="range" min="0" max="60" value="24" class="accent-cyan-500 cursor-pointer" />
             </div>
-            <div class="flex justify-between items-center">
-                <span>Color (<span id="val2" class="font-mono text-indigo-400 font-semibold">24px</span>)</span>
-                <input id="range2" type="range" min="4" max="64" value="24" class="w-40 accent-indigo-500 cursor-pointer" />
-            </div>
-            <div class="flex justify-between items-center">
-                <span>Radial (<span id="val3" class="font-mono text-indigo-400 font-semibold">80%</span>)</span>
-                <input id="range3" type="range" min="10" max="100" value="80" class="w-40 accent-indigo-500 cursor-pointer" />
+            <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex flex-col gap-2">
+                <div class="flex justify-between text-slate-400"><span>Blur / Intensity</span><span id="lblV2">40px</span></div>
+                <input id="visRange2" type="range" min="0" max="100" value="40" class="accent-cyan-500 cursor-pointer" />
             </div>
         </div>
 
-        <!-- Output Code & Copy Button -->
-        <div class="relative">
-            <pre class="bg-slate-950/80 p-3 rounded-xl text-xs font-mono text-slate-300 overflow-x-auto border border-slate-800 mb-3"><code id="codeOutput">/* Generated Configuration */
---component-scale: 50%;
---border-radius: 24px;
---opacity-level: 80%;</code></pre>
-
-            <button id="copyActionBtn" class="w-full bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 active:scale-[0.98] text-white font-semibold py-2.5 rounded-xl transition shadow-lg shadow-indigo-500/25 flex items-center justify-center space-x-2">
-                <span>Copy Code</span>
+        <div class="flex items-center gap-3">
+            <button id="btnDynAction" class="flex-1 bg-gradient-to-r from-cyan-500 via-sky-600 to-blue-600 shadow-cyan-500/30 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+                <span>⚡ Randomize Style</span>
+            </button>
+            <button id="btnDynCopy" class="bg-slate-800/90 hover:bg-slate-700 text-white font-semibold py-3 px-5 rounded-xl border border-slate-700 transition active:scale-[0.98] text-sm">
+                Copy CSS
             </button>
         </div>
     </div>
 </div>
 
 <script is:inline>
-    const liveBox = document.getElementById('livePreviewBox');
-    const range1 = document.getElementById('range1');
-    const range2 = document.getElementById('range2');
-    const range3 = document.getElementById('range3');
-    const val1 = document.getElementById('val1');
-    const val2 = document.getElementById('val2');
-    const val3 = document.getElementById('val3');
-    const codeOutput = document.getElementById('codeOutput');
-    const copyBtn = document.getElementById('copyActionBtn');
-    const previewMetric = document.getElementById('previewMetric');
+(function() {
+    const r1 = document.getElementById('visRange1');
+    const r2 = document.getElementById('visRange2');
+    const l1 = document.getElementById('lblV1');
+    const l2 = document.getElementById('lblV2');
+    const prev = document.getElementById('visPreview');
+    const btnAct = document.getElementById('btnDynAction');
+    const btnCp = document.getElementById('btnDynCopy');
 
-    function updatePreview() {
-        const v1 = range1.value;
-        const v2 = range2.value;
-        const v3 = range3.value;
-
-        val1.textContent = v1 + '%';
-        val2.textContent = v2 + 'px';
-        val3.textContent = v3 + '%';
-
-        if (liveBox) {
-            liveBox.style.borderRadius = v2 + 'px';
-            liveBox.style.opacity = (v3 / 100);
-            liveBox.style.transform = `scale(${0.8 + (v1 / 250)})`;
-        }
-
-        if (previewMetric) {
-            previewMetric.textContent = v1 + ' • ' + v2 + 'px';
-        }
-
-        if (codeOutput) {
-            codeOutput.textContent = `/* Fluid Mesh Gradient Generator */\n--component-scale: ${v1}%;\n--border-radius: ${v2}px;\n--opacity-level: ${v3}%;`;
-        }
+    function update() {
+        const v1 = r1.value;
+        const v2 = r2.value;
+        l1.textContent = v1 + 'px';
+        l2.textContent = v2 + 'px';
+        prev.style.borderRadius = v1 + 'px';
+        prev.style.boxShadow = `0 ${v1/2}px ${v2}px rgba(0,0,0,0.4)`;
     }
 
-    [range1, range2, range3].forEach(input => {
-        if (input) input.addEventListener('input', updatePreview);
-    });
+    btnAct.onclick = () => {
+        r1.value = Math.floor(Math.random() * 50) + 10;
+        r2.value = Math.floor(Math.random() * 80) + 20;
+        update();
+    };
 
-    if (copyBtn) {
-        copyBtn.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(codeOutput ? codeOutput.textContent : '');
-                const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<span>Copied! ✓</span>';
-                copyBtn.classList.add('bg-emerald-600');
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                    copyBtn.classList.remove('bg-emerald-600');
-                }, 1800);
-            } catch (e) {
-                copyBtn.textContent = 'Copied! ✓';
+    btnCp.onclick = async () => {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(`border-radius: ${r1.value}px; box-shadow: 0 ${r1.value/2}px ${r2.value}px rgba(0,0,0,0.4);`);
             }
-        });
-    }
+        } catch(e) {}
+        btnCp.textContent = 'Copied! ✓';
+        btnCp.classList.add('bg-emerald-600');
+        setTimeout(() => { btnCp.textContent = 'Copy CSS'; btnCp.classList.remove('bg-emerald-600'); }, 1400);
+    };
 
-    updatePreview();
+    r1.oninput = update;
+    r2.oninput = update;
+    update();
+})();
 </script>

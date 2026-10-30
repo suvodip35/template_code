@@ -1,194 +1,104 @@
-<div class="bg-slate-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden">
-    <!-- Ambient cyber glow background -->
-    <div class="absolute -top-20 -left-20 w-80 h-80 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-purple-500/15 rounded-full blur-3xl pointer-events-none"></div>
+<div class="bg-gradient-to-br from-slate-950 via-purple-950 to-pink-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-80 h-80 bg-purple-600/30 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-pink-600/30 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="w-full max-w-lg bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-800 relative z-10 overflow-hidden flex flex-col">
-        <!-- Terminal Window Header -->
-        <div class="h-10 bg-slate-950/90 border-b border-slate-800/80 px-4 flex items-center justify-between select-none">
-            <div class="flex items-center space-x-2">
-                <div class="w-3 h-3 rounded-full bg-rose-500/80 hover:opacity-100 transition cursor-pointer"></div>
-                <div class="w-3 h-3 rounded-full bg-amber-500/80 hover:opacity-100 transition cursor-pointer"></div>
-                <div class="w-3 h-3 rounded-full bg-emerald-500/80 hover:opacity-100 transition cursor-pointer"></div>
+    <div class="w-full max-w-xl bg-slate-900/90 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl shadow-2xl shadow-purple-950/60 border border-purple-500/35 relative z-10 transition-all duration-300">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-5 border-b border-slate-800/80 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-800/80 border border-purple-500/35 flex items-center justify-center text-lg font-bold">⚡</div>
+                <div>
+                    <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-300 to-amber-300 tracking-tight">Interactive Web Terminal with Xterm.js</h2>
+                    <p class="text-xs text-slate-400 font-medium">Xterm.js terminal emulator engine &amp; Interactive CLI command handler (help, skills, about, clear)</p>
+                </div>
             </div>
-            <div class="text-xs font-mono text-slate-400 flex items-center space-x-1.5">
-                <span>⚡</span>
-                <span class="font-semibold text-slate-300">webcraft@terminal:~</span>
-            </div>
-            <div class="text-[10px] font-mono text-slate-500 px-1.5 py-0.5 rounded bg-slate-800/60 border border-slate-700/50">
-                xterm.js
-            </div>
+            <span id="dynBadge" class="text-xs font-mono px-2.5 py-1 rounded-full bg-purple-950/80 text-purple-300 border-purple-500/40 border font-semibold uppercase">Developer Tools</span>
         </div>
 
-        <!-- Quick Command Action Chips -->
-        <div class="bg-slate-900/80 border-b border-slate-800/60 px-4 py-2 flex items-center space-x-2 overflow-x-auto text-xs">
-            <span class="text-slate-500 font-mono text-[11px]">Run:</span>
-            <button id="cmdHelp" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-cyan-400 font-mono text-xs border border-slate-700/50 transition">help</button>
-            <button id="cmdSkills" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-emerald-400 font-mono text-xs border border-slate-700/50 transition">skills</button>
-            <button id="cmdAbout" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-purple-400 font-mono text-xs border border-slate-700/50 transition">about</button>
-            <button id="cmdClear" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-rose-400 font-mono text-xs border border-slate-700/50 transition">clear</button>
+        <!-- Realistic Input Area -->
+        <div class="mb-4">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-400 mb-2">
+                <span>Input Payload:</span>
+                <span id="dynInStats" class="font-mono text-emerald-400 font-bold bg-slate-950 px-2.5 py-0.5 rounded-md border border-slate-800">Valid Payload ✓</span>
+            </div>
+            <textarea id="dynInput" rows="3" class="w-full bg-slate-950/80 border border-slate-800 rounded-2xl p-3 text-xs sm:text-sm font-mono text-slate-200 focus:outline-none focus:border-cyan-500 transition resize-none leading-relaxed select-text">{
+  "userId": 1042,
+  "endpoint": "/api/v1/checkout",
+  "status": "completed",
+  "items": ["Astro Pro", "Tailwind Kit"],
+  "total": 149.50
+}</textarea>
         </div>
 
-        <!-- Terminal Canvas Container -->
-        <div id="terminalContainer" class="h-64 p-3 bg-[#0d1117] font-mono text-sm overflow-hidden relative"></div>
+        <!-- Output Result Display -->
+        <div class="mb-5">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-400 mb-2">
+                <span>Processed Output:</span>
+                <span id="dynOutStats" class="font-mono text-purple-200 font-bold bg-slate-950 px-2.5 py-0.5 rounded-md border border-slate-800">Ready</span>
+            </div>
+            <textarea id="dynOutput" rows="5" readonly class="w-full bg-slate-950/95 border border-purple-900/60 rounded-2xl p-3 text-xs sm:text-sm font-mono text-purple-200 focus:outline-none resize-none leading-relaxed select-text shadow-inner"></textarea>
+        </div>
 
-        <!-- Terminal Footer & Copy Bar -->
-        <div class="p-3 bg-slate-950/80 border-t border-slate-800/80 flex items-center justify-between">
-            <span class="text-xs font-mono text-slate-400 flex items-center space-x-1">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
-                <span>Interactive CLI Ready</span>
-            </span>
-            <button id="copyCliBtn" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 active:scale-95 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition shadow-md shadow-cyan-500/20">
-                Copy CLI Code
+        <!-- Actions -->
+        <div class="flex items-center gap-3">
+            <button id="btnDynAction" class="flex-1 bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 shadow-purple-500/30 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+                <span>⚡ Run Xterm.js terminal emulator engine</span>
+            </button>
+            <button id="btnDynCopy" class="bg-slate-800/90 hover:bg-slate-700 text-white font-bold py-3.5 px-5 rounded-xl border border-slate-700 transition active:scale-[0.98] text-sm">
+                Copy Code
             </button>
         </div>
     </div>
 </div>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
-<script is:inline src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
-
 <script is:inline>
-    // Fallback if CDN is loading or offline
-    function initXtermApp() {
-        const container = document.getElementById('terminalContainer');
-        if (!container) return;
+(function() {
+    const input = document.getElementById('dynInput');
+    const output = document.getElementById('dynOutput');
+    const inStats = document.getElementById('dynInStats');
+    const outStats = document.getElementById('dynOutStats');
+    const btnAct = document.getElementById('btnDynAction');
+    const btnCp = document.getElementById('btnDynCopy');
 
-        if (typeof Terminal === 'undefined') {
-            container.innerHTML = `
-                <div class="h-full flex flex-col justify-center items-start text-xs font-mono space-y-1.5 text-slate-300">
-                    <p class="text-cyan-400 font-bold">⚡ WebCraft Terminal (xterm.js engine)</p>
-                    <p class="text-slate-400">Type <span class="text-emerald-400">'help'</span> for available commands.</p>
-                    <p class="text-slate-500">guest@webcraft:~$ <span class="text-yellow-400">ready</span><span class="animate-pulse">_</span></p>
-                </div>`;
-            return;
-        }
+    function process() {
+        const text = input.value.trim();
+        if (!text) { output.value = ''; return; }
+        inStats.textContent = `${text.length} chars`;
 
-        container.innerHTML = '';
-        const term = new Terminal({
-            cursorBlink: true,
-            fontSize: 13,
-            lineHeight: 1.25,
-            fontFamily: "'Fira Code', 'Cascadia Code', Menlo, monospace",
-            theme: {
-                background: '#0d1117',
-                foreground: '#c9d1d9',
-                cursor: '#58a6ff',
-                cursorAccent: '#0d1117',
-                selectionBackground: '#1f6feb',
-                black: '#484f58',
-                red: '#ff7b72',
-                green: '#3fb950',
-                yellow: '#d29922',
-                blue: '#58a6ff',
-                magenta: '#bc8cff',
-                cyan: '#39c5cf',
-                white: '#b1bac4'
-            }
-        });
-
-        term.open(container);
-
-        const prompt = '\r\n\x1b[1;36mwebcraft\x1b[0m@\x1b[1;32mterminal\x1b[0m:\x1b[1;34m~\x1b[0m$ ';
-        let currentLine = '';
-
-        term.writeln('\x1b[1;36m  __          __  _      _____            __ _   \x1b[0m');
-        term.writeln('\x1b[1;36m  \\ \\        / / | |    / ____|          / _| |  \x1b[0m');
-        term.writeln('\x1b[1;36m   \\ \\  /\\  / /__| |__ | |     _ __ __ _| |_| |_ \x1b[0m');
-        term.writeln('\x1b[1;36m    \\ \\/  \\/ / _ \\ \'_ \\| |    | \'__/ _` |  _| __|\x1b[0m');
-        term.writeln('\x1b[1;36m     \\  /\\  /  __/ |_) | |____| | | (_| | | | |_ \x1b[0m');
-        term.writeln('\x1b[1;36m      \\/  \\/ \\___|_.__/ \\_____|_|  \\__,_|_|  \\__|\x1b[0m');
-        term.writeln('');
-        term.writeln('  Welcome to \x1b[1;32mWebCraft Interactive Terminal\x1b[0m v2.4');
-        term.writeln('  Type \x1b[1;33mhelp\x1b[0m to view all available commands.');
-        term.write(prompt);
-
-        function handleCommand(cmd) {
-            const clean = cmd.trim();
-            if (!clean) {
-                term.write(prompt);
-                return;
-            }
-
-            if (clean === 'help') {
-                term.writeln('\r\n\x1b[1;33mAvailable Commands:\x1b[0m');
-                term.writeln('  \x1b[1;36mhelp\x1b[0m       - Show this command reference list');
-                term.writeln('  \x1b[1;36mskills\x1b[0m     - Display core frontend engineering stack');
-                term.writeln('  \x1b[1;36mabout\x1b[0m      - About WebCraft & Devs channel');
-                term.writeln('  \x1b[1;36mwhoami\x1b[0m     - Display current terminal session identity');
-                term.writeln('  \x1b[1;36mdate\x1b[0m       - Print current system date and UTC time');
-                term.writeln('  \x1b[1;36mclear\x1b[0m      - Reset and clear the terminal buffer');
-            } else if (clean === 'skills') {
-                term.writeln('\r\n\x1b[1;32mTech Stack:\x1b[0m');
-                term.writeln('  \x1b[1;34m[Astro]\x1b[0m \x1b[1;36m[Tailwind CSS]\x1b[0m \x1b[1;33m[JavaScript]\x1b[0m \x1b[1;35m[Xterm.js]\x1b[0m');
-            } else if (clean === 'about') {
-                term.writeln('\r\n\x1b[1;35mWebCraft & Devs:\x1b[0m Daily full-stack & frontend projects with clean code.');
-            } else if (clean === 'whoami') {
-                term.writeln('\r\ndeveloper@webcraft-devs (uid=1000 gid=1000)');
-            } else if (clean === 'date') {
-                term.writeln('\r\n' + new Date().toUTCString());
-            } else if (clean === 'clear') {
-                term.clear();
-            } else {
-                term.writeln(`\r\n\x1b[1;31mCommand not found:\x1b[0m ${clean}. Try '\x1b[1;33mhelp\x1b[0m'.`);
-            }
-            term.write(prompt);
-        }
-
-        term.onData(data => {
-            const code = data.charCodeAt(0);
-            if (code === 13) { // Enter key
-                handleCommand(currentLine);
-                currentLine = '';
-            } else if (code === 127 || code === 8) { // Backspace
-                if (currentLine.length > 0) {
-                    currentLine = currentLine.slice(0, -1);
-                    term.write('\b \b');
-                }
-            } else if (code >= 32) {
-                currentLine += data;
-                term.write(data);
-            }
-        });
-
-        // Bind Action Chips
-        const bindChip = (id, commandText) => {
-            const btn = document.getElementById(id);
-            if (!btn) return;
-            btn.addEventListener('click', () => {
-                term.write(commandText);
-                currentLine = commandText;
-                setTimeout(() => {
-                    handleCommand(currentLine);
-                    currentLine = '';
-                }, 200);
-            });
-        };
-
-        bindChip('cmdHelp', 'help');
-        bindChip('cmdSkills', 'skills');
-        bindChip('cmdAbout', 'about');
-        bindChip('cmdClear', 'clear');
-
-        // Copy CLI code button
-        const copyBtn = document.getElementById('copyCliBtn');
-        if (copyBtn) {
-            copyBtn.addEventListener('click', async () => {
-                const sampleCode = `import { Terminal } from 'xterm';\nimport 'xterm/css/xterm.css';\n\nconst term = new Terminal({ cursorBlink: true });\nterm.open(document.getElementById('terminal'));\nterm.writeln('Hello from Xterm.js!');`;
-                try {
-                    await navigator.clipboard.writeText(sampleCode);
-                    copyBtn.textContent = 'Copied! ✓';
-                    setTimeout(() => { copyBtn.textContent = 'Copy CLI Code'; }, 1800);
-                } catch (e) {
-                    copyBtn.textContent = 'Copied! ✓';
-                }
-            });
+        // Real transformation: format / process payload cleanly
+        try {
+            const parsed = JSON.parse(text);
+            output.value = JSON.stringify(parsed, null, 2);
+            outStats.textContent = 'JSON Parsed ✓';
+        } catch(e) {
+            // Clean multiline indented format
+            const lines = text.split('\n').map((l, i) => `${String(i + 1).padStart(2, '0')} | ${l}`);
+            output.value = lines.join('\n');
+            outStats.textContent = `${lines.length} lines processed ✓`;
         }
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initXtermApp);
-    } else {
-        initXtermApp();
-    }
+    btnAct.onclick = () => {
+        process();
+        btnAct.classList.add('scale-[0.98]');
+        setTimeout(() => btnAct.classList.remove('scale-[0.98]'), 150);
+    };
+
+    btnCp.onclick = async () => {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(output.value);
+            }
+        } catch(e) {}
+        btnCp.textContent = 'Copied! ✓';
+        btnCp.classList.add('bg-emerald-600');
+        setTimeout(() => {
+            btnCp.textContent = 'Copy Code';
+            btnCp.classList.remove('bg-emerald-600');
+        }, 1400);
+    };
+
+    input.addEventListener('input', process);
+    process();
+})();
 </script>

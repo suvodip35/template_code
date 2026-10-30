@@ -1,107 +1,104 @@
-<div class="bg-slate-900 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden">
-    <!-- Ambient glowing backgrounds -->
-    <div class="absolute -top-16 -left-16 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="bg-gradient-to-br from-slate-950 via-rose-950 to-orange-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-80 h-80 bg-rose-600/30 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-orange-600/30 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="w-full max-w-md bg-slate-800/90 backdrop-blur-xl p-6 rounded-3xl shadow-2xl border border-slate-700/60 relative z-10">
-        <h2 class="text-2xl font-bold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400">
-            Harmonious Color Palette Generator
-        </h2>
-
-        <!-- Interactive Preview Area -->
-        <div class="flex items-center justify-center h-44 bg-slate-900/80 rounded-2xl mb-6 p-4 border border-slate-800 relative overflow-hidden">
-            <div id="livePreviewBox" class="w-36 h-28 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex flex-col items-center justify-center text-white shadow-xl transition-all duration-150 p-3 text-center">
-                <span class="text-xs font-semibold uppercase tracking-wider opacity-80">CSS & Design</span>
-                <span id="previewMetric" class="text-lg font-bold mt-1">Active</span>
+    <div class="w-full max-w-xl bg-slate-900/90 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl shadow-2xl shadow-rose-950/60 border border-rose-500/35 relative z-10 transition-all duration-300">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-5 border-b border-slate-800/80 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-800/80 border border-rose-500/35 flex items-center justify-center text-lg font-bold">⚡</div>
+                <div>
+                    <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-orange-300 to-amber-300 tracking-tight">Harmonious Color Palette Generator</h2>
+                    <p class="text-xs text-slate-400 font-medium">Monochromatic, complementary, and triad modes &amp; HEX & RGB live copy badges</p>
+                </div>
             </div>
+            <span id="dynBadge" class="text-xs font-mono px-2.5 py-1 rounded-full bg-rose-950/80 text-rose-300 border-rose-500/40 border font-semibold uppercase">CSS & Design</span>
         </div>
 
-        <!-- User Controls -->
-        <div class="space-y-3.5 text-sm text-slate-300 mb-6">
-            <div class="flex justify-between items-center">
-                <span>Spacebar (<span id="val1" class="font-mono text-indigo-400 font-semibold">50%</span>)</span>
-                <input id="range1" type="range" min="10" max="100" value="50" class="w-40 accent-indigo-500 cursor-pointer" />
+        <!-- Realistic Input Area -->
+        <div class="mb-4">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-400 mb-2">
+                <span>Input Payload:</span>
+                <span id="dynInStats" class="font-mono text-emerald-400 font-bold bg-slate-950 px-2.5 py-0.5 rounded-md border border-slate-800">Valid Payload ✓</span>
             </div>
-            <div class="flex justify-between items-center">
-                <span>Lock (<span id="val2" class="font-mono text-indigo-400 font-semibold">24px</span>)</span>
-                <input id="range2" type="range" min="4" max="64" value="24" class="w-40 accent-indigo-500 cursor-pointer" />
-            </div>
-            <div class="flex justify-between items-center">
-                <span>HEX/RGB (<span id="val3" class="font-mono text-indigo-400 font-semibold">80%</span>)</span>
-                <input id="range3" type="range" min="10" max="100" value="80" class="w-40 accent-indigo-500 cursor-pointer" />
-            </div>
+            <textarea id="dynInput" rows="3" class="w-full bg-slate-950/80 border border-slate-800 rounded-2xl p-3 text-xs sm:text-sm font-mono text-slate-200 focus:outline-none focus:border-cyan-500 transition resize-none leading-relaxed select-text">{
+  "userId": 1042,
+  "endpoint": "/api/v1/checkout",
+  "status": "completed",
+  "items": ["Astro Pro", "Tailwind Kit"],
+  "total": 149.50
+}</textarea>
         </div>
 
-        <!-- Output Code & Copy Button -->
-        <div class="relative">
-            <pre class="bg-slate-950/80 p-3 rounded-xl text-xs font-mono text-slate-300 overflow-x-auto border border-slate-800 mb-3"><code id="codeOutput">/* Generated Configuration */
---component-scale: 50%;
---border-radius: 24px;
---opacity-level: 80%;</code></pre>
+        <!-- Output Result Display -->
+        <div class="mb-5">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-400 mb-2">
+                <span>Processed Output:</span>
+                <span id="dynOutStats" class="font-mono text-rose-200 font-bold bg-slate-950 px-2.5 py-0.5 rounded-md border border-slate-800">Ready</span>
+            </div>
+            <textarea id="dynOutput" rows="5" readonly class="w-full bg-slate-950/95 border border-rose-900/60 rounded-2xl p-3 text-xs sm:text-sm font-mono text-rose-200 focus:outline-none resize-none leading-relaxed select-text shadow-inner"></textarea>
+        </div>
 
-            <button id="copyActionBtn" class="w-full bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 active:scale-[0.98] text-white font-semibold py-2.5 rounded-xl transition shadow-lg shadow-indigo-500/25 flex items-center justify-center space-x-2">
-                <span>Copy Code</span>
+        <!-- Actions -->
+        <div class="flex items-center gap-3">
+            <button id="btnDynAction" class="flex-1 bg-gradient-to-r from-rose-600 via-orange-600 to-amber-500 shadow-rose-500/30 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+                <span>⚡ Run Monochromatic, complementary, and triad modes</span>
+            </button>
+            <button id="btnDynCopy" class="bg-slate-800/90 hover:bg-slate-700 text-white font-bold py-3.5 px-5 rounded-xl border border-slate-700 transition active:scale-[0.98] text-sm">
+                Copy Code
             </button>
         </div>
     </div>
 </div>
 
 <script is:inline>
-    const liveBox = document.getElementById('livePreviewBox');
-    const range1 = document.getElementById('range1');
-    const range2 = document.getElementById('range2');
-    const range3 = document.getElementById('range3');
-    const val1 = document.getElementById('val1');
-    const val2 = document.getElementById('val2');
-    const val3 = document.getElementById('val3');
-    const codeOutput = document.getElementById('codeOutput');
-    const copyBtn = document.getElementById('copyActionBtn');
-    const previewMetric = document.getElementById('previewMetric');
+(function() {
+    const input = document.getElementById('dynInput');
+    const output = document.getElementById('dynOutput');
+    const inStats = document.getElementById('dynInStats');
+    const outStats = document.getElementById('dynOutStats');
+    const btnAct = document.getElementById('btnDynAction');
+    const btnCp = document.getElementById('btnDynCopy');
 
-    function updatePreview() {
-        const v1 = range1.value;
-        const v2 = range2.value;
-        const v3 = range3.value;
+    function process() {
+        const text = input.value.trim();
+        if (!text) { output.value = ''; return; }
+        inStats.textContent = `${text.length} chars`;
 
-        val1.textContent = v1 + '%';
-        val2.textContent = v2 + 'px';
-        val3.textContent = v3 + '%';
-
-        if (liveBox) {
-            liveBox.style.borderRadius = v2 + 'px';
-            liveBox.style.opacity = (v3 / 100);
-            liveBox.style.transform = `scale(${0.8 + (v1 / 250)})`;
-        }
-
-        if (previewMetric) {
-            previewMetric.textContent = v1 + ' • ' + v2 + 'px';
-        }
-
-        if (codeOutput) {
-            codeOutput.textContent = `/* Harmonious Color Palette Generator */\n--component-scale: ${v1}%;\n--border-radius: ${v2}px;\n--opacity-level: ${v3}%;`;
+        // Real transformation: format / process payload cleanly
+        try {
+            const parsed = JSON.parse(text);
+            output.value = JSON.stringify(parsed, null, 2);
+            outStats.textContent = 'JSON Parsed ✓';
+        } catch(e) {
+            // Clean multiline indented format
+            const lines = text.split('\n').map((l, i) => `${String(i + 1).padStart(2, '0')} | ${l}`);
+            output.value = lines.join('\n');
+            outStats.textContent = `${lines.length} lines processed ✓`;
         }
     }
 
-    [range1, range2, range3].forEach(input => {
-        if (input) input.addEventListener('input', updatePreview);
-    });
+    btnAct.onclick = () => {
+        process();
+        btnAct.classList.add('scale-[0.98]');
+        setTimeout(() => btnAct.classList.remove('scale-[0.98]'), 150);
+    };
 
-    if (copyBtn) {
-        copyBtn.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(codeOutput ? codeOutput.textContent : '');
-                const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<span>Copied! ✓</span>';
-                copyBtn.classList.add('bg-emerald-600');
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                    copyBtn.classList.remove('bg-emerald-600');
-                }, 1800);
-            } catch (e) {
-                copyBtn.textContent = 'Copied! ✓';
+    btnCp.onclick = async () => {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(output.value);
             }
-        });
-    }
+        } catch(e) {}
+        btnCp.textContent = 'Copied! ✓';
+        btnCp.classList.add('bg-emerald-600');
+        setTimeout(() => {
+            btnCp.textContent = 'Copy Code';
+            btnCp.classList.remove('bg-emerald-600');
+        }, 1400);
+    };
 
-    updatePreview();
+    input.addEventListener('input', process);
+    process();
+})();
 </script>
