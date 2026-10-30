@@ -1,138 +1,258 @@
-<div class="bg-gradient-to-r from-red-600 via-pink-600 to-purple-600 text-white font-sans min-h-screen flex items-center justify-center">
-    <div class="w-full max-w-lg p-6 bg-white text-gray-800 rounded-lg shadow-lg">
-        <div class="text-center py-6">
-            <h1 class="text-4xl font-extrabold mb-3">
-                Interactive Map Tool
-            </h1>
-            <p class="text-lg">
-                Set a location, adjust the radius, and explore dynamically.
-            </p>
-        </div>
-        <div class="mb-4">
-            <label for="location-input" class="block text-sm font-semibold mb-1">
-                Search Location:
-            </label>
-            <div class="flex items-center space-x-2">
-                <input
-                    type="text"
-                    id="location-input"
-                    placeholder="Enter a location (e.g., New York)"
-                    class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                <button
-                    id="reset-btn"
-                    class="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400">
-                    Reset
-                </button>
+<div class="bg-slate-950 text-slate-100 font-sans min-h-screen p-4 md:p-8 flex items-center justify-center">
+    <div class="w-full max-w-6xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
+        
+        <!-- Controls Sidebar -->
+        <div class="w-full md:w-[380px] p-6 bg-slate-900/95 border-b md:border-b-0 md:border-r border-slate-800 flex flex-col justify-between space-y-6">
+            <div>
+                <!-- Brand / Header -->
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-xl shadow-lg shadow-emerald-500/20">
+                        🗺️
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-white tracking-tight">Interactive Map Tool</h1>
+                        <p class="text-xs text-emerald-400 font-medium">Leaflet.js &bull; OpenStreetMap</p>
+                    </div>
+                </div>
+                
+                <p class="text-xs text-slate-400 mb-5 leading-relaxed">
+                    Search global destinations, drag the marker dynamically, and calibrate geospatial coverage radius in real time.
+                </p>
+
+                <!-- Location Search -->
+                <div class="space-y-2 mb-5">
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                        Search Location
+                    </label>
+                    <div class="flex space-x-2">
+                        <div class="relative flex-1">
+                            <input
+                                type="text"
+                                id="location-input"
+                                placeholder="e.g. New York, Tokyo, Paris"
+                                class="w-full pl-3 pr-8 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                            />
+                        </div>
+                        <button
+                            id="search-btn"
+                            class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold tracking-wide transition shadow-md shadow-emerald-600/20 active:scale-95">
+                            Search
+                        </button>
+                    </div>
+                    <p id="location-message" class="text-xs text-rose-400 min-h-[16px]"></p>
+                </div>
+
+                <!-- Quick Location Presets -->
+                <div class="mb-5">
+                    <span class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                        Quick Presets
+                    </span>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button type="button" class="preset-btn px-2.5 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-md text-xs text-slate-300 transition" data-lat="40.7128" data-lng="-74.0060" data-name="New York">🗽 New York</button>
+                        <button type="button" class="preset-btn px-2.5 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-md text-xs text-slate-300 transition" data-lat="51.5074" data-lng="-0.1278" data-name="London">🏰 London</button>
+                        <button type="button" class="preset-btn px-2.5 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-md text-xs text-slate-300 transition" data-lat="35.6762" data-lng="139.6503" data-name="Tokyo">🗼 Tokyo</button>
+                        <button type="button" class="preset-btn px-2.5 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-md text-xs text-slate-300 transition" data-lat="22.5726" data-lng="88.3639" data-name="Kolkata">🏛️ Kolkata</button>
+                    </div>
+                </div>
+
+                <!-- Radius Slider -->
+                <div class="space-y-2 mb-5">
+                    <div class="flex justify-between items-center">
+                        <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                            Coverage Radius
+                        </label>
+                        <span id="radius-value" class="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono font-bold rounded">
+                            5 km
+                        </span>
+                    </div>
+                    <input
+                        type="range"
+                        id="radius-input"
+                        min="1"
+                        max="50"
+                        value="5"
+                        class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                    />
+                    <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+                        <span>1 km</span>
+                        <span>25 km</span>
+                        <span>50 km</span>
+                    </div>
+                </div>
+
+                <!-- Live Coordinates & Telemetry Card -->
+                <div class="p-3.5 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-400 font-medium">Latitude:</span>
+                        <span id="lat-val" class="font-mono text-emerald-400 font-semibold">22.5726</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-400 font-medium">Longitude:</span>
+                        <span id="lng-val" class="font-mono text-emerald-400 font-semibold">88.3639</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs border-t border-slate-800/80 pt-2">
+                        <span class="text-slate-400 font-medium">Coverage:</span>
+                        <span id="coverage-val" class="font-mono text-slate-300">78.5 km&sup2;</span>
+                    </div>
+                </div>
             </div>
-            <p id="location-message" class="message mt-2 text-red-500"></p>
+
+            <!-- Reset Button -->
+            <button
+                id="reset-btn"
+                class="w-full py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-semibold tracking-wide transition flex items-center justify-center space-x-2">
+                <span>↺</span>
+                <span>Reset Map View</span>
+            </button>
         </div>
-        <div class="mb-4">
-            <label for="radius-input" class="block text-sm font-semibold mb-1">
-                Radius (km)
-            </label>
-            <div class="flex items-center space-x-2">
-                <input
-                    type="range"
-                    id="radius-input"
-                    min="1"
-                    max="50"
-                    value="2"
-                    class="w-full accent-blue-500"
-                />
-                <span id="radius-value" class="text-lg font-semibold">
-                    2 km
-                </span>
+
+        <!-- Interactive Map Canvas Container -->
+        <div class="flex-1 relative bg-slate-950 min-h-[420px] md:min-h-[560px]">
+            <div id="map" class="absolute inset-0 w-full h-full z-10"></div>
+            
+            <!-- Draggable Badge Overlay -->
+            <div class="absolute top-4 right-4 z-20 pointer-events-none bg-slate-900/80 backdrop-blur border border-slate-700/80 rounded-lg px-3 py-1.5 shadow-lg text-[11px] text-slate-300 flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Draggable Pin &bull; Dynamic Geofence</span>
             </div>
         </div>
-        <div id="map" class="rounded-lg shadow-lg h-[400px]"></div>
-        <div class="mt-4 text-center">
-            <p 
-                class="text-sm text-gray-600"
-                id="info">
-                Drag the marker to adjust the location.
-            </p>
-        </div>
+
     </div>
 </div>
+
 <script is:inline src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+
+<style>
+    .leaflet-popup-content-wrapper {
+        background: #0f172a !important;
+        color: #f8fafc !important;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
+    }
+    .leaflet-popup-tip {
+        background: #0f172a !important;
+    }
+</style>
+
 <script is:inline>
-    document.addEventListener('DOMContentLoaded', function (){
-        const map = L.map('map').setView([22.5726, 88.3639], 10);
+    document.addEventListener('DOMContentLoaded', function () {
+        const defaultLat = 22.5726;
+        const defaultLng = 88.3639;
+        const defaultRadius = 5;
+
+        const map = L.map('map', {
+            zoomControl: true
+        }).setView([defaultLat, defaultLng], 11);
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors',
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
         }).addTo(map);
-        let marker = L.marker([22.5726, 88.3639], {draggable: true}).addTo(map);
-        let circle = L.circle([22.5726, 88.3639], {
-            radius: 10000,
-            color: '#4f46e5',
-            fillColor: '#a5b4fc',
-            fillOpacity: 0.4,
+
+        let marker = L.marker([defaultLat, defaultLng], {
+            draggable: true
         }).addTo(map);
-        function updateInfo(latlng, radius){
-            if(latlng && latlng.lat !== undefined && latlng.lng !== undefined){
-                document.getElementById('info').innerText = `Radius: ${radius} km, Location: ${latlng.lat.toFixed(4)}, ${latlng.lng.toFixed(4)}`;
-            } else{
-                document.getElementById('info').innerText = `Invalid location data`;
-            }
-        }
-        marker.on('move', function(e){
-            const newPos = e.target.getLatLng();
-            circle.setLatLng(newPos);
-            updateInfo(newPos, circle.getRadius() / 1000);
-        });
+
+        let circle = L.circle([defaultLat, defaultLng], {
+            radius: defaultRadius * 1000,
+            color: '#10b981',
+            fillColor: '#10b981',
+            fillOpacity: 0.25,
+            weight: 2
+        }).addTo(map);
 
         const radiusInput = document.getElementById('radius-input');
         const radiusValue = document.getElementById('radius-value');
-        radiusInput.addEventListener('input', function(){
-            const newRadius = radiusInput.value * 1000;
-            circle.setRadius(newRadius);
-            radiusValue.innerText = `${radiusInput.value} km`;
-            updateInfo(marker.getLatLng(), radiusInput.value);
-        });
+        const latVal = document.getElementById('lat-val');
+        const lngVal = document.getElementById('lng-val');
+        const coverageVal = document.getElementById('coverage-val');
         const locationInput = document.getElementById('location-input');
         const locationMessage = document.getElementById('location-message');
-        locationInput.addEventListener('keypress', function (e){
-            if(e.key === 'Enter'){
-                const location = e.target.value.trim();
-                if(!location){
-                    locationMessage.innerText = 'Please enetr a location';
-                    return;
-                }
+        const searchBtn = document.getElementById('search-btn');
+        const resetBtn = document.getElementById('reset-btn');
 
-                fetch(`https://nominatim.openstreetmap.org/search?q=${location}&format=json&limit=1`)
-                .then(response => response.json())
+        function updateTelemetry(lat, lng, radiusKm) {
+            latVal.innerText = lat.toFixed(4);
+            lngVal.innerText = lng.toFixed(4);
+            radiusValue.innerText = `${radiusKm} km`;
+            const area = (Math.PI * Math.pow(radiusKm, 2)).toFixed(1);
+            coverageVal.innerHTML = `${area} km&sup2;`;
+        }
+
+        marker.on('move', function (e) {
+            const pos = e.target.getLatLng();
+            circle.setLatLng(pos);
+            updateTelemetry(pos.lat, pos.lng, radiusInput.value);
+        });
+
+        radiusInput.addEventListener('input', function () {
+            const radKm = parseFloat(radiusInput.value);
+            circle.setRadius(radKm * 1000);
+            updateTelemetry(marker.getLatLng().lat, marker.getLatLng().lng, radKm);
+        });
+
+        function performGeocode() {
+            const query = locationInput.value.trim();
+            if (!query) {
+                locationMessage.innerText = 'Please enter a location.';
+                return;
+            }
+            locationMessage.innerText = 'Searching coordinates...';
+
+            fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`)
+                .then(res => res.json())
                 .then(data => {
-                    if(data.length > 0){
-                        const lat = parseFloat(data[0].lat);
-                        const lon = parseFloat(data[0].lon);
-                        const newLatLng = {lat, lng: lon};
-                        marker.setLatLng(newLatLng);
-                        circle.setLatLng(newLatLng);
-                        map.setView(newLatLng, 12);
-                        updateInfo(newLatLng, circle.getRadius() / 1000);
+                    if (data && data.length > 0) {
+                        const newLat = parseFloat(data[0].lat);
+                        const newLng = parseFloat(data[0].lon);
+                        const newPos = [newLat, newLng];
+
+                        marker.setLatLng(newPos);
+                        circle.setLatLng(newPos);
+                        map.flyTo(newPos, 12, { duration: 1.5 });
+                        updateTelemetry(newLat, newLng, radiusInput.value);
                         locationMessage.innerText = '';
-                    } else{
-                        locationMessage.innerText = 'Location not found. Please try again.';
+                    } else {
+                        locationMessage.innerText = 'Location not found. Try another city.';
                     }
                 })
                 .catch(() => {
-                    locationMessage.innerText = 'An error occurred while fetching location data.';
+                    locationMessage.innerText = 'Error fetching geolocation data.';
                 });
-            }
+        }
+
+        searchBtn.addEventListener('click', performGeocode);
+        locationInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') performGeocode();
         });
-        document.getElementById('reset-btn').addEventListener('click', function (){
-            const defaultLatLng = {lat: 22.5726, lng: 88.3639};
-            const defaultRadius = 2;
-            marker.setLatLng(defaultLatLng);
-            circle.setLatLng(defaultLatLng).setRadius(defaultRadius * 1000);
-            map.setView(defaultLatLng, 10);
-            radiusInput.value = defaultRadius;
-            radiusInput.innerText = `${defaultRadius} km`;
-            updateInfo(defaultLatLng, defaultRadius);
+
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const pLat = parseFloat(this.dataset.lat);
+                const pLng = parseFloat(this.dataset.lng);
+                const pName = this.dataset.name;
+                locationInput.value = pName;
+                locationMessage.innerText = '';
+
+                marker.setLatLng([pLat, pLng]);
+                circle.setLatLng([pLat, pLng]);
+                map.flyTo([pLat, pLng], 12, { duration: 1.5 });
+                updateTelemetry(pLat, pLng, radiusInput.value);
+            });
+        });
+
+        resetBtn.addEventListener('click', function () {
+            locationInput.value = '';
             locationMessage.innerText = '';
+            radiusInput.value = defaultRadius;
+            marker.setLatLng([defaultLat, defaultLng]);
+            circle.setLatLng([defaultLat, defaultLng]);
+            circle.setRadius(defaultRadius * 1000);
+            map.flyTo([defaultLat, defaultLng], 11, { duration: 1.0 });
+            updateTelemetry(defaultLat, defaultLng, defaultRadius);
         });
-        updateInfo(marker.getLatLng(), circle.getRadius() / 1000);
+
+        updateTelemetry(defaultLat, defaultLng, defaultRadius);
     });
 </script>
