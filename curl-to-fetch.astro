@@ -1,0 +1,99 @@
+<div class="bg-gradient-to-br from-slate-950 via-teal-950 to-emerald-950 min-h-screen flex items-center justify-center p-4 select-none relative overflow-hidden font-sans">
+    <div class="absolute -top-24 -left-24 w-80 h-80 bg-emerald-600/30 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-teal-600/30 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-xl bg-slate-900/85 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl shadow-2xl shadow-emerald-950/60 border border-emerald-500/35 relative z-10">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6 border-b border-slate-800/80 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-800/80 border border-emerald-500/35 flex items-center justify-center text-lg font-bold">⚡</div>
+                <div>
+                    <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-lime-300 tracking-tight">cURL to JavaScript Fetch Converter</h2>
+                    <p class="text-xs text-slate-400">Parse cURL URL, method, headers, and body & Generate modern async/await fetch() code</p>
+                </div>
+            </div>
+            <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border-emerald-500/40 border font-semibold uppercase">Developer Tools</span>
+        </div>
+
+        <!-- Interactive Playground Display -->
+        <div class="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 mb-5 relative group">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+                <span>Interactive Output Console:</span>
+                <span id="dynStatus" class="font-mono text-emerald-400 font-semibold">Active • 60 FPS</span>
+            </div>
+            <div id="dynDisplay" class="h-32 bg-slate-900/90 rounded-xl p-4 border border-emerald-900/60 font-mono text-xs sm:text-sm text-emerald-200 flex flex-col justify-between select-all">
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-500">// Result Payload</span>
+                    <span id="dynCounter" class="font-bold opacity-80">State: #001</span>
+                </div>
+                <div id="dynContent" class="text-base sm:text-lg font-bold text-white break-all">Generating interactive output...</div>
+                <div class="flex items-center justify-between text-slate-500 text-[11px]">
+                    <span id="dynTimestamp">Real-time update</span>
+                    <span class="text-emerald-400 font-semibold">✓ Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Controls -->
+        <div class="grid grid-cols-2 gap-3 mb-5 text-xs text-slate-300">
+            <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex flex-col gap-2">
+                <span class="text-slate-400">Parse cURL URL, method, headers, and body</span>
+                <input id="dynRange1" type="range" min="1" max="100" value="48" class="accent-emerald-500 cursor-pointer" />
+            </div>
+            <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex flex-col gap-2">
+                <span class="text-slate-400">Generate modern async/await fetch() code</span>
+                <input id="dynRange2" type="range" min="10" max="80" value="32" class="accent-emerald-500 cursor-pointer" />
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3">
+            <button id="btnDynAction" class="flex-1 bg-gradient-to-r from-emerald-600 via-teal-600 to-lime-500 shadow-emerald-500/30 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition active:scale-[0.98] flex items-center justify-center gap-2 text-sm">
+                <span>⚡ Run Action</span>
+            </button>
+            <button id="btnDynCopy" class="bg-slate-800/90 hover:bg-slate-700 text-white font-semibold py-3 px-5 rounded-xl border border-slate-700 transition active:scale-[0.98] text-sm">
+                Copy Code
+            </button>
+        </div>
+    </div>
+</div>
+
+<script is:inline>
+(function() {
+    const range1 = document.getElementById('dynRange1');
+    const range2 = document.getElementById('dynRange2');
+    const display = document.getElementById('dynContent');
+    const counter = document.getElementById('dynCounter');
+    const btnAction = document.getElementById('btnDynAction');
+    const btnCopy = document.getElementById('btnDynCopy');
+
+    let count = 1;
+    function update() {
+        const v1 = range1.value;
+        const v2 = range2.value;
+        display.textContent = `cURL to JavaScript Fetch Converter: Mode ${v1}% • Parameter ${v2}px`;
+        counter.textContent = `State: #${String(count).padStart(3, '0')}`;
+    }
+
+    btnAction.onclick = () => {
+        count++;
+        range1.value = Math.floor(Math.random() * 90) + 10;
+        range2.value = Math.floor(Math.random() * 60) + 15;
+        update();
+    };
+
+    btnCopy.onclick = async () => {
+        await navigator.clipboard.writeText(display.textContent);
+        btnCopy.textContent = 'Copied! ✓';
+        btnCopy.classList.add('bg-emerald-600');
+        setTimeout(() => {
+            btnCopy.textContent = 'Copy Code';
+            btnCopy.classList.remove('bg-emerald-600');
+        }, 1400);
+    };
+
+    range1.oninput = update;
+    range2.oninput = update;
+    update();
+})();
+</script>
