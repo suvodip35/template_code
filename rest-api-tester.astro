@@ -1,0 +1,250 @@
+<div class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 min-h-screen flex items-center justify-center p-3 sm:p-6 font-sans text-slate-100 select-none relative overflow-hidden">
+  <!-- Ambient glows -->
+  <div class="absolute -top-32 -left-32 w-96 h-96 bg-emerald-600/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- Main Card -->
+  <div class="w-full max-w-4xl bg-slate-900/90 backdrop-blur-2xl rounded-2xl shadow-2xl border border-slate-800 p-5 sm:p-7 relative z-10 space-y-5">
+    
+    <!-- Top Header -->
+    <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+      <div class="flex items-center gap-2.5">
+        <span class="text-2xl">⚡</span>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-white tracking-wide">REST API Tester <span class="text-xs font-normal text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded-full ml-1.5">Zero NPM</span></h1>
+          <p class="text-xs text-slate-400">Lightweight, in-browser HTTP client powered by native fetch()</p>
+        </div>
+      </div>
+      <!-- Preset Dropdown -->
+      <div class="flex items-center gap-2 text-xs">
+        <span class="text-slate-400 hidden sm:inline">Presets:</span>
+        <select id="presetSelect" class="bg-slate-800 text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1 text-xs focus:outline-none focus:border-indigo-500">
+          <option value="posts">GET /posts/1</option>
+          <option value="users">GET /users/1</option>
+          <option value="create_post">POST /posts (JSON)</option>
+          <option value="delete">DELETE /posts/1</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- URL & Method Bar -->
+    <div class="flex flex-col sm:flex-row gap-2">
+      <!-- Method Selector -->
+      <select id="methodSelect" class="bg-slate-800 font-bold text-xs uppercase px-3 py-2.5 rounded-xl border border-slate-700 text-emerald-400 focus:outline-none focus:border-emerald-500 cursor-pointer">
+        <option value="GET" class="text-emerald-400 font-bold">GET</option>
+        <option value="POST" class="text-blue-400 font-bold">POST</option>
+        <option value="PUT" class="text-amber-400 font-bold">PUT</option>
+        <option value="DELETE" class="text-rose-400 font-bold">DELETE</option>
+        <option value="PATCH" class="text-purple-400 font-bold">PATCH</option>
+      </select>
+
+      <!-- URL Input -->
+      <div class="flex-1 relative">
+        <input 
+          id="urlInput" 
+          type="text" 
+          value="https://jsonplaceholder.typicode.com/posts/1" 
+          placeholder="https://api.example.com/v1/resource" 
+          class="w-full h-full bg-slate-950/80 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs sm:text-sm font-mono text-slate-200 focus:outline-none focus:border-indigo-500 placeholder-slate-600"
+        />
+      </div>
+
+      <!-- Send Button -->
+      <button id="btnSend" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-emerald-950/50 transition flex items-center justify-center gap-1.5 min-w-[100px]">
+        <span id="sendIcon">🚀</span>
+        <span id="sendText">Send</span>
+      </button>
+    </div>
+
+    <!-- Request Details Tabs (Headers vs Body) -->
+    <div class="space-y-2">
+      <div class="flex items-center gap-2 border-b border-slate-800 text-xs font-semibold">
+        <button id="tabHeaders" class="tab-btn pb-2 border-b-2 border-indigo-500 text-indigo-400 px-2 transition">Headers (2)</button>
+        <button id="tabBody" class="tab-btn pb-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 px-2 transition">Request Body</button>
+      </div>
+
+      <!-- Tab Content: Headers -->
+      <div id="contentHeaders" class="space-y-2 py-1">
+        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+          <input type="text" value="Content-Type" class="bg-slate-950/60 border border-slate-800 rounded-lg px-2.5 py-1 text-slate-300 focus:outline-none focus:border-indigo-500" placeholder="Key" />
+          <input type="text" value="application/json" class="bg-slate-950/60 border border-slate-800 rounded-lg px-2.5 py-1 text-slate-300 focus:outline-none focus:border-indigo-500" placeholder="Value" />
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+          <input type="text" value="Accept" class="bg-slate-950/60 border border-slate-800 rounded-lg px-2.5 py-1 text-slate-300 focus:outline-none focus:border-indigo-500" placeholder="Key" />
+          <input type="text" value="application/json" class="bg-slate-950/60 border border-slate-800 rounded-lg px-2.5 py-1 text-slate-300 focus:outline-none focus:border-indigo-500" placeholder="Value" />
+        </div>
+      </div>
+
+      <!-- Tab Content: Body -->
+      <div id="contentBody" class="hidden py-1">
+        <textarea 
+          id="requestBodyTextarea" 
+          rows="3" 
+          class="w-full bg-slate-950/60 border border-slate-800 rounded-xl p-2.5 font-mono text-xs text-slate-200 focus:outline-none focus:border-indigo-500 resize-none leading-relaxed"
+          placeholder='{\n  "title": "foo",\n  "body": "bar",\n  "userId": 1\n}'
+        >{"title": "Mastering Vanilla JS", "body": "Zero NPM REST API Tool", "userId": 1}</textarea>
+      </div>
+    </div>
+
+    <!-- Response Section -->
+    <div class="bg-slate-950/90 rounded-xl border border-slate-800 p-4 space-y-3">
+      <!-- Response Status Bar -->
+      <div class="flex items-center justify-between text-xs pb-2 border-b border-slate-800/80">
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400 font-semibold uppercase text-[11px]">Response:</span>
+          <span id="statusCodeBadge" class="bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-mono font-bold px-2 py-0.5 rounded text-xs">200 OK</span>
+        </div>
+
+        <div class="flex items-center gap-3 text-xs text-slate-400 font-mono">
+          <span>Latency: <strong id="latencyBadge" class="text-cyan-400">128ms</strong></span>
+          <span>Size: <strong id="sizeBadge" class="text-slate-300">292 B</strong></span>
+          <button id="btnCopyResponse" class="text-indigo-400 hover:text-indigo-300 text-xs ml-1 font-sans">Copy JSON</button>
+        </div>
+      </div>
+
+      <!-- JSON Viewer Output -->
+      <pre id="responseJsonOutput" class="font-mono text-xs text-emerald-400 max-h-[220px] overflow-y-auto overflow-x-auto leading-relaxed p-2 bg-slate-900/50 rounded-lg border border-slate-800/60">{
+  "userId": 1,
+  "id": 1,
+  "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+  "body": "quia et suscipit suscipit recusandae consequuntur expedita et cum reprehenderit molestiae ut ut quas totam nostrum rerum est autem sunt rem eveniet architecto"
+}</pre>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const methodSelect = document.getElementById("methodSelect");
+  const urlInput = document.getElementById("urlInput");
+  const btnSend = document.getElementById("btnSend");
+  const sendIcon = document.getElementById("sendIcon");
+  const sendText = document.getElementById("sendText");
+  const presetSelect = document.getElementById("presetSelect");
+
+  const tabHeaders = document.getElementById("tabHeaders");
+  const tabBody = document.getElementById("tabBody");
+  const contentHeaders = document.getElementById("contentHeaders");
+  const contentBody = document.getElementById("contentBody");
+
+  const statusCodeBadge = document.getElementById("statusCodeBadge");
+  const latencyBadge = document.getElementById("latencyBadge");
+  const sizeBadge = document.getElementById("sizeBadge");
+  const responseJsonOutput = document.getElementById("responseJsonOutput");
+  const btnCopyResponse = document.getElementById("btnCopyResponse");
+  const requestBodyTextarea = document.getElementById("requestBodyTextarea");
+
+  // Tabs
+  tabHeaders?.addEventListener("click", () => {
+    tabHeaders.className = "tab-btn pb-2 border-b-2 border-indigo-500 text-indigo-400 px-2 transition font-semibold";
+    tabBody.className = "tab-btn pb-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 px-2 transition";
+    contentHeaders.classList.remove("hidden");
+    contentBody.classList.add("hidden");
+  });
+
+  tabBody?.addEventListener("click", () => {
+    tabBody.className = "tab-btn pb-2 border-b-2 border-indigo-500 text-indigo-400 px-2 transition font-semibold";
+    tabHeaders.className = "tab-btn pb-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 px-2 transition";
+    contentBody.classList.remove("hidden");
+    contentHeaders.classList.add("hidden");
+  });
+
+  // Method color updates
+  const METHOD_COLORS = {
+    GET: "text-emerald-400",
+    POST: "text-blue-400",
+    PUT: "text-amber-400",
+    DELETE: "text-rose-400",
+    PATCH: "text-purple-400"
+  };
+
+  methodSelect?.addEventListener("change", () => {
+    const val = methodSelect.value;
+    methodSelect.className = `bg-slate-800 font-bold text-xs uppercase px-3 py-2.5 rounded-xl border border-slate-700 ${METHOD_COLORS[val] || 'text-slate-300'} focus:outline-none cursor-pointer`;
+    if (val === "POST" || val === "PUT" || val === "PATCH") {
+      tabBody.click();
+    }
+  });
+
+  // Presets
+  const PRESETS = {
+    posts: { method: "GET", url: "https://jsonplaceholder.typicode.com/posts/1", body: "" },
+    users: { method: "GET", url: "https://jsonplaceholder.typicode.com/users/1", body: "" },
+    create_post: { method: "POST", url: "https://jsonplaceholder.typicode.com/posts", body: '{\n  "title": "Mastering Vanilla JS",\n  "body": "Zero NPM REST API Tool",\n  "userId": 1\n}' },
+    delete: { method: "DELETE", url: "https://jsonplaceholder.typicode.com/posts/1", body: "" }
+  };
+
+  presetSelect?.addEventListener("change", () => {
+    const p = PRESETS[presetSelect.value];
+    if (!p) return;
+    methodSelect.value = p.method;
+    methodSelect.dispatchEvent(new Event("change"));
+    urlInput.value = p.url;
+    if (p.body) {
+      requestBodyTextarea.value = p.body;
+      tabBody.click();
+    }
+  });
+
+  // Execute native fetch()
+  async function executeRequest() {
+    const method = methodSelect.value;
+    const url = urlInput.value.trim();
+    if (!url) return;
+
+    sendIcon.textContent = "⏳";
+    sendText.textContent = "Testing...";
+    btnSend.disabled = true;
+
+    const startTime = performance.now();
+
+    try {
+      const options = { method, headers: { "Content-Type": "application/json" } };
+      if (["POST", "PUT", "PATCH"].includes(method)) {
+        options.body = requestBodyTextarea.value.trim() || "{}";
+      }
+
+      const res = await fetch(url, options);
+      const endTime = performance.now();
+      const latencyMs = Math.round(endTime - startTime);
+
+      const text = await res.text();
+      let formattedJson = text;
+      try {
+        formattedJson = JSON.stringify(JSON.parse(text), null, 2);
+      } catch {}
+
+      // Update UI
+      statusCodeBadge.textContent = `${res.status} ${res.statusText || (res.ok ? "OK" : "Error")}`;
+      if (res.ok) {
+        statusCodeBadge.className = "bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-mono font-bold px-2 py-0.5 rounded text-xs";
+        responseJsonOutput.className = "font-mono text-xs text-emerald-400 max-h-[220px] overflow-y-auto overflow-x-auto leading-relaxed p-2 bg-slate-900/50 rounded-lg border border-slate-800/60";
+      } else {
+        statusCodeBadge.className = "bg-rose-950/80 border border-rose-500/40 text-rose-300 font-mono font-bold px-2 py-0.5 rounded text-xs";
+        responseJsonOutput.className = "font-mono text-xs text-rose-300 max-h-[220px] overflow-y-auto overflow-x-auto leading-relaxed p-2 bg-slate-900/50 rounded-lg border border-slate-800/60";
+      }
+
+      latencyBadge.textContent = `${latencyMs}ms`;
+      sizeBadge.textContent = `${text.length} B`;
+      responseJsonOutput.textContent = formattedJson;
+
+    } catch (err) {
+      statusCodeBadge.textContent = "Error: Network Failed";
+      statusCodeBadge.className = "bg-rose-950/80 border border-rose-500/40 text-rose-300 font-mono font-bold px-2 py-0.5 rounded text-xs";
+      responseJsonOutput.textContent = `// Fetch Error:\n${err.message}\n\nNote: If testing cross-origin APIs, ensure CORS headers are supported.`;
+      responseJsonOutput.className = "font-mono text-xs text-rose-400 max-h-[220px] overflow-y-auto leading-relaxed p-2 bg-slate-900/50 rounded-lg border border-slate-800/60";
+    } finally {
+      sendIcon.textContent = "🚀";
+      sendText.textContent = "Send";
+      btnSend.disabled = false;
+    }
+  }
+
+  btnSend?.addEventListener("click", executeRequest);
+
+  btnCopyResponse?.addEventListener("click", () => {
+    navigator.clipboard.writeText(responseJsonOutput.textContent);
+    btnCopyResponse.textContent = "Copied!";
+    setTimeout(() => { btnCopyResponse.textContent = "Copy JSON"; }, 1500);
+  });
+</script>

@@ -1,0 +1,253 @@
+<div class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 min-h-screen flex items-center justify-center p-3 sm:p-6 font-sans text-slate-100 select-none relative overflow-hidden">
+  <!-- Glowing backdrops -->
+  <div class="absolute -top-32 -left-32 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- Main Card -->
+  <div class="w-full max-w-4xl bg-slate-900/90 backdrop-blur-2xl rounded-2xl shadow-2xl border border-slate-800 p-5 sm:p-7 relative z-10 space-y-5">
+    
+    <!-- Header & Presets -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800 gap-3">
+      <div class="flex items-center gap-2.5">
+        <span class="text-2xl">🔍</span>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-white tracking-wide">RegEx Tester & Visualizer <span class="text-xs font-normal text-amber-400 bg-amber-950/60 border border-amber-500/30 px-2 py-0.5 rounded-full ml-1">Client-Side</span></h1>
+          <p class="text-xs text-slate-400">Real-time regular expression tester with live highlight canvas and capture groups</p>
+        </div>
+      </div>
+
+      <!-- Presets -->
+      <div class="flex items-center gap-1.5 flex-wrap">
+        <span class="text-[11px] text-slate-400 mr-1">Presets:</span>
+        <button class="preset-btn px-2 py-0.5 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition" data-regex="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}" data-flags="g">Email</button>
+        <button class="preset-btn px-2 py-0.5 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition" data-regex="https?:\\/\\/[\\w\\.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+" data-flags="g">URL</button>
+        <button class="preset-btn px-2 py-0.5 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition" data-regex="#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})" data-flags="gi">Hex Color</button>
+        <button class="preset-btn px-2 py-0.5 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition" data-regex="\\b(\\d{4})-(\\d{2})-(\\d{2})\\b" data-flags="g">Date</button>
+      </div>
+    </div>
+
+    <!-- RegEx Input Bar with Flags -->
+    <div class="space-y-1.5">
+      <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center justify-between">
+        <span>Regular Expression</span>
+        <span id="regexErrorLabel" class="text-rose-400 font-mono text-[11px] normal-case hidden">Invalid Regular Expression</span>
+      </label>
+
+      <div class="flex items-center bg-slate-950/80 rounded-xl border border-slate-700/80 px-3 py-2 focus-within:border-amber-500 transition shadow-inner">
+        <span class="text-slate-500 font-mono text-base font-bold mr-2">/</span>
+        <input 
+          id="regexInput" 
+          type="text" 
+          value="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}" 
+          placeholder="Enter regex pattern..." 
+          class="flex-1 bg-transparent font-mono text-xs sm:text-sm text-amber-300 focus:outline-none placeholder-slate-600"
+        />
+        <span class="text-slate-500 font-mono text-base font-bold ml-2 mr-3">/</span>
+
+        <!-- Flags Toggles -->
+        <div class="flex items-center gap-1 border-l border-slate-800 pl-3">
+          <button id="flagG" class="flag-toggle w-6 h-6 text-xs font-mono font-bold rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 transition" data-flag="g">g</button>
+          <button id="flagI" class="flag-toggle w-6 h-6 text-xs font-mono font-bold rounded bg-slate-800 text-slate-400 border border-slate-700 transition" data-flag="i">i</button>
+          <button id="flagM" class="flag-toggle w-6 h-6 text-xs font-mono font-bold rounded bg-slate-800 text-slate-400 border border-slate-700 transition" data-flag="m">m</button>
+          <button id="flagS" class="flag-toggle w-6 h-6 text-xs font-mono font-bold rounded bg-slate-800 text-slate-400 border border-slate-700 transition" data-flag="s">s</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Test String Input & Match Highlighting -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Input Textarea -->
+      <div class="space-y-1.5 flex flex-col">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span class="font-semibold uppercase tracking-wider text-slate-300">Test String</span>
+          <span class="text-[11px] text-slate-500">Edit text to test live</span>
+        </div>
+        <textarea 
+          id="testStringTextarea" 
+          class="flex-1 min-h-[160px] w-full bg-slate-950/80 border border-slate-800 rounded-xl p-3 font-mono text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-indigo-500 resize-none leading-relaxed"
+          placeholder="Paste text here..."
+        >Contact our team at support@webcraft.dev or sales@enterprise-tools.io for inquiries. You can also reach admin@devs.org.</textarea>
+      </div>
+
+      <!-- Live Match Highlight Display -->
+      <div class="space-y-1.5 flex flex-col">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span class="font-semibold uppercase tracking-wider text-emerald-400">Live Match Canvas</span>
+          <span id="matchCountBadge" class="bg-amber-950/80 border border-amber-500/30 text-amber-300 text-[11px] font-mono px-2 py-0.5 rounded-full">3 Matches</span>
+        </div>
+        <div 
+          id="highlightCanvas" 
+          class="flex-1 min-h-[160px] w-full bg-slate-950/50 border border-slate-800/80 rounded-xl p-3 font-mono text-xs sm:text-sm text-slate-300 overflow-y-auto leading-relaxed break-all"
+        >
+          <!-- Highlights injected here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Match Details & Group Breakdown -->
+    <div class="bg-slate-950/80 rounded-xl border border-slate-800 p-3.5 space-y-2">
+      <div class="flex items-center justify-between text-xs border-b border-slate-800/80 pb-2">
+        <span class="font-semibold uppercase text-slate-300 text-[11px] tracking-wider">Match & Group Breakdown</span>
+        <span class="text-[11px] text-slate-500 font-mono">Capture Groups Analysis</span>
+      </div>
+
+      <div id="matchDetailsList" class="space-y-1.5 max-h-[140px] overflow-y-auto pr-1 text-xs font-mono">
+        <!-- Dynamically rendered -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const regexInput = document.getElementById("regexInput");
+  const testStringTextarea = document.getElementById("testStringTextarea");
+  const highlightCanvas = document.getElementById("highlightCanvas");
+  const matchCountBadge = document.getElementById("matchCountBadge");
+  const matchDetailsList = document.getElementById("matchDetailsList");
+  const regexErrorLabel = document.getElementById("regexErrorLabel");
+
+  const flagToggles = document.querySelectorAll(".flag-toggle");
+  const presetBtns = document.querySelectorAll(".preset-btn");
+
+  // Get active flags
+  function getFlags() {
+    let flags = "";
+    flagToggles.forEach(btn => {
+      if (btn.classList.contains("bg-amber-500/20")) {
+        flags += btn.getAttribute("data-flag");
+      }
+    });
+    return flags;
+  }
+
+  // Toggle flag
+  flagToggles.forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.classList.contains("bg-amber-500/20")) {
+        btn.classList.remove("bg-amber-500/20", "text-amber-300", "border-amber-500/40");
+        btn.classList.add("bg-slate-800", "text-slate-400", "border-slate-700");
+      } else {
+        btn.classList.remove("bg-slate-800", "text-slate-400", "border-slate-700");
+        btn.classList.add("bg-amber-500/20", "text-amber-300", "border-amber-500/40");
+      }
+      runRegex();
+    });
+  });
+
+  // Presets
+  presetBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const reg = btn.getAttribute("data-regex");
+      const flags = btn.getAttribute("data-flags") || "g";
+      regexInput.value = reg;
+
+      flagToggles.forEach(fb => {
+        const f = fb.getAttribute("data-flag");
+        if (flags.includes(f)) {
+          fb.classList.remove("bg-slate-800", "text-slate-400", "border-slate-700");
+          fb.classList.add("bg-amber-500/20", "text-amber-300", "border-amber-500/40");
+        } else {
+          fb.classList.remove("bg-amber-500/20", "text-amber-300", "border-amber-500/40");
+          fb.classList.add("bg-slate-800", "text-slate-400", "border-slate-700");
+        }
+      });
+
+      runRegex();
+    });
+  });
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function runRegex() {
+    const pattern = regexInput.value;
+    const flags = getFlags();
+    const text = testStringTextarea.value;
+
+    regexErrorLabel.classList.add("hidden");
+
+    if (!pattern) {
+      highlightCanvas.innerHTML = escapeHtml(text);
+      matchCountBadge.textContent = "0 Matches";
+      matchDetailsList.innerHTML = '<span class="text-slate-500 italic">Enter a pattern to evaluate</span>';
+      return;
+    }
+
+    let regex;
+    try {
+      regex = new RegExp(pattern, flags);
+    } catch (err) {
+      regexErrorLabel.textContent = err.message;
+      regexErrorLabel.classList.remove("hidden");
+      highlightCanvas.innerHTML = escapeHtml(text);
+      matchCountBadge.textContent = "Error";
+      matchDetailsList.innerHTML = `<span class="text-rose-400 font-mono">Syntax Error: ${err.message}</span>`;
+      return;
+    }
+
+    // Process matches
+    const matches = [];
+    let match;
+    const isGlobal = flags.includes("g");
+
+    if (isGlobal) {
+      while ((match = regex.exec(text)) !== null) {
+        matches.push(match);
+        if (match.index === regex.lastIndex) regex.lastIndex++; // Avoid infinite loop
+      }
+    } else {
+      match = regex.exec(text);
+      if (match) matches.push(match);
+    }
+
+    matchCountBadge.textContent = `${matches.length} Match${matches.length === 1 ? '' : 'es'}`;
+
+    if (matches.length === 0) {
+      highlightCanvas.innerHTML = escapeHtml(text);
+      matchDetailsList.innerHTML = '<span class="text-slate-500 italic">No matches found in test string</span>';
+      return;
+    }
+
+    // Build highlighted string
+    let highlightedHtml = "";
+    let lastIndex = 0;
+
+    matches.forEach((m, idx) => {
+      const matchStart = m.index;
+      const matchEnd = matchStart + m[0].length;
+
+      highlightedHtml += escapeHtml(text.slice(lastIndex, matchStart));
+      highlightedHtml += `<mark class="bg-amber-400/25 border-b-2 border-amber-400 text-amber-200 px-0.5 rounded">${escapeHtml(m[0])}</mark>`;
+      lastIndex = matchEnd;
+    });
+    highlightedHtml += escapeHtml(text.slice(lastIndex));
+    highlightCanvas.innerHTML = highlightedHtml;
+
+    // Build match breakdown list
+    matchDetailsList.innerHTML = matches.map((m, idx) => {
+      const groups = m.slice(1);
+      const groupsHtml = groups.length > 0 
+        ? groups.map((g, gIdx) => `<span class="text-indigo-300 ml-2">Group $${gIdx+1}: <strong class="text-slate-200">${escapeHtml(g || 'undefined')}</strong></span>`).join("")
+        : '<span class="text-slate-500 ml-2">No capture groups</span>';
+
+      return `
+        <div class="flex items-center justify-between p-1.5 rounded bg-slate-900 border border-slate-800/80">
+          <div class="flex items-center gap-2">
+            <span class="bg-amber-950 text-amber-300 border border-amber-500/30 px-1.5 py-0.2 rounded text-[10px]">#${idx+1}</span>
+            <span class="text-emerald-400 font-bold">"${escapeHtml(m[0])}"</span>
+            <span class="text-slate-500 text-[10px]">(index: ${m.index})</span>
+          </div>
+          <div class="text-[11px]">${groupsHtml}</div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  regexInput?.addEventListener("input", runRegex);
+  testStringTextarea?.addEventListener("input", runRegex);
+
+  // Initial Run
+  runRegex();
+</script>

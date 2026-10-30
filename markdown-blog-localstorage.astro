@@ -1,0 +1,314 @@
+<div class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 min-h-screen flex items-center justify-center p-3 sm:p-6 font-sans text-slate-100 select-none relative overflow-hidden">
+  <!-- Glowing ambient backdrops -->
+  <div class="absolute -top-32 -left-32 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- Main Container -->
+  <div class="w-full max-w-5xl bg-slate-900/90 backdrop-blur-2xl rounded-2xl shadow-2xl border border-indigo-500/20 overflow-hidden flex flex-col md:flex-row relative z-10 min-h-[620px]">
+    
+    <!-- Sidebar: Posts List -->
+    <aside class="w-full md:w-72 bg-slate-950/70 border-b md:border-b-0 md:border-r border-slate-800/80 p-4 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">📝</span>
+            <h2 class="font-bold text-sm tracking-wide text-indigo-400 uppercase">My Markdown Blog</h2>
+          </div>
+          <button id="btnNewPost" class="px-2.5 py-1 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg shadow-sm transition">
+            + New
+          </button>
+        </div>
+
+        <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
+          <span>SAVED ARTICLES</span>
+          <span id="postCountBadge" class="bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded text-[10px]">3 Posts</span>
+        </div>
+
+        <!-- Post list items container -->
+        <div id="postsListContainer" class="space-y-1.5 max-h-[360px] overflow-y-auto pr-1">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </div>
+
+      <!-- Storage Telemetry Footer -->
+      <div class="pt-3 border-t border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
+        <span class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          LocalStorage Synced
+        </span>
+        <button id="btnClearAll" class="text-rose-400 hover:text-rose-300 text-[10px] underline">Clear All</button>
+      </div>
+    </aside>
+
+    <!-- Main Workspace: Split Pane Editor & Live Preview -->
+    <main class="flex-1 flex flex-col bg-slate-900/60 p-4 sm:p-6 overflow-hidden">
+      <!-- Top Bar: Title & Controls -->
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800">
+        <input 
+          id="postTitleInput" 
+          type="text" 
+          value="Building Scalable Microservices with Event Streaming" 
+          placeholder="Article Title..." 
+          class="flex-1 min-w-[200px] bg-transparent text-lg sm:text-xl font-bold text-slate-100 focus:outline-none placeholder-slate-500 border-b border-transparent focus:border-indigo-500 transition px-1 py-0.5"
+        />
+
+        <div class="flex items-center gap-2">
+          <!-- Word Counter & Reading Time -->
+          <div class="text-xs bg-slate-800/80 px-2.5 py-1 rounded-lg text-slate-300 border border-slate-700/50 flex items-center gap-2">
+            <span id="wordCountBadge">184 words</span>
+            <span class="text-slate-600">•</span>
+            <span id="readTimeBadge" class="text-indigo-400">1 min read</span>
+          </div>
+
+          <!-- Save Button -->
+          <button id="btnSavePost" class="px-3.5 py-1 text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition flex items-center gap-1.5 shadow-sm">
+            <span>💾</span> Save
+          </button>
+        </div>
+      </div>
+
+      <!-- Dual-Pane Workspace: Raw Markdown on Left, Rendered Preview on Right -->
+      <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-[380px]">
+        <!-- Left: Markdown Input Pane -->
+        <div class="flex flex-col bg-slate-950/60 rounded-xl border border-slate-800/80 p-3">
+          <div class="flex items-center justify-between text-xs text-slate-400 mb-2 pb-1.5 border-b border-slate-800/60">
+            <span class="font-mono text-indigo-400"># Markdown Input</span>
+            <span class="text-[10px] text-slate-500">Auto-saves to browser</span>
+          </div>
+          <textarea 
+            id="markdownTextarea" 
+            class="flex-1 w-full bg-transparent font-mono text-xs sm:text-sm text-slate-200 resize-none focus:outline-none leading-relaxed placeholder-slate-600"
+            placeholder="# Write your markdown here..."
+          >## The Architecture Breakdown
+
+Modern distributed systems require **loose coupling** and high availability.
+
+### Key Pillars:
+- **Zero single point of failure** across all clusters
+- Sub-millisecond latency via *Redis RAM caching*
+- Event streaming through Apache Kafka
+
+> "Simplicity is prerequisite for reliability." — Edsger W. Dijkstra
+
+```javascript
+// Quick LocalStorage sync
+const savePost = (data) => {
+  localStorage.setItem('post_' + data.id, JSON.stringify(data));
+};
+```
+Everything is stored directly inside **browser LocalStorage** with zero servers needed!</textarea>
+        </div>
+
+        <!-- Right: Live Rendered Output Pane -->
+        <div class="flex flex-col bg-slate-950/40 rounded-xl border border-slate-800/80 p-4 overflow-y-auto max-h-[440px]">
+          <div class="flex items-center justify-between text-xs text-slate-400 mb-3 pb-1.5 border-b border-slate-800/60">
+            <span class="font-mono text-emerald-400">👁️ Live Preview</span>
+            <span id="saveStatusIndicator" class="text-[10px] text-emerald-400">Saved</span>
+          </div>
+          <div id="renderedPreviewContent" class="prose prose-invert max-w-none text-xs sm:text-sm space-y-2.5 leading-relaxed text-slate-300">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  // Initial demo posts
+  const INITIAL_POSTS = [
+    {
+      id: "post_1",
+      title: "Building Scalable Microservices with Event Streaming",
+      content: "## The Architecture Breakdown\\n\\nModern distributed systems require **loose coupling** and high availability.\\n\\n### Key Pillars:\\n- **Zero single point of failure** across all clusters\\n- Sub-millisecond latency via *Redis RAM caching*\\n- Event streaming through Apache Kafka\\n\\n> \\\"Simplicity is prerequisite for reliability.\\\" — Edsger W. Dijkstra\\n\\n```javascript\\nconst savePost = (data) => {\\n  localStorage.setItem('post_' + data.id, JSON.stringify(data));\\n};\\n```\\nEverything is stored directly inside **browser LocalStorage** with zero servers needed!"
+    },
+    {
+      id: "post_2",
+      title: "How to Build Pure Vanilla JS Tools (Zero NPM)",
+      content: "## Why Zero NPM Matters\\n\\nModern web tooling has become bloated with thousands of transitive dependencies.\\n\\n1. Fast bundle-less execution\\n2. Zero security supply-chain vulnerabilities\\n3. Instant browser execution\\n\\nUse the native browser APIs: `localStorage`, `fetch`, and `crypto`!"
+    },
+    {
+      id: "post_3",
+      title: "Understanding Tailwind CSS Glassmorphism",
+      content: "## Glassmorphism Styling\\n\\nCombine `backdrop-blur-md` with semi-transparent `bg-slate-900/80` for a sleek modern UI design!"
+    }
+  ];
+
+  const STORAGE_KEY = "webcraft_markdown_posts_v1";
+
+  function getStoredPosts() {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : INITIAL_POSTS;
+    } catch {
+      return INITIAL_POSTS;
+    }
+  }
+
+  function saveStoredPosts(posts) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+    } catch (e) {
+      console.warn("Storage quota exceeded", e);
+    }
+  }
+
+  let posts = getStoredPosts();
+  let currentPostId = posts[0]?.id || "post_1";
+
+  // Simple, robust zero-dependency Markdown parser
+  function parseMarkdown(md) {
+    let html = md
+      // Escape script tags
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+      // Headers
+      .replace(/^### (.*$)/gim, '<h3 class="text-base font-bold text-indigo-400 mt-3 mb-1">$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2 class="text-lg font-bold text-slate-100 mt-4 mb-2 border-b border-slate-800 pb-1">$1</h2>')
+      .replace(/^# (.*$)/gim, '<h1 class="text-xl font-extrabold text-white mt-4 mb-2">$1</h1>')
+      // Blockquote
+      .replace(/^\> (.*$)/gim, '<blockquote class="border-l-4 border-indigo-500 pl-3 py-1 my-2 text-slate-400 italic bg-indigo-950/20 rounded-r">$1</blockquote>')
+      // Code block
+      .replace(/```([\s\S]*?)```/gim, '<pre class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 font-mono text-xs text-emerald-400 overflow-x-auto my-2"><code>$1</code></pre>')
+      // Inline code
+      .replace(/`([^`]+)`/gim, '<code class="bg-slate-800 px-1.5 py-0.5 rounded text-amber-300 font-mono text-xs">$1</code>')
+      // Bold & Italic
+      .replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-white">$1</strong>')
+      .replace(/\*(.*?)\*/gim, '<em class="italic text-indigo-200">$1</em>')
+      // Unordered lists
+      .replace(/^\- (.*$)/gim, '<li class="ml-4 list-disc text-slate-300">$1</li>')
+      .replace(/^\d+\. (.*$)/gim, '<li class="ml-4 list-decimal text-slate-300">$1</li>')
+      // Paragraphs
+      .replace(/\n\n/gim, '</p><p class="mt-2">');
+
+    return '<p class="mt-1">' + html + '</p>';
+  }
+
+  function renderPostList() {
+    const listEl = document.getElementById("postsListContainer");
+    const countEl = document.getElementById("postCountBadge");
+    if (!listEl) return;
+
+    countEl.textContent = `${posts.length} Posts`;
+    listEl.innerHTML = posts.map(p => {
+      const active = p.id === currentPostId ? "bg-indigo-600/30 border-indigo-500 text-white" : "hover:bg-slate-800/60 text-slate-400 border-transparent";
+      return `
+        <div class="post-item flex items-center justify-between p-2 rounded-lg cursor-pointer border transition text-xs ${active}" data-id="${p.id}">
+          <span class="truncate pr-2 font-medium">${p.title || "Untitled"}</span>
+          <button class="delete-btn text-slate-500 hover:text-rose-400 px-1 py-0.5" data-id="${p.id}" title="Delete">✕</button>
+        </div>
+      `;
+    }).join("");
+
+    // Attach click handlers
+    listEl.querySelectorAll(".post-item").forEach(item => {
+      item.addEventListener("click", (e) => {
+        if (e.target.classList.contains("delete-btn")) return;
+        const id = item.getAttribute("data-id");
+        loadPost(id);
+      });
+    });
+
+    listEl.querySelectorAll(".delete-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const id = btn.getAttribute("data-id");
+        deletePost(id);
+      });
+    });
+  }
+
+  function loadPost(id) {
+    const post = posts.find(p => p.id === id) || posts[0];
+    if (!post) return;
+    currentPostId = post.id;
+    document.getElementById("postTitleInput").value = post.title;
+    document.getElementById("markdownTextarea").value = post.content;
+    updatePreview();
+    renderPostList();
+  }
+
+  function updatePreview() {
+    const title = document.getElementById("postTitleInput").value;
+    const content = document.getElementById("markdownTextarea").value;
+    const preview = document.getElementById("renderedPreviewContent");
+
+    preview.innerHTML = `
+      <h1 class="text-xl font-bold text-white mb-2">${title}</h1>
+      ${parseMarkdown(content)}
+    `;
+
+    // Metrics
+    const words = content.trim().split(/\s+/).filter(Boolean).length;
+    document.getElementById("wordCountBadge").textContent = `${words} words`;
+    const readMin = Math.max(1, Math.ceil(words / 200));
+    document.getElementById("readTimeBadge").textContent = `${readMin} min read`;
+  }
+
+  function saveCurrentPost() {
+    const title = document.getElementById("postTitleInput").value.trim() || "Untitled Post";
+    const content = document.getElementById("markdownTextarea").value;
+    const postIndex = posts.findIndex(p => p.id === currentPostId);
+
+    if (postIndex !== -1) {
+      posts[postIndex].title = title;
+      posts[postIndex].content = content;
+    } else {
+      posts.unshift({ id: currentPostId, title, content });
+    }
+
+    saveStoredPosts(posts);
+    renderPostList();
+
+    const indicator = document.getElementById("saveStatusIndicator");
+    indicator.textContent = "Saved to LocalStorage!";
+    indicator.classList.remove("text-slate-500");
+    indicator.classList.add("text-emerald-400");
+    setTimeout(() => {
+      indicator.textContent = "Saved";
+    }, 1500);
+  }
+
+  function createNewPost() {
+    const newId = "post_" + Date.now();
+    const newPost = {
+      id: newId,
+      title: "Untitled Article",
+      content: "# New Article\\n\\nStart writing your thoughts in Markdown..."
+    };
+    posts.unshift(newPost);
+    saveStoredPosts(posts);
+    loadPost(newId);
+  }
+
+  function deletePost(id) {
+    if (posts.length <= 1) {
+      alert("Keep at least one article!");
+      return;
+    }
+    posts = posts.filter(p => p.id !== id);
+    saveStoredPosts(posts);
+    loadPost(posts[0].id);
+  }
+
+  // Bind Events
+  document.getElementById("markdownTextarea")?.addEventListener("input", () => {
+    updatePreview();
+    saveCurrentPost();
+  });
+  document.getElementById("postTitleInput")?.addEventListener("input", () => {
+    updatePreview();
+    saveCurrentPost();
+  });
+  document.getElementById("btnSavePost")?.addEventListener("click", saveCurrentPost);
+  document.getElementById("btnNewPost")?.addEventListener("click", createNewPost);
+  document.getElementById("btnClearAll")?.addEventListener("click", () => {
+    if (confirm("Reset all articles to default?")) {
+      posts = [...INITIAL_POSTS];
+      saveStoredPosts(posts);
+      loadPost(posts[0].id);
+    }
+  });
+
+  // Init
+  loadPost(currentPostId);
+</script>
